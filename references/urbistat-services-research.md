@@ -1,6 +1,6 @@
 # UrbiStat: services and product research
 
-Research date: 2 November 2026  
+Research date: 2 November 2026
 Scope: English public product and service pages, the uGeo feature and module descriptions, sector coverage, client list, recent publications and uGeo update posts. The site's sitemap contains 154 URLs, including translated pages and a long historical article archive; this note focuses on the current service-bearing pages and representative recent examples rather than summarizing every archived post.
 
 ## What UrbiStat does

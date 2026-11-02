@@ -1,7 +1,7 @@
 # Retail review analytics PRD
 
-Source: [Retail Review Analytics Internal Specification](../Retail_Review_Analytics_Internal_Specification%20%281%29.docx)  
-Source version: 0.1, 2 November 2026  
+Source: [Retail Review Analytics Internal Specification](../Retail_Review_Analytics_Internal_Specification%20%281%29.docx)
+Source version: 0.1, 2 November 2026
 Reviewed: 2 November 2026
 
 ## Authority and scope

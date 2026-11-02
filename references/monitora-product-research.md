@@ -1,6 +1,6 @@
 # Monitora: public product reconstruction
 
-Research date: 2 November 2026  
+Research date: 2 November 2026
 Purpose: understand the publicly visible product and identify what we still need to learn before designing a similar service.
 
 ## Product at a glance
