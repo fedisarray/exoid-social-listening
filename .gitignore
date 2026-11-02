@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.env*
+!.env.example
+supabase/.temp/
+supabase/.branches/
+*.tsbuildinfo
+playwright-report/
+test-results/
+.DS_Store
+
+# Confidential reference attachments stay outside source control.
+*.docx
+*.xlsx

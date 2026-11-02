@@ -1,0 +1,1 @@
+-- Local analyst accounts are provisioned through scripts/seed-analysts.mjs using the local Auth Admin API.
