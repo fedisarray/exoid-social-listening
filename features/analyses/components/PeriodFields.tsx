@@ -1,7 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
 import type { AnalysisConfig } from "../schemas/analysisConfig";
-import { resolvePeriod } from "../domain/period";
+import { resolvePeriod } from "@/features/_shared/domain/period";
 import { Choice } from "@/features/_shared/components/Choice";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

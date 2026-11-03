@@ -1,16 +1,9 @@
 import { z } from "zod";
+import { periodSchema } from "@/features/_shared/schemas/period";
 import { listingSchema } from "@/features/_shared/schemas/listing";
 export const selectionSchema = listingSchema.extend({
   role: z.enum(["primary", "additionalOwn", "competitor", "anchor"]),
   label: z.string().trim().min(1).max(120),
-});
-export const periodSchema = z.object({
-  kind: z.enum(["quarter", "l12m", "custom"]),
-  year: z.number().int().min(2000).max(2100),
-  quarter: z.number().int().min(1).max(4),
-  cutoff: z.iso.date(),
-  start: z.iso.date(),
-  end: z.iso.date(),
 });
 export const analysisConfigSchema = z
   .object({

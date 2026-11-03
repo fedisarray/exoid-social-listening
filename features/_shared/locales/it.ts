@@ -13,11 +13,26 @@ export const it = {
     loginDescription:
       "Accedi per scegliere i confronti e preparare la prossima analisi delle recensioni.",
     email: "Email",
-    password: "Password",
     signIn: "Accedi",
     signingIn: "Accesso in corso…",
-    loginError: "Accesso non riuscito. Controlla le credenziali e riprova.",
     localLogin: "Accesso riservato agli account analista abilitati.",
+    otpDescription:
+      "Inserisci la tua email per ricevere un codice di accesso monouso.",
+    sendCode: "Invia codice di accesso",
+    sendingCode: "Invio codice…",
+    checkInbox: "Controlla la tua email",
+    otpHint: "Inserisci il codice di sei cifre. Scade tra 10 minuti.",
+    codeSentTo: "Codice inviato a",
+    otpCode: "Codice di accesso",
+    verifyCode: "Verifica e accedi",
+    resendCode: "Invia di nuovo",
+    changeEmail: "Cambia email",
+    codeResent: "Un nuovo codice è stato inviato. Usa l’email più recente.",
+    sendCodeError:
+      "Impossibile inviare il codice. Controlla che la tua email sia abilitata, attendi un momento e riprova.",
+    codeError:
+      "Il codice non è valido o è scaduto. Riprova o richiedi un nuovo codice.",
+    devInbox: "Apri la posta locale",
     analysesTitle: "Le tue analisi",
     analysesDescription:
       "Confronti salvati, pronti per il prossimo periodo di analisi.",

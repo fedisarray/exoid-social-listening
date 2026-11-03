@@ -2,39 +2,31 @@
 import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import {
-  Building2,
-  MessageSquare,
-  ArrowLeft,
-  SlidersHorizontal,
-} from "lucide-react";
-import { periodSchema } from "../schemas/analysisConfig";
+import { Building2, ArrowLeft, SlidersHorizontal } from "lucide-react";
+import { dashboardPeriod } from "../domain/dashboardPeriod";
+import { ReviewDashboard } from "@/features/reviews/components/ReviewDashboard";
+import type { GetReviewDashboardInput } from "@/features/reviews/schemas/getReviewDashboardInput";
+import type { ReviewDashboard as ReviewData } from "@/features/reviews/schemas/getReviewDashboardOutput";
 import type { AnalysisDetail } from "../schemas/analysisDetail";
-import { resolvePeriod } from "../domain/period";
 import { PeriodFields } from "../components/PeriodFields";
 import { Choice } from "@/features/_shared/components/Choice";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-export function AnalysisDashboard({ analysis }: { analysis: AnalysisDetail }) {
+export function AnalysisDashboard({
+  analysis,
+  initialReviews,
+}: {
+  analysis: AnalysisDetail;
+  initialReviews: { input: GetReviewDashboardInput; data: ReviewData };
+}) {
   const t = useTranslations("app");
   const router = useRouter();
   const path = usePathname();
   const search = useSearchParams();
   const saved = analysis.config.period;
   const params = Object.fromEntries(search.entries());
-  const year = Number(params.year ?? saved.year);
-  const quarter = Number(params.quarter ?? saved.quarter);
-  const candidate = periodSchema.safeParse({
-    ...saved,
-    kind: params.kind ?? saved.kind,
-    year,
-    quarter,
-    cutoff: params.cutoff ?? saved.cutoff,
-    start: params.start ?? saved.start,
-    end: params.end ?? saved.end,
-  });
-  const period = resolvePeriod(candidate.success ? candidate.data : saved);
+  const period = dashboardPeriod(saved, params);
   const role = ["primary", "additionalOwn", "competitor", "anchor"].includes(
     params.role,
   )
@@ -116,16 +108,23 @@ export function AnalysisDashboard({ analysis }: { analysis: AnalysisDetail }) {
               </div>
             ))}
           </div>
-          <div className="mt-6 rounded-xl border border-dashed p-7">
-            <MessageSquare className="size-7 text-primary" />
-            <h2 className="mt-4 text-xl font-medium">{t("notCollected")}</h2>
-            <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
-              {t("notCollectedDescription")}
-            </p>
-            <p className="mt-4 text-sm text-muted-foreground">
-              {t("reportPending")}
-            </p>
-          </div>
+          <ReviewDashboard
+            version={analysis.version}
+            propertyCount={analysis.config.listings.length}
+            role={role}
+            initial={initialReviews}
+            input={{
+              analysisId: analysis.id,
+              period,
+              ...(params.snapshot ? { snapshotId: params.snapshot } : {}),
+            }}
+            onSnapshot={(snapshot) => {
+              const next = new URLSearchParams(search.toString());
+              if (snapshot === "latest") next.delete("snapshot");
+              else next.set("snapshot", snapshot);
+              router.replace(`${path}?${next}`, { scroll: false });
+            }}
+          />
         </section>
         <aside className="self-start rounded-xl border bg-card p-5">
           <h2 className="font-semibold">{t("savedScope")}</h2>

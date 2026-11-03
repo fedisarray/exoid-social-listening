@@ -7,7 +7,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/dev.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
@@ -18,7 +18,8 @@
     "db:types": "node scripts/generate-types.mjs",
     "db:seed": "node --env-file=.env.local scripts/seed-analysts.mjs",
     "format": "prettier --write app features lib components scripts *.ts *.mjs *.json",
-    "format:check": "prettier --check app features lib components scripts *.ts *.mjs *.json"
+    "format:check": "prettier --check app features lib components scripts *.ts *.mjs *.json",
+    "worker": "node scripts/collection-worker.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "7.0.1",

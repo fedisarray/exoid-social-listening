@@ -21,7 +21,7 @@ import {
 } from "../schemas/saveAnalysisInput";
 import type { AnalysisDetail } from "../schemas/analysisDetail";
 import type { Selection } from "../schemas/analysisConfig";
-import { defaultPeriod } from "../domain/period";
+import { defaultPeriod } from "@/features/_shared/domain/period";
 import { getAnalysis } from "../actions/getAnalysis";
 import { useSaveAnalysis } from "../hooks/useSaveAnalysis";
 import { analysisKeys } from "../constants/queryKeys";

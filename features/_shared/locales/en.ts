@@ -13,11 +13,25 @@ export const en = {
     loginDescription:
       "Sign in to build your comparison set and prepare your next review analysis.",
     email: "Email",
-    password: "Password",
     signIn: "Sign in",
     signingIn: "Signing in…",
-    loginError: "Unable to sign in. Check your credentials and try again.",
     localLogin: "Access is reserved for provisioned analyst accounts.",
+    otpDescription: "Enter your email to receive a one-time sign-in code.",
+    sendCode: "Send sign-in code",
+    sendingCode: "Sending code…",
+    checkInbox: "Check your email",
+    otpHint: "Enter the six-digit code. It expires in 10 minutes.",
+    codeSentTo: "Code sent to",
+    otpCode: "Sign-in code",
+    verifyCode: "Verify and sign in",
+    resendCode: "Resend code",
+    changeEmail: "Change email",
+    codeResent: "A new code has been sent. Use the most recent email.",
+    sendCodeError:
+      "Unable to send a code. Check that your email has access, wait a moment, and try again.",
+    codeError:
+      "The code is invalid or expired. Try again or request a new code.",
+    devInbox: "Open local email inbox",
     analysesTitle: "Your analyses",
     analysesDescription:
       "Saved comparison sets, ready for the next reporting period.",

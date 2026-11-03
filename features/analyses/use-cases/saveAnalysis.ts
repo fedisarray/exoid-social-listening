@@ -4,7 +4,7 @@ import type { SaveAnalysisInput } from "../schemas/saveAnalysisInput";
 import type { SaveAnalysisOutput } from "../schemas/saveAnalysisOutput";
 import { persistAnalysis, findOwnedAnalysis } from "../repositories/analyses";
 import { confirmedListings } from "@/features/discovery/queries/confirmedListings";
-import { resolvePeriod } from "../domain/period";
+import { resolvePeriod } from "@/features/_shared/domain/period";
 export async function saveAnalysis(
   ctx: OperationContext,
   input: SaveAnalysisInput,

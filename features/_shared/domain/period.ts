@@ -1,5 +1,4 @@
-import type { AnalysisConfig } from "../schemas/analysisConfig";
-type Period = AnalysisConfig["period"];
+import type { Period } from "@/features/_shared/schemas/period";
 function day(year: number, month: number, date: number): string {
   return new Date(Date.UTC(year, month, date)).toISOString().slice(0, 10);
 }

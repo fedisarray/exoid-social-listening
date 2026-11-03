@@ -1,4 +1,5 @@
 import "server-only";
+// Public authenticated analysis read contract; reusable by collection/analytics use cases.
 import { requireUser } from "@/lib/auth/dal";
 import { getAnalysis as execute } from "../use-cases/getAnalysis";
 import { getAnalysisInputSchema } from "../schemas/getAnalysisInput";

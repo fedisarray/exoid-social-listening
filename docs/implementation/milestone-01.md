@@ -22,7 +22,7 @@ Implemented 2 November 2026. The application now has a local Supabase CLI stack,
 - Browser checks covered persisted labels/periods, failed-request rollback and retry, conflict preservation/retry, pending-save disabling, missing-provider errors, URL exploration filters, Italian/English, keyboard navigation, mobile overflow, visible role text, logout and unauthenticated redirects.
 - Browser runtime and hydration checks passed after fixing optional URL validation and stable form label IDs.
 
-All verification fixtures were removed by the clean migration replay. Development analyst accounts are provisioned again using the password stored only in `.env.local`.
+All verification fixtures were removed by the clean migration replay. Development analyst accounts are provisioned without passwords. As of 3 November 2026, login uses email OTP captured in the local Supabase mail inbox at `http://127.0.0.1:55324`; codes expire in ten minutes and are single use. The password login operation and password environment setting have been removed.
 
 ## Remaining external validation
 
