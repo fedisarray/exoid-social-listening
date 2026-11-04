@@ -3,7 +3,9 @@ import { z } from "zod";
 export const exportReviewExcelOutputSchema = z.discriminatedUnion("ok", [
   z.object({
     ok: z.literal(true),
-    filename: z.string().regex(/^reviews-Q[1-4]-\d{4}-[a-f0-9-]+\.xlsx$/),
+    filename: z
+      .string()
+      .regex(/^reviews-\d{4}-\d{2}-\d{2}-\d{4}-\d{2}-\d{2}-[a-f0-9-]+\.xlsx$/),
     content: z
       .string()
       .min(1)
@@ -16,6 +18,7 @@ export const exportReviewExcelOutputSchema = z.discriminatedUnion("ok", [
       "COVERAGE_INCOMPLETE",
       "CONFIGURATION_CHANGED",
       "ANALYSIS_NOT_FOUND",
+      "INVALID_SELECTION",
     ]),
   }),
 ]);

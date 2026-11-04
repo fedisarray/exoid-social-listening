@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { DeleteAnalysisControl } from "../components/DeleteAnalysisControl";
 export async function AnalysesScreen({ search = "" }: { search?: string }) {
   const [t, locale, analyses] = await Promise.all([
     getTranslations("app"),
@@ -135,6 +136,21 @@ export async function AnalysesScreen({ search = "" }: { search?: string }) {
                       </time>
                     </p>
                     <div className="flex w-full gap-2 sm:w-auto">
+                      <DeleteAnalysisControl
+                        id={analysis.id}
+                        name={analysis.name}
+                        labels={{
+                          delete: t("deleteAnalysis"),
+                          deleteNamed: t("deleteNamedAnalysis"),
+                          confirmTitle: t("deleteAnalysisTitle"),
+                          confirmDescription: t("deleteAnalysisDescription", {
+                            name: analysis.name,
+                          }),
+                          cancel: t("cancel"),
+                          deleteError: t("deleteAnalysisError"),
+                          deleteUnavailable: t("deleteAnalysisUnavailable"),
+                        }}
+                      />
                       <Link
                         href={`/analyses/${analysis.id}/setup`}
                         className={cn(

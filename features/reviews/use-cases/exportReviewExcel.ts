@@ -4,12 +4,17 @@ import { findOwnedAnalysis } from "@/features/analyses/repositories/analyses";
 import {
   enqueueCollection,
   findRunSnapshot,
+  findSnapshot,
+  readMetrics,
+  readFrozenCoverage,
 } from "../repositories/collections";
-import { getReviewDashboard } from "./getReviewDashboard";
-import { getReviewDashboardOutputSchema } from "../schemas/getReviewDashboardOutput";
+import { reviewCoverage, windowCovered } from "../domain/reviewCoverage";
 import type { ExportReviewExcelInput } from "../schemas/exportReviewExcelInput";
 import type { ExportReviewExcelOutput } from "../schemas/exportReviewExcelOutput";
-import { reviewExcelReport } from "../domain/reviewExcelReport";
+import {
+  reviewExcelReport,
+  type ReviewExcelData,
+} from "../domain/reviewExcelReport";
 import { buildReviewExcel } from "../domain/buildReviewExcel";
 
 export async function exportReviewExcel(
@@ -24,6 +29,13 @@ export async function exportReviewExcel(
   if (!analysis) return { ok: false, code: "ANALYSIS_NOT_FOUND" };
   let snapshotId = input.snapshotId;
   if (!snapshotId) {
+    if (
+      input.options.listingIds.some(
+        (id) =>
+          !analysis.config.listings.some((place) => place.sourceId === id),
+      )
+    )
+      return { ok: false, code: "INVALID_SELECTION" };
     if (analysis.version !== input.expectedVersion)
       return { ok: false, code: "CONFIGURATION_CHANGED" };
     try {
@@ -43,21 +55,63 @@ export async function exportReviewExcel(
       throw error;
     }
   }
-  const result = await getReviewDashboard(ctx, {
+  const dashboardInput = {
     analysisId: analysis.id,
     snapshotId,
     period: input.period,
-  });
-  const data = getReviewDashboardOutputSchema.parse(result);
-  if (!data.snapshot || !data.comparisonReady || !data.metrics)
+  };
+  const snapshot = await findSnapshot(
+    ctx.db,
+    { analysisId: analysis.id },
+    snapshotId,
+  );
+  const [raw, storedCoverage] = await Promise.all([
+    readMetrics(ctx.db, snapshot.id, dashboardInput),
+    readFrozenCoverage(ctx.db, snapshot.id),
+  ]);
+  const selectedIds = new Set(input.options.listingIds);
+  if (
+    input.options.listingIds.some(
+      (id) => !storedCoverage.some((place) => place.listingId === id),
+    )
+  )
+    return { ok: false, code: "INVALID_SELECTION" };
+  const coverage = reviewCoverage(
+    storedCoverage.filter((place) => selectedIds.has(place.listingId)),
+    input.period,
+    new Date().toISOString().slice(0, 10),
+  );
+  if (!windowCovered(coverage, input.period))
     return { ok: false, code: "COVERAGE_INCOMPLETE" };
-  if (!input.snapshotId && data.snapshot.version !== input.expectedVersion)
+  if (!input.snapshotId && snapshot.version !== input.expectedVersion)
     return { ok: false, code: "CONFIGURATION_CHANGED" };
-  const report = reviewExcelReport(data, input.period, input.locale);
+  const data: ReviewExcelData = {
+    mode: "frozen",
+    snapshot,
+    coverage,
+    comparisonReady: true,
+    metrics: {
+      ...raw,
+      properties: raw.properties
+        .filter((property) => selectedIds.has(property.listingId))
+        .map((property) => {
+          const place = coverage.find(
+            (place) => place.listingId === property.listingId,
+          )!;
+          return { ...property, label: place.label, role: place.role };
+        }),
+    },
+  };
+  const report = reviewExcelReport(
+    data,
+    input.period,
+    input.locale,
+    input.options,
+  );
   const bytes = buildReviewExcel(report);
   return {
     ok: true,
-    filename: `reviews-Q${input.period.quarter}-${input.period.year}-${snapshotId}.xlsx`,
+    filename: `reviews-${input.period.start}-${input.period.end}-${snapshotId}.xlsx`,
     content: Buffer.from(bytes).toString("base64"),
     snapshotId,
   };

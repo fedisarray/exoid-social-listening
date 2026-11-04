@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Building2, Folders } from "lucide-react";
+import { Building2, Folders, FileDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function WorkspaceNavigation() {
@@ -40,6 +40,14 @@ export function WorkspaceNavigation() {
         >
           <Folders className="size-4 shrink-0" />
           {t("comparisons")}
+        </Link>
+        <Link
+          href="/exports"
+          className={linkClass(pathname.startsWith("/exports"))}
+          aria-current={pathname.startsWith("/exports") ? "page" : undefined}
+        >
+          <FileDown className="size-4 shrink-0" aria-hidden="true" />
+          {t("exports")}
         </Link>
       </div>
     </nav>

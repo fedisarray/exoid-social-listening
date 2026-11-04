@@ -8,9 +8,9 @@ import {
   SlidersHorizontal,
   CalendarRange,
   ChevronDown,
+  FileDown,
 } from "lucide-react";
 import { ComparisonSyncControl } from "@/features/reviews/components/ComparisonSyncControl";
-import { ExportReviewExcel } from "@/features/reviews/components/ExportReviewExcel";
 import { useReviewDashboard } from "@/features/reviews/hooks/useReviewDashboard";
 import {
   Popover,
@@ -134,14 +134,13 @@ export function AnalysisDashboard({
               dashboard={dashboard}
               onLive={() => update({ snapshot: "" })}
             />
-            <ExportReviewExcel
-              analysisId={analysis.id}
-              version={analysis.version}
-              period={period}
-              savedPeriod={saved}
-              data={dashboard.query.data}
-              onSnapshot={(snapshot) => update({ snapshot })}
-            />
+            <Link
+              href={`/exports?${new URLSearchParams({ analysis: analysis.id, ...Object.fromEntries(Object.entries(period).map(([key, value]) => [key, String(value)])), ...(params.snapshot ? { snapshot: params.snapshot } : {}) })}`}
+              className={cn(buttonVariants({ variant: "outline" }))}
+            >
+              <FileDown className="size-4" aria-hidden="true" />
+              {t("exports")}
+            </Link>
             <Link
               href={`/analyses/${analysis.id}/setup`}
               className={cn(buttonVariants({ variant: "outline" }))}

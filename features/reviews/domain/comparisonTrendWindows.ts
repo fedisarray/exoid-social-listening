@@ -14,7 +14,7 @@ export type TrendWindow = {
 };
 
 export function comparisonTrendWindows(
-  data: ReviewDashboard,
+  data: Pick<ReviewDashboard, "metrics" | "coverage">,
   period: Period,
 ): {
   annual: TrendWindow[];

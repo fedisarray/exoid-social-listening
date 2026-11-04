@@ -1,5 +1,6 @@
 export const en = {
   app: {
+    exports: "Exports",
     propertyDetails: "Individual property details",
     analysisLibraryDescription:
       "Your saved comparisons, with their properties and reporting periods in one place.",
@@ -9,6 +10,15 @@ export const en = {
     analysisSearchPlaceholder: "Analysis or primary property",
     propertyCount: "{count, plural, one {# property} other {# properties}}",
     editAnalysis: "Edit setup",
+    deleteAnalysis: "Delete",
+    deleteNamedAnalysis: "Delete {name}",
+    deleteAnalysisTitle: "Delete comparison?",
+    deleteAnalysisDescription:
+      "Delete “{name}” and its saved configuration? This cannot be undone.",
+    deleteAnalysisError: "Could not delete this comparison. Try again.",
+    deleteAnalysisUnavailable:
+      "This comparison could not be found or is no longer available to your account. Refresh the page and try again.",
+    cancel: "Cancel",
     openAnalysis: "Open analysis",
     openNamedAnalysis: "Open {name}",
     noAnalysesMatch: "No matching comparisons",

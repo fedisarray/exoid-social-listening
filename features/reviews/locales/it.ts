@@ -1,21 +1,44 @@
 export const reviewsIT = {
+  exportWorkspaceDescription:
+    "Scegli confronto, date e luoghi, poi configura i fogli Excel da scaricare. I grafici restano modificabili. Il sentiment verrà aggiunto in seguito.",
+  exportEmpty:
+    "Salva un confronto e raccogli le recensioni per configurare un’esportazione.",
+  exportComparison: "Confronto",
+  exportScope: "Date e dataset",
+  exportProperties: "Luoghi inclusi",
+  exportSelectAll: "Seleziona tutti i luoghi",
+  exportContent: "Fogli Excel",
+  exportContentHint:
+    "I sette fogli originali sono selezionati inizialmente. Con date personalizzate o gli ultimi dodici mesi, i fogli del periodo mostrano l’intervallo scelto al posto dello storico trimestrale.",
+  exportPeriodRating: "Voto medio del periodo selezionato",
+  exportPeriodSatisfaction: "Soddisfazione del periodo selezionato",
+  exportEmptyGroup:
+    "Nessun luogo di questo gruppo è stato selezionato. Il foglio non contiene dati.",
+  exportHistory: "Anni precedenti da includere",
+  exportHistoryHint:
+    "Da 0 a 20 anni. Zero mantiene solo le righe degli ultimi dodici mesi e del periodo selezionato.",
+  exportCharts: "Includi grafici Excel modificabili",
+  exportSummary: "Riepilogo download",
+  exportReset: "Ripristina configurazione",
+  exportNewDataset: "Crea una copia congelata delle recensioni raccolte",
+  exportFrozenHint:
+    "Utilizza revisioni, nomi dei luoghi, ruoli e copertura congelati nel dataset. Scegli nuovamente i luoghi quando cambi dataset.",
+  exportChecking: "Verifica dataset e copertura delle date…",
+  exportCoverageHint:
+    "Scegli almeno un luogo con copertura completa per le date selezionate. Raccogli le date mancanti dalla dashboard del confronto.",
+  exportInvalidSelection:
+    "Controlla date e anni, e scegli almeno un luogo e un foglio validi.",
+  exportDownloadStarted:
+    "Il download è stato avviato. Il dataset salvato è selezionato per la prossima esportazione; la configurazione è mantenuta.",
   exportExcel: "Esporta Excel",
-  excelDescription:
-    "Scarica i sette fogli di analisi delle recensioni con grafici Excel modificabili. Include tutti i luoghi del confronto, indipendentemente dal gruppo visualizzato. Il sentiment è escluso.",
-  excelQuarterRequired:
-    "Seleziona un trimestre nei filtri delle date per esportare questo report di sette fogli.",
   excelNewDataset:
-    "Per questo download verrà salvata una copia congelata delle recensioni raccolte. Anche le date del report salvato devono essere interamente coperte.",
-  excelExistingDataset:
-    "Utilizza il dataset salvato attualmente selezionato nella dashboard.",
+    "Crea una copia congelata delle recensioni raccolte. Richiede la copertura delle date salvate del confronto per tutti i luoghi. Il download include solo i luoghi che selezioni qui.",
   excelDownload: "Scarica Excel (.xlsx)",
   excelGenerating: "Preparazione Excel…",
-  excelDownloaded:
-    "Il download Excel è stato avviato. La dashboard mostra ora lo stesso dataset congelato.",
   excelError:
     "Impossibile generare Excel. Riprova; i dati salvati rimangono invariati.",
   excelCoverageError:
-    "Il trimestre da esportare o le date del report salvato non sono interamente coperti. Sincronizza le date mancanti e riprova.",
+    "Le date da esportare o quelle salvate del confronto non sono interamente coperte. Sincronizza le date mancanti oppure scegli un dataset già salvato, poi riprova.",
   excelVersionError:
     "La configurazione del confronto è cambiata. Ricarica la pagina prima di esportare.",
   excelNotFound: "Questo confronto non è più disponibile. Torna ai confronti.",
@@ -25,8 +48,6 @@ export const reviewsIT = {
   excelDates: "Date (UTC)",
   excelMissing:
     "Le celle vuote e gli spazi nei grafici indicano dati non disponibili. Un periodo verificato senza recensioni ha conteggio zero e nessun voto o indice di soddisfazione.",
-  excelNoAnchors:
-    "Nessuna àncora in questo dataset. Il foglio è mantenuto per conservare la struttura di sette fogli.",
   excelPartialHistory:
     "Alcuni periodi storici non hanno copertura completa per tutti i luoghi. I relativi valori sono omessi; il report storico è parziale.",
   excelSatisfactionMethod:

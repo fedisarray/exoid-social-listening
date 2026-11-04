@@ -1,5 +1,6 @@
 export const it = {
   app: {
+    exports: "Esportazioni",
     propertyDetails: "Dettagli delle singole proprietà",
     analysisLibraryDescription:
       "I tuoi confronti salvati, con proprietà e periodi di riferimento in un unico spazio.",
@@ -9,6 +10,15 @@ export const it = {
     analysisSearchPlaceholder: "Analisi o proprietà principale",
     propertyCount: "{count, plural, one {# proprietà} other {# proprietà}}",
     editAnalysis: "Modifica configurazione",
+    deleteAnalysis: "Elimina",
+    deleteNamedAnalysis: "Elimina {name}",
+    deleteAnalysisTitle: "Eliminare il confronto?",
+    deleteAnalysisDescription:
+      "Eliminare “{name}” e la configurazione salvata? L’operazione non si può annullare.",
+    deleteAnalysisError: "Impossibile eliminare il confronto. Riprova.",
+    deleteAnalysisUnavailable:
+      "Il confronto non è stato trovato o non è più disponibile per il tuo account. Aggiorna la pagina e riprova.",
+    cancel: "Annulla",
     openAnalysis: "Apri analisi",
     openNamedAnalysis: "Apri {name}",
     noAnalysesMatch: "Nessun confronto corrispondente",

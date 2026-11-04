@@ -1,21 +1,44 @@
 export const reviewsEN = {
+  exportWorkspaceDescription:
+    "Choose a comparison, dates and places, then configure the Excel sheets to download. Charts remain editable. Sentiment will be added later.",
+  exportEmpty:
+    "Save a comparison and collect its reviews to configure an export.",
+  exportComparison: "Comparison",
+  exportScope: "Dates and dataset",
+  exportProperties: "Included places",
+  exportSelectAll: "Select all places",
+  exportContent: "Workbook sheets",
+  exportContentHint:
+    "The original seven sheets are selected by default. For custom dates or trailing twelve months, the period sheets show the selected range instead of quarterly history.",
+  exportPeriodRating: "Selected-period average rating",
+  exportPeriodSatisfaction: "Selected-period satisfaction",
+  exportEmptyGroup:
+    "No places in this group were selected. This sheet has no data.",
+  exportHistory: "Previous years to include",
+  exportHistoryHint:
+    "0–20 years. Zero keeps the last-12-month and selected-period rows only.",
+  exportCharts: "Include editable Excel charts",
+  exportSummary: "Download summary",
+  exportReset: "Reset configuration",
+  exportNewDataset: "Create a frozen copy from collected reviews",
+  exportFrozenHint:
+    "Uses this dataset's frozen review revisions, property names, roles and coverage. Choose places again when changing datasets.",
+  exportChecking: "Checking dataset and date coverage…",
+  exportCoverageHint:
+    "Choose at least one place with complete coverage for the selected dates. Collect missing dates from the comparison dashboard.",
+  exportInvalidSelection:
+    "Check the dates and years, and choose at least one valid place and sheet.",
+  exportDownloadStarted:
+    "Your download has started. The saved dataset is selected for the next export; your configuration is retained.",
   exportExcel: "Export Excel",
-  excelDescription:
-    "Download the seven review-analysis sheets with editable Excel charts. Includes all comparison places, regardless of the displayed group. Sentiment is excluded.",
-  excelQuarterRequired:
-    "Select a quarter in the date filters to export this seven-sheet report.",
   excelNewDataset:
-    "A frozen copy of the collected reviews will be saved for this download. The saved report dates must also be fully covered.",
-  excelExistingDataset:
-    "Uses the saved dataset currently selected in the dashboard.",
+    "Creates a frozen copy of collected reviews. This requires coverage of the saved comparison dates for every place. The download includes only the places you select here.",
   excelDownload: "Download Excel (.xlsx)",
   excelGenerating: "Preparing Excel…",
-  excelDownloaded:
-    "Your Excel download has started. The dashboard now shows the same frozen dataset.",
   excelError:
     "Excel could not be generated. Retry; your saved data is unchanged.",
   excelCoverageError:
-    "The export quarter or saved report dates are not fully covered. Sync the missing dates, then retry.",
+    "The export dates or saved comparison dates are not fully covered. Sync the missing dates, or choose an existing saved dataset, then retry.",
   excelVersionError:
     "The comparison setup changed. Reload the page before exporting.",
   excelNotFound:
@@ -26,8 +49,6 @@ export const reviewsEN = {
   excelDates: "Dates (UTC)",
   excelMissing:
     "Blank cells and chart gaps mean unavailable data. A verified empty period has zero reviews and no rating or satisfaction score.",
-  excelNoAnchors:
-    "No anchors in this dataset. This sheet is retained to preserve the seven-sheet layout.",
   excelPartialHistory:
     "Some historical windows lack complete coverage across all places. Those figures are omitted; this is a partial historical report.",
   excelSatisfactionMethod:
