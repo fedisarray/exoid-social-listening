@@ -8,7 +8,7 @@ import type {
 import type { SaveAnalysisInput } from "../schemas/saveAnalysisInput";
 import { analysisConfigSchema } from "../schemas/analysisConfig";
 type DB = SupabaseClient<Database>;
-function summary(row: Tables<"analyses">): AnalysisSummary {
+function summary(row: Tables<"analyses">): Omit<AnalysisDetail, "config"> {
   return {
     id: row.id,
     name: row.name,
@@ -27,7 +27,48 @@ export async function listOwnedAnalyses(
     .eq("owner_id", ownerId)
     .order("updated_at", { ascending: false });
   if (error) throw error;
-  return data.map(summary);
+  if (!data.length) return [];
+  const batches = [];
+  for (let offset = 0; offset < data.length; offset += 100) {
+    const rows = data.slice(offset, offset + 100);
+    batches.push(rows);
+  }
+  const versions = await Promise.all(
+    batches.map(async (rows) => {
+      const filters = rows
+        .map(
+          (row) =>
+            `and(analysis_id.eq.${row.id},version.eq.${row.current_version})`,
+        )
+        .join(",");
+      const result = await db
+        .from("analysis_versions")
+        .select("analysis_id,version,config")
+        .or(filters);
+      if (result.error) throw result.error;
+      return result.data;
+    }),
+  );
+  const configs = new Map(
+    versions
+      .flat()
+      .map((row) => [`${row.analysis_id}:${row.version}`, row.config]),
+  );
+  return data.map((row) => {
+    const config = analysisConfigSchema.parse(
+      configs.get(`${row.id}:${row.current_version}`),
+    );
+    const primary = config.listings.find(
+      (listing) => listing.role === "primary",
+    );
+    if (!primary) throw new Error("PRIMARY_REQUIRED");
+    return {
+      ...summary(row),
+      primary,
+      period: config.period,
+      propertyCount: config.listings.length,
+    };
+  });
 }
 export async function findOwnedAnalysis(
   db: DB,

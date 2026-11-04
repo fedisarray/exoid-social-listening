@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-03T16:03:27.838334+00:00",
+  "title": "Design System: Exoid Reviews",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Primary",
+        "tonalRamp": [
+          "oklch(0.150 0.0322 242.77)",
+          "oklch(0.270 0.0598 242.77)",
+          "oklch(0.390 0.0782 242.77)",
+          "oklch(0.510 0.0920 242.77)",
+          "oklch(0.630 0.0920 242.77)",
+          "oklch(0.750 0.0736 242.77)",
+          "oklch(0.870 0.0460 242.77)",
+          "oklch(0.950 0.0184 242.77)"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Foreground",
+        "tonalRamp": [
+          "oklch(0.150 0.0133 238.02)",
+          "oklch(0.270 0.0248 238.02)",
+          "oklch(0.390 0.0324 238.02)",
+          "oklch(0.510 0.0381 238.02)",
+          "oklch(0.630 0.0381 238.02)",
+          "oklch(0.750 0.0305 238.02)",
+          "oklch(0.870 0.0190 238.02)",
+          "oklch(0.950 0.0076 238.02)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "tonalRamp": [
+          "oklch(0.150 0.0000 89.88)",
+          "oklch(0.270 0.0000 89.88)",
+          "oklch(0.390 0.0000 89.88)",
+          "oklch(0.510 0.0000 89.88)",
+          "oklch(0.630 0.0000 89.88)",
+          "oklch(0.750 0.0000 89.88)",
+          "oklch(0.870 0.0000 89.88)",
+          "oklch(0.950 0.0000 89.88)"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Canvas",
+        "tonalRamp": [
+          "oklch(0.150 0.0015 236.50)",
+          "oklch(0.270 0.0027 236.50)",
+          "oklch(0.390 0.0036 236.50)",
+          "oklch(0.510 0.0042 236.50)",
+          "oklch(0.630 0.0042 236.50)",
+          "oklch(0.750 0.0033 236.50)",
+          "oklch(0.870 0.0021 236.50)",
+          "oklch(0.950 0.0008 236.50)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "tonalRamp": [
+          "oklch(0.150 0.0029 236.56)",
+          "oklch(0.270 0.0055 236.56)",
+          "oklch(0.390 0.0071 236.56)",
+          "oklch(0.510 0.0084 236.56)",
+          "oklch(0.630 0.0084 236.56)",
+          "oklch(0.750 0.0067 236.56)",
+          "oklch(0.870 0.0042 236.56)",
+          "oklch(0.950 0.0017 236.56)"
+        ]
+      },
+      "muted-foreground": {
+        "role": "neutral",
+        "displayName": "Muted Foreground",
+        "tonalRamp": [
+          "oklch(0.150 0.0117 237.47)",
+          "oklch(0.270 0.0217 237.47)",
+          "oklch(0.390 0.0284 237.47)",
+          "oklch(0.510 0.0334 237.47)",
+          "oklch(0.630 0.0334 237.47)",
+          "oklch(0.750 0.0267 237.47)",
+          "oklch(0.870 0.0167 237.47)",
+          "oklch(0.950 0.0067 237.47)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Border",
+        "tonalRamp": [
+          "oklch(0.150 0.0038 234.83)",
+          "oklch(0.270 0.0071 234.83)",
+          "oklch(0.390 0.0093 234.83)",
+          "oklch(0.510 0.0110 234.83)",
+          "oklch(0.630 0.0110 234.83)",
+          "oklch(0.750 0.0088 234.83)",
+          "oklch(0.870 0.0055 234.83)",
+          "oklch(0.950 0.0022 234.83)"
+        ]
+      },
+      "input": {
+        "role": "neutral",
+        "displayName": "Input",
+        "tonalRamp": [
+          "oklch(0.150 0.0060 236.72)",
+          "oklch(0.270 0.0111 236.72)",
+          "oklch(0.390 0.0145 236.72)",
+          "oklch(0.510 0.0171 236.72)",
+          "oklch(0.630 0.0171 236.72)",
+          "oklch(0.750 0.0137 236.72)",
+          "oklch(0.870 0.0085 236.72)",
+          "oklch(0.950 0.0034 236.72)"
+        ]
+      },
+      "sidebar-accent": {
+        "role": "neutral",
+        "displayName": "Sidebar Accent",
+        "tonalRamp": [
+          "oklch(0.150 0.0159 235.47)",
+          "oklch(0.270 0.0295 235.47)",
+          "oklch(0.390 0.0386 235.47)",
+          "oklch(0.510 0.0454 235.47)",
+          "oklch(0.630 0.0454 235.47)",
+          "oklch(0.750 0.0364 235.47)",
+          "oklch(0.870 0.0227 235.47)",
+          "oklch(0.950 0.0091 235.47)"
+        ]
+      },
+      "sidebar-foreground": {
+        "role": "neutral",
+        "displayName": "Sidebar Foreground",
+        "tonalRamp": [
+          "oklch(0.150 0.0021 239.82)",
+          "oklch(0.270 0.0038 239.82)",
+          "oklch(0.390 0.0050 239.82)",
+          "oklch(0.510 0.0059 239.82)",
+          "oklch(0.630 0.0059 239.82)",
+          "oklch(0.750 0.0047 239.82)",
+          "oklch(0.870 0.0029 239.82)",
+          "oklch(0.950 0.0012 239.82)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Page title",
+        "purpose": "System sans page headings."
+      }
+    },
+    "breakpoints": [
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Standard action with visible keyboard focus.",
+      "html": "<button class=\"ds-button-primary\">Salva</button>",
+      "css": ".ds-button-primary{font-family:ui-sans-serif,system-ui,sans-serif;font-size:14px;height:32px;padding:0 10px;border:1px solid transparent;border-radius:10px;font-weight:500;background:var(--primary,#215e88);color:var(--primary-foreground,#fff);cursor:pointer;transition:background 150ms;} .ds-button-primary:hover{opacity:.8;} .ds-button-primary:focus-visible{outline:2px solid var(--ring,#215e88);outline-offset:2px;} .ds-button-primary:active{transform:translateY(1px);} @media(pointer:coarse){.ds-button-primary{min-height:44px;}} @media(prefers-reduced-motion:reduce){.ds-button-primary{transition:none;}}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Standard action with visible keyboard focus.",
+      "html": "<button class=\"ds-button-outline\">Salva</button>",
+      "css": ".ds-button-outline{font-family:ui-sans-serif,system-ui,sans-serif;font-size:14px;height:32px;padding:0 10px;border:1px solid var(--border,#dce4e9);border-radius:10px;font-weight:500;background:var(--background,#f3f6f8);color:var(--foreground,#172d3b);cursor:pointer;transition:background 150ms;} .ds-button-outline:hover{background:var(--muted,#e9eff3);} .ds-button-outline:focus-visible{outline:2px solid var(--ring,#215e88);outline-offset:2px;} .ds-button-outline:active{transform:translateY(1px);} @media(pointer:coarse){.ds-button-outline{min-height:44px;}} @media(prefers-reduced-motion:reduce){.ds-button-outline{transition:none;}}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Named search and configuration fields.",
+      "html": "<label class=\"ds-input-label\">Nome del luogo<input class=\"ds-input\" placeholder=\"Cerca un luogo\"></label>",
+      "css": ".ds-input-label{font-family:ui-sans-serif,system-ui,sans-serif;font-size:14px;display:grid;gap:8px;color:var(--foreground,#172d3b);} .ds-input{font-family:ui-sans-serif,system-ui,sans-serif;font-size:14px;height:32px;padding:4px 10px;border:1px solid var(--input,#cbd7df);border-radius:10px;background:transparent;color:var(--foreground,#172d3b);} .ds-input::placeholder{color:var(--muted-foreground,#586d7b);} .ds-input:hover{border-color:var(--ring,#215e88);} .ds-input:focus-visible{outline:2px solid var(--ring,#215e88);outline-offset:2px;} @media(pointer:coarse){.ds-input{min-height:44px;}}"
+    },
+    {
+      "name": "Workspace Navigation",
+      "kind": "nav",
+      "refersTo": "navigation-active",
+      "description": "Places precede comparisons; current page is explicit.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#places\" aria-current=\"page\">I miei luoghi</a><a class=\"ds-nav-link\" href=\"#comparisons\">Confronti</a></nav>",
+      "css": ".ds-nav{padding:12px;background:var(--sidebar,#172d3b);} .ds-nav-link{font-family:ui-sans-serif,system-ui,sans-serif;font-size:14px;display:block;padding:10px 12px;min-height:24px;border-radius:10px;text-decoration:none;color:var(--sidebar-foreground,#f2f6f9);} .ds-nav-link[aria-current],.ds-nav-link:hover{background:var(--sidebar-accent,#294657);color:#fff;} .ds-nav-link:focus-visible{outline:2px solid var(--sidebar-ring,#a7cce5);outline-offset:2px;}"
+    },
+    {
+      "name": "Secondary Badge",
+      "kind": "chip",
+      "refersTo": "badge-secondary",
+      "description": "Compact textual classification.",
+      "html": "<span class=\"ds-badge\">Concorrente</span>",
+      "css": ".ds-badge{font-family:ui-sans-serif,system-ui,sans-serif;font-size:14px;display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:999px;background:var(--secondary,#e9eff3);color:var(--secondary-foreground,#233f52);font-size:12px;font-weight:500;}"
+    },
+    {
+      "name": "Place Card",
+      "kind": "card",
+      "refersTo": "place-card",
+      "description": "Saved place identity and direct review action.",
+      "html": "<article class=\"ds-place\"><h3>Fiumara Shopping</h3><p>Genova, Italia</p><a href=\"#reviews\">Vedi recensioni</a></article>",
+      "css": ".ds-place{font-family:ui-sans-serif,system-ui,sans-serif;font-size:14px;padding:20px;border:1px solid var(--border,#dce4e9);border-radius:14px;background:var(--card,#fff);color:var(--card-foreground,#172d3b);} .ds-place h3{margin:0;font-size:18px;font-weight:600;} .ds-place p{color:var(--muted-foreground,#586d7b);} .ds-place a{color:var(--primary,#215e88);text-underline-offset:4px;} .ds-place a:hover{text-decoration-thickness:2px;} .ds-place a:focus-visible{outline:2px solid var(--ring,#215e88);outline-offset:2px;}"
+    }
+  ],
+  "narrative": {
+    "overview": "An analyst workspace made approachable for ordinary users: find and save a place, collect its reviews, then compare saved places. Clear group boundaries and explicit reporting dates keep the evidence understandable.\n\nThe incumbent ink and blue palette, system typography, quiet rounded controls, and restrained surfaces support a practical working tool. Progressive disclosure keeps optional setup available without crowding the main task.",
+    "keyCharacteristics": [
+      "Plain language in Italian by default, with English supported.",
+      "A clear next action and optional detail revealed on demand.",
+      "Visible evidence scope, collection status, and honest missing-data states."
+    ],
+    "rules": [
+      {
+        "name": "The Clear Title Rule",
+        "body": "Page titles use system sans at the headline token; do not use Georgia.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Use semantic theme tokens and compose the existing shadcn primitives.",
+      "Keep dates, source identity, and coverage understandable alongside the evidence.",
+      "Preserve drafts and distinguish unsaved, saving, saved, and conflict states.",
+      "Keep layouts usable at 360px, keyboard focus visible, and touch controls comfortable."
+    ],
+    "donts": [
+      "Do not show invented charts, provider results, metrics, or export completion.",
+      "Do not replace the ink and blue identity or reintroduce serif page titles.",
+      "Do not expose optional setup ahead of the main user task."
+    ]
+  }
+}

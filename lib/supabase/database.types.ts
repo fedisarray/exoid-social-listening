@@ -104,9 +104,37 @@ export type Database = {
         };
         Relationships: [];
       };
+      properties: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          listing: NonNullable<Json>;
+          owner_id: string;
+          source_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          listing: NonNullable<Json>;
+          owner_id: string;
+          source_id: string;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          listing?: NonNullable<Json>;
+          owner_id?: string;
+          source_id?: string;
+        };
+        Relationships: [];
+      };
       review_collection_runs: {
         Row: {
-          analysis_id: string;
+          analysis_id: string | null;
           analysis_version: number;
           config: NonNullable<Json>;
           created_at: string;
@@ -117,13 +145,14 @@ export type Database = {
           max_reviews: number;
           next_attempt_at: string;
           owner_id: string;
+          property_id: string | null;
           requested_end: string;
           requested_start: string;
           status: string;
         };
         ComputedFields: never;
         Insert: {
-          analysis_id: string;
+          analysis_id?: string | null;
           analysis_version: number;
           config: NonNullable<Json>;
           created_at?: string;
@@ -134,12 +163,13 @@ export type Database = {
           max_reviews: number;
           next_attempt_at?: string;
           owner_id: string;
+          property_id?: string | null;
           requested_end: string;
           requested_start: string;
           status?: string;
         };
         Update: {
-          analysis_id?: string;
+          analysis_id?: string | null;
           analysis_version?: number;
           config?: NonNullable<Json>;
           created_at?: string;
@@ -150,6 +180,7 @@ export type Database = {
           max_reviews?: number;
           next_attempt_at?: string;
           owner_id?: string;
+          property_id?: string | null;
           requested_end?: string;
           requested_start?: string;
           status?: string;
@@ -161,6 +192,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "analysis_versions";
             referencedColumns: ["analysis_id", "version"];
+          },
+          {
+            foreignKeyName: "review_collection_runs_property_id_fkey";
+            columns: ["property_id"];
+            isOneToOne: false;
+            referencedRelation: "properties";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -174,6 +212,7 @@ export type Database = {
           duplicate_count: number;
           earliest_at: string | null;
           error: string | null;
+          frozen_coverage: Json | null;
           id: string;
           label: string;
           latest_at: string | null;
@@ -186,7 +225,9 @@ export type Database = {
           owner_id: string;
           provider_build_id: string | null;
           provider_cost: number | null;
+          provider_end: string | null;
           provider_run_id: string | null;
+          provider_start: string | null;
           provider_status: string | null;
           returned_count: number;
           role: string;
@@ -204,6 +245,7 @@ export type Database = {
           duplicate_count?: number;
           earliest_at?: string | null;
           error?: string | null;
+          frozen_coverage?: Json | null;
           id?: string;
           label: string;
           latest_at?: string | null;
@@ -216,7 +258,9 @@ export type Database = {
           owner_id: string;
           provider_build_id?: string | null;
           provider_cost?: number | null;
+          provider_end?: string | null;
           provider_run_id?: string | null;
+          provider_start?: string | null;
           provider_status?: string | null;
           returned_count?: number;
           role: string;
@@ -233,6 +277,7 @@ export type Database = {
           duplicate_count?: number;
           earliest_at?: string | null;
           error?: string | null;
+          frozen_coverage?: Json | null;
           id?: string;
           label?: string;
           latest_at?: string | null;
@@ -245,7 +290,9 @@ export type Database = {
           owner_id?: string;
           provider_build_id?: string | null;
           provider_cost?: number | null;
+          provider_end?: string | null;
           provider_run_id?: string | null;
+          provider_start?: string | null;
           provider_status?: string | null;
           returned_count?: number;
           role?: string;
@@ -370,32 +417,35 @@ export type Database = {
       };
       review_snapshots: {
         Row: {
-          analysis_id: string;
+          analysis_id: string | null;
           analysis_version: number;
           created_at: string;
           id: string;
           owner_id: string;
+          property_id: string | null;
           requested_end: string;
           requested_start: string;
           run_id: string;
         };
         ComputedFields: never;
         Insert: {
-          analysis_id: string;
+          analysis_id?: string | null;
           analysis_version: number;
           created_at?: string;
           id?: string;
           owner_id: string;
+          property_id?: string | null;
           requested_end: string;
           requested_start: string;
           run_id: string;
         };
         Update: {
-          analysis_id?: string;
+          analysis_id?: string | null;
           analysis_version?: number;
           created_at?: string;
           id?: string;
           owner_id?: string;
+          property_id?: string | null;
           requested_end?: string;
           requested_start?: string;
           run_id?: string;
@@ -406,6 +456,13 @@ export type Database = {
             columns: ["analysis_id"];
             isOneToOne: false;
             referencedRelation: "analyses";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "review_snapshots_property_id_fkey";
+            columns: ["property_id"];
+            isOneToOne: false;
+            referencedRelation: "properties";
             referencedColumns: ["id"];
           },
           {
@@ -467,7 +524,7 @@ export type Database = {
       claim_review_collection: {
         Args: Record<PropertyKey, never>;
         Returns: {
-          analysis_id: string;
+          analysis_id: string | null;
           analysis_version: number;
           config: NonNullable<Json>;
           created_at: string;
@@ -478,6 +535,7 @@ export type Database = {
           max_reviews: number;
           next_attempt_at: string;
           owner_id: string;
+          property_id: string | null;
           requested_end: string;
           requested_start: string;
           status: string;
@@ -489,9 +547,22 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      ensure_comparison_coverage: {
+        Args: {
+          p_analysis: string;
+          p_end: string;
+          p_retry?: boolean;
+          p_start: string;
+        };
+        Returns: undefined;
+      };
       finish_review_collection: {
         Args: { p_lease: string; p_run_id: string };
         Returns: undefined;
+      };
+      get_frozen_review_coverage: {
+        Args: { p_snapshot: string };
+        Returns: Json;
       };
       get_review_dashboard_metrics: {
         Args: {
@@ -499,6 +570,18 @@ export type Database = {
           p_kind: string;
           p_quarter: number;
           p_snapshot: string;
+          p_start: string;
+          p_year: number;
+        };
+        Returns: Json;
+      };
+      get_stored_review_dashboard: {
+        Args: {
+          p_end: string;
+          p_kind: string;
+          p_property: boolean;
+          p_quarter: number;
+          p_scope: string;
           p_start: string;
           p_year: number;
         };
@@ -515,6 +598,19 @@ export type Database = {
           p_source_id: string;
         };
         Returns: undefined;
+      };
+      list_property_metrics: {
+        Args: Record<PropertyKey, never>;
+        Returns: Json;
+      };
+      queue_property_collection: {
+        Args: {
+          p_end: string;
+          p_max_reviews: number;
+          p_property_id: string;
+          p_start: string;
+        };
+        Returns: string;
       };
       queue_review_collection: {
         Args: { p_analysis_id: string; p_max_reviews: number };

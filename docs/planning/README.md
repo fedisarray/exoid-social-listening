@@ -4,7 +4,7 @@ Status: planning baseline, 2 November 2026. The first application foundation is 
 
 ## Product goal
 
-Give an analyst one workflow to identify European retail listings, save a comparison set, collect review evidence, calculate repeatable metrics, inspect and review findings, and export a versioned PowerPoint report. The first validation case is Fiumara. The two main application areas are **Analysis setup** and **Dashboard**; evidence, findings, and report creation belong in the Dashboard workspace.
+Give an analyst one workflow to identify European retail listings, save a comparison set, collect review evidence, calculate repeatable metrics, inspect and review findings, and export a versioned PowerPoint report. The first validation case is Fiumara. The default **Property dashboard** starts with listing search and a saved property library. Reviews are collected per property. **Analysis setup** selects saved properties for comparisons, and each analysis reuses property review snapshots for its dashboard. Evidence, findings, and report creation belong in the corresponding workspace.
 
 The [internal specification](../../Retail_Review_Analytics_Internal_Specification%20%281%29.docx) is authoritative. [Monitora](../../references/monitora-product-research.md) and [UrbiStat](../../references/urbistat-services-research.md) are product references, not feature commitments. The [scope note](../../references/core-app-scope.md) records the agreed screen emphasis.
 

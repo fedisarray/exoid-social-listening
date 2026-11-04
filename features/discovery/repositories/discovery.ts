@@ -11,6 +11,21 @@ import {
 } from "@/features/_shared/schemas/listing";
 import type { StartDiscoveryInput } from "../schemas/startDiscoveryInput";
 type DB = SupabaseClient<Database>;
+export async function findLatestRun(
+  db: DB,
+  userId: string,
+): Promise<Tables<"discovery_runs"> | null> {
+  const { data, error } = await db
+    .from("discovery_runs")
+    .select("*")
+    .eq("owner_id", userId)
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
 export async function insertRun(
   db: DB,
   userId: string,
@@ -60,7 +75,8 @@ export async function readConfirmedListings(
     .from("discovery_runs")
     .select("results")
     .eq("owner_id", userId)
-    .eq("status", "completed");
+    .eq("status", "completed")
+    .order("created_at", { ascending: false });
   if (error) throw error;
   return data.flatMap((row) => listingSchema.array().parse(row.results));
 }

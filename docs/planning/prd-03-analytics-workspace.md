@@ -10,6 +10,8 @@ The Dashboard makes review measures, comparison windows, source coverage, shared
 
 The proposed navigation has overview, competitors, anchors, shared reviewers, reviews, themes/sentiment, findings, and report sections. This is a screen arrangement, not a new requirement for eight separate pages. Every view shows the selected configuration version, dataset snapshot, source, dates, collection status, and sample sizes. Exploration filters never silently alter a previously frozen report.
 
+The saved-comparison library shows the primary property, property count, saved reporting period, configuration version and last update. Search uses the analysis name or primary property. Each analysis opens to a compact property comparison table; individual property details remain expandable. Local section links preserve URL filters, and date exploration is separate from the saved configuration. Historical datasets show their configuration mismatch before the comparison table.
+
 ## Deterministic metrics
 
 | Measure | Calculation and display rule |
@@ -39,3 +41,13 @@ The analyst can search and filter individual reviews by listing, dates, rating, 
 - Shared-reviewer fixture verifies 20/100 and 20/40, missing IDs, zero denominators, and subgroup scores.
 - Clicking a finding's metric/review evidence opens the stated data in the same frozen scope.
 - A filter change updates the exploration view and labels its scope without changing an earlier report.
+
+## Live exploration and coverage (3 November 2026)
+
+Without an explicit snapshot selection, exploration immediately uses all finished property collections. The view always shows covered and missing intervals for each included place; role display filters do not change coverage requirements. If any place lacks selected-period coverage, comparison metrics, evidence, and shared-reviewer results are withheld until the user explicitly requests collection and the elapsed gaps are covered. Opening a view or changing dates never starts collection. A covered empty period is zero, not missing. Annual, same-quarter, and rolling comparisons independently require complete coverage across all included places for their respective windows.
+
+Report datasets remain immutable, including their review revisions, source snapshot provenance, and coverage diagnostics. Opening a frozen dataset never starts collection, and changing live dates does not rewrite any saved report.
+
+## Review indicators (4 November 2026)
+
+Overview alone shows the Review indicators table: rating change (current minus previous average), 1–2-star share of rated reviews, percentage review-volume change, primary-minus-competitor rating gap, and the same gap for shared identified reviewers. Shared reviewers also shows its gap beside subgroup ratings. Gaps are rating points; positive values favor the primary place. Quarter changes compare the preceding calendar quarter, trailing 12-month changes compare the preceding 12 complete months, and custom periods compare the preceding equal number of UTC days. Both windows need complete coverage; zero prior review volume makes percentage growth undefined. Zero rated reviews makes the low-rating share unavailable. Frozen datasets use only frozen evidence and coverage. Topic sentiment remains a subsequent text-analysis pipeline.

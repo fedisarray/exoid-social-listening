@@ -1,6 +1,6 @@
 # Filters and export experience
 
-Status: proposed interaction design, 2 November 2026. Builds on the analysis setup, analytics workspace, and reporting PRDs. PowerPoint is the required export; other file formats remain proposals.
+Status: proposed interaction design, 2 November 2026, with the Excel addition below implemented on 4 November 2026. Builds on the analysis setup, analytics workspace, and reporting PRDs. PowerPoint remains the required presentation export.
 
 ## Dashboard filter bar
 
@@ -42,4 +42,16 @@ An unreviewed report is marked draft. Missing mandatory data prevents a normal f
 - The file opens in desktop PowerPoint; editable text and native chart data are validated during the Gamma pilot.
 - Reopening an old report after changing filters or refreshing reproduces its original content.
 
-CSV, Excel, and PDF exports are possible future additions, with no commitment in the current specification.
+CSV and PDF exports remain possible future additions.
+
+## Excel export (4 November 2026)
+
+The comparison dashboard offers **Export Excel** for a selected calendar quarter. The scope dialog shows the selected quarter, saved report dates, and the selected dataset when frozen. All places are included regardless of the role filter. Non-quarter exploration asks the analyst to select a quarter before downloading.
+
+An existing selected snapshot is reused. From live data, the existing freeze transaction saves the collected review revisions and historical coverage; it does not call the review provider. Both the saved report dates and the exported quarter need complete coverage. A configuration change requires reloading before creating a new dataset. After successful generation the dashboard selects the exported snapshot.
+
+The workbook has exactly seven sheets in reference order: `reviews L12M`, `score L12M`, `score Q{quarter}`, `satisfied L12M`, `satisfied Q{quarter}`, `score anchors`, and `satisfied anchors`. Each contains a native editable clustered-column chart linked to its worksheet cells. Calendar years, trailing twelve complete months, and same-quarter comparisons use the existing dashboard metric rules. Satisfaction is stored as a numeric Excel percentage; ratings retain two decimal places.
+
+Unavailable historical windows remain blank, with chart gaps and an explicit partial-history note. Verified empty windows have zero reviews and unavailable ratings/satisfaction. Anchor sheets remain present when no anchors exist and explain the empty state. Notes include source, actual window dates, frozen dataset ID/configuration version/time, coverage limitations, and rated-review sample sizes. Visible report labels support Italian and English; sheet names follow the supplied template. Sentiment is deferred.
+
+Downloads are generated on demand from the frozen dataset; this addition does not implement the separate PowerPoint report-history workflow.

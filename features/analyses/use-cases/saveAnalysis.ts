@@ -3,7 +3,7 @@ import type { OperationContext } from "@/lib/auth/dal";
 import type { SaveAnalysisInput } from "../schemas/saveAnalysisInput";
 import type { SaveAnalysisOutput } from "../schemas/saveAnalysisOutput";
 import { persistAnalysis, findOwnedAnalysis } from "../repositories/analyses";
-import { confirmedListings } from "@/features/discovery/queries/confirmedListings";
+import { findSavedListings } from "@/features/properties/repositories/properties";
 import { resolvePeriod } from "@/features/_shared/domain/period";
 export async function saveAnalysis(
   ctx: OperationContext,
@@ -14,7 +14,11 @@ export async function saveAnalysis(
     : null;
   if (input.id && (!current || current.version !== input.expectedVersion))
     return { ok: false, code: "CONFLICT" };
-  const confirmed = await confirmedListings(ctx);
+  const confirmed = await findSavedListings(
+    ctx.db,
+    ctx.userId,
+    input.config.listings.map((listing) => listing.sourceId),
+  );
   const known = [...confirmed, ...(current?.config.listings ?? [])];
   const listings = [];
   for (const selected of input.config.listings) {

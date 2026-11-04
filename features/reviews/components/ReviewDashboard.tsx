@@ -1,46 +1,121 @@
 "use client";
-import { useState } from "react";
+import Link from "next/link";
+import { useState, type MouseEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Download, RefreshCw, MessageSquare, ExternalLink } from "lucide-react";
+import {
+  Download,
+  RefreshCw,
+  MessageSquare,
+  ExternalLink,
+  ChevronDown,
+  Star,
+} from "lucide-react";
+import { ReviewCoverage } from "./ReviewCoverage";
+import { PropertyTrends } from "./PropertyTrends";
+import { ReviewIndicators } from "./ReviewIndicators";
+import { ComparisonTrends } from "./ComparisonTrends";
+import { SharedReviewersComparison } from "./SharedReviewersComparison";
 import { useReviewDashboard } from "../hooks/useReviewDashboard";
 import type { GetReviewDashboardInput } from "../schemas/getReviewDashboardInput";
-import type {
-  ReviewDashboard as DashboardData,
-  MetricFacts,
-} from "../schemas/getReviewDashboardOutput";
+import type { ReviewDashboard as DashboardData } from "../schemas/getReviewDashboardOutput";
 import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@/components/ui/collapsible";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Choice } from "@/features/_shared/components/Choice";
+import type { Selection } from "@/features/analyses/schemas/analysisConfig";
+import { AnalysisComparisonTable } from "./AnalysisComparisonTable";
+import { PropertyReviewCard } from "./PropertyReviewCard";
 import { Label } from "@/components/ui/label";
-export function ReviewDashboard({
-  input,
-  initial,
-  version,
-  propertyCount,
-  role,
-  onSnapshot,
-}: {
+import { PeriodFields } from "@/features/analyses/components/PeriodFields";
+type ReviewDashboardProps = {
+  section?: string;
+  onCollect?: (event: MouseEvent<HTMLButtonElement>) => void;
+  collectionDialog?: {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    onCloseAutoFocus: () => void;
+    onPeriodChange: (period: GetReviewDashboardInput["period"]) => void;
+  };
   input: GetReviewDashboardInput;
   initial: { input: GetReviewDashboardInput; data: DashboardData };
   version: number;
-  propertyCount: number;
+  listings: Selection[];
   role: string;
   onSnapshot: (id: string) => void;
+};
+
+export function ReviewDashboard(props: ReviewDashboardProps) {
+  const dashboard = useReviewDashboard(props.input, props.initial);
+  return <ReviewDashboardContent {...props} dashboard={dashboard} />;
+}
+
+export function ReviewDashboardContent({
+  section = "all",
+  onCollect,
+  collectionDialog,
+  input,
+  version,
+  listings,
+  role,
+  onSnapshot,
+  dashboard,
+}: ReviewDashboardProps & {
+  dashboard: ReturnType<typeof useReviewDashboard>;
 }) {
   const t = useTranslations("reviews");
   const app = useTranslations("app");
   const locale = useLocale();
-  const { query, collect } = useReviewDashboard(input, initial);
+  const { query, collect, ensure } = dashboard;
   const [limit, setLimit] = useState("10000");
   const data = query.data;
   const active = Boolean(
-    data?.run && ["queued", "running"].includes(data.run.status),
+    data?.coverage.some((state) => state.activeRun) ||
+    (data?.run && ["queued", "running"].includes(data.run.status)),
   );
   const properties =
     data?.metrics?.properties.filter(
       (p) => role === "all" || p.role === role,
     ) ?? [];
+  const cards = data?.metrics
+    ? properties.map((metric) => ({
+        id: metric.listingId,
+        label: metric.label,
+        role: metric.role,
+        metric,
+        listing: listings.find(
+          (listing) => listing.sourceId === metric.listingId,
+        ),
+        status: metric.status,
+      }))
+    : listings
+        .filter((listing) => role === "all" || listing.role === role)
+        .map((listing) => ({
+          id: listing.sourceId,
+          label: listing.label,
+          role: listing.role,
+          listing,
+          metric: undefined,
+          status:
+            data?.run?.version === version
+              ? data.run.sources.find(
+                  (source) => source.listingId === listing.sourceId,
+                )?.status
+              : undefined,
+        }));
   const ids = new Set(properties.map((p) => p.listingId));
   const labels = new Map(
     data?.metrics?.properties.map((p) => [p.listingId, p.label]) ?? [],
@@ -58,84 +133,65 @@ export function ReviewDashboard({
       timeStyle: "short",
       timeZone: "UTC",
     }).format(new Date(v));
-  function table(
-    title: string,
-    rows: (MetricFacts & { listingId: string; bucket?: string })[],
-    subtitle?: string,
-  ) {
-    const selected = rows.filter((r) => ids.has(r.listingId));
-    return (
-      <section className="mt-8">
-        <h3 className="text-lg font-semibold">{title}</h3>
-        {subtitle ? (
-          <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
-        ) : null}
-        {selected.length ? (
-          <div className="mt-3 overflow-x-auto">
-            <table className="w-full min-w-[570px] text-sm">
-              <thead className="border-b text-left text-muted-foreground">
-                <tr>
-                  {[
-                    t("property"),
-                    t("bucket"),
-                    t("reviews"),
-                    t("rating"),
-                    t("satisfied"),
-                  ].map((h) => (
-                    <th key={h} className="px-2 py-3 font-medium">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {selected.map((r, i) => (
-                  <tr key={`${r.listingId}-${r.bucket ?? i}`}>
-                    <td className="px-2 py-3">{labels.get(r.listingId)}</td>
-                    <td className="px-2 py-3">{r.bucket ?? "—"}</td>
-                    <td className="px-2 py-3 tabular-nums">
-                      {number(r.reviews)}
-                    </td>
-                    <td className="px-2 py-3 tabular-nums">
-                      {number(r.rating, 2)}
-                    </td>
-                    <td className="px-2 py-3 tabular-nums">
-                      {number(r.satisfaction, 1)}
-                      {r.satisfaction !== null ? "%" : ""}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+  const propertyCards = (
+    <div className="mt-4 grid gap-4" aria-busy={query.isPending}>
+      {input.propertyId && data?.metrics && !data.comparisonReady ? (
+        <p className="text-sm text-muted-foreground">
+          {t("partialPropertyMetrics")}
+        </p>
+      ) : null}
+      {cards.map((card) => (
+        <PropertyReviewCard
+          key={card.id}
+          {...card}
+          showIdentity={!input.propertyId}
+          role={input.propertyId ? undefined : card.role}
+          loading={query.isPending}
+          covered={
+            data?.coverage.find((state) => state.listingId === card.id)?.covered
+          }
+          collectionPeriod={
+            data?.snapshot
+              ? { start: data.snapshot.start, end: data.snapshot.end }
+              : null
+          }
+          ratingTrend={data?.metrics?.monthly.filter(
+            (point) => point.listingId === card.id,
+          )}
+        />
+      ))}
+    </div>
+  );
+  const collectionControls = (
+    <div
+      hidden={
+        !collectionDialog?.open && section !== "all" && section !== "collection"
+      }
+    >
+      <div className="mt-7 flex flex-wrap items-end gap-3 border-t pt-6">
+        {input.propertyId ? (
+          <div className="min-w-48 flex-1 space-y-2">
+            <Label htmlFor="review-limit">{t("limit")}</Label>
+            <Choice
+              id="review-limit"
+              label={t("limit")}
+              value={limit}
+              disabled={active || collect.isPending}
+              onChange={setLimit}
+              options={["100", "1000", "5000", "10000"].map((v) => ({
+                value: v,
+                label: number(Number(v)),
+              }))}
+            />
           </div>
-        ) : (
-          <p className="mt-3 text-sm text-muted-foreground">
-            {t("noWindowData")}
-          </p>
-        )}
-      </section>
-    );
-  }
-  return (
-    <div className="mt-7 min-w-0 border-t pt-6">
-      <div className="flex flex-wrap items-end gap-3">
-        <div className="min-w-48 flex-1 space-y-2">
-          <Label htmlFor="review-limit">{t("limit")}</Label>
-          <Choice
-            id="review-limit"
-            label={t("limit")}
-            value={limit}
-            disabled={active || collect.isPending}
-            onChange={setLimit}
-            options={["100", "1000", "5000", "10000"].map((v) => ({
-              value: v,
-              label: number(Number(v)),
-            }))}
-          />
-        </div>
+        ) : null}
         <Button
           type="button"
-          disabled={active || collect.isPending}
+          disabled={
+            active ||
+            collect.isPending ||
+            Boolean(input.analysisId && !data?.comparisonReady)
+          }
           onClick={() => collect.mutate(Number(limit))}
         >
           {active ? (
@@ -144,40 +200,44 @@ export function ReviewDashboard({
             <Download className="size-4" />
           )}
           {t(
-            collect.isPending
-              ? "startingCollection"
-              : data?.snapshot
-                ? "refresh"
-                : "collect",
+            !input.propertyId
+              ? collect.isPending
+                ? "preparingSnapshot"
+                : "prepareSnapshot"
+              : collect.isPending
+                ? "startingCollection"
+                : data?.coverage.some((state) => state.collections.length)
+                  ? "refresh"
+                  : "collect",
           )}
         </Button>
       </div>
       <p className="mt-3 text-sm text-muted-foreground">
-        {t("collectHint")} {t("propertyCount")}: {propertyCount}.
+        {t(input.propertyId ? "collectHint" : "reuseHint")} {t("propertyCount")}
+        : {listings.length}.
       </p>
+      {!input.propertyId ? (
+        <Link
+          href="/properties"
+          className="mt-2 inline-block text-sm text-primary underline underline-offset-4"
+        >
+          {t("manageProperties")}
+        </Link>
+      ) : null}
       {collect.isError ? (
         <p role="alert" className="mt-3 text-sm text-destructive">
           {t(
-            collect.error.message === "APIFY_NOT_CONFIGURED"
-              ? "apifyMissing"
-              : collect.error.message === "WORKER_NOT_CONFIGURED"
-                ? "workerMissing"
-                : "collectionError",
+            collect.error.message === "COMPARISON_COVERAGE_INCOMPLETE"
+              ? "freezeIncomplete"
+              : collect.error.message === "PROPERTIES_NOT_COLLECTED"
+                ? "propertiesNotCollected"
+                : collect.error.message === "APIFY_NOT_CONFIGURED"
+                  ? "apifyMissing"
+                  : collect.error.message === "WORKER_NOT_CONFIGURED"
+                    ? "workerMissing"
+                    : "collectionError",
           )}
         </p>
-      ) : null}
-      {query.isError ? (
-        <div role="alert" className="mt-3">
-          <p className="text-sm text-destructive">{t("loadError")}</p>
-          <Button
-            type="button"
-            variant="outline"
-            className="mt-2"
-            onClick={() => query.refetch()}
-          >
-            {t("retry")}
-          </Button>
-        </div>
       ) : null}
       {data?.run ? (
         <section
@@ -237,7 +297,10 @@ export function ReviewDashboard({
                   ) : null}
                   {s.error ? (
                     <p className="break-words text-destructive">
-                      {t("error")}: {s.error}
+                      {t("error")}:{" "}
+                      {t.has(`providerErrors.${s.error}`)
+                        ? t(`providerErrors.${s.error}`)
+                        : s.error}
                     </p>
                   ) : null}
                   {s.capped ? (
@@ -267,164 +330,235 @@ export function ReviewDashboard({
           />
         </div>
       ) : null}
+    </div>
+  );
+  return (
+    <div className="flex min-w-0 flex-col">
+      {!input.propertyId && !input.analysisId ? (
+        <p className="mt-4 text-sm tabular-nums text-muted-foreground">
+          {t("selected")} · {input.period.start} — {input.period.end} (UTC)
+        </p>
+      ) : null}
+      {data ? (
+        <Collapsible
+          key={String(data.comparisonReady)}
+          defaultOpen={false}
+          className={
+            section === "evidence"
+              ? "order-last mt-6 rounded-lg border bg-card"
+              : "mt-4 rounded-lg border bg-card"
+          }
+        >
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="ghost"
+              className="h-auto w-full justify-between gap-3 px-4 py-3 text-left whitespace-normal"
+            >
+              <span>{t("coverageTitle")}</span>
+              <span className="flex items-center gap-2">
+                <Badge variant={data.comparisonReady ? "secondary" : "outline"}>
+                  {t(data.comparisonReady ? "coverageReady" : "coverageCheck")}
+                </Badge>
+                <ChevronDown className="size-4 shrink-0" />
+              </span>
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="px-4 pb-4">
+            <ReviewCoverage
+              coverage={data.coverage}
+              ready={data.comparisonReady}
+              frozen={data.mode === "frozen"}
+              pending={ensure.isPending}
+              error={ensure.isError}
+              onRetry={
+                input.analysisId
+                  ? () =>
+                      ensure.mutate({
+                        analysisId: input.analysisId!,
+                        period: input.period,
+                        retry: true,
+                      })
+                  : undefined
+              }
+            />
+          </CollapsibleContent>
+        </Collapsible>
+      ) : null}
+      {data?.snapshot ? (
+        <details className="mt-4 rounded-xl border bg-card px-4 py-3 text-sm">
+          <summary className="cursor-pointer font-medium">
+            {t("scopeTitle")}
+          </summary>
+          <p className="mt-3 leading-relaxed text-muted-foreground">
+            {t("scopeExplanation")}
+          </p>
+          <p className="mt-3 tabular-nums text-muted-foreground">
+            {t("savedCoverage")}: {data.snapshot.start} — {data.snapshot.end}{" "}
+            (UTC)
+          </p>
+        </details>
+      ) : null}
+      {input.analysisId &&
+      data?.snapshot &&
+      data.snapshot.version !== version ? (
+        <p
+          role="status"
+          className="mt-4 rounded-lg border bg-accent p-4 text-sm leading-relaxed text-accent-foreground"
+        >
+          {t("historicalSnapshotNotice", {
+            snapshotVersion: data.snapshot.version,
+            currentVersion: version,
+          })}
+        </p>
+      ) : null}
+      {data && (section === "all" || section === "overview") ? (
+        <ReviewIndicators data={data} role={role} />
+      ) : null}
+      <div hidden={section !== "all" && section !== "overview"}>
+        {input.analysisId ? (
+          <>
+            <AnalysisComparisonTable
+              properties={cards}
+              loading={query.isPending}
+            />
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+              {app("comparisonHint")}
+            </p>
+            <details className="mt-6">
+              <summary className="cursor-pointer text-sm font-medium">
+                {app("propertyDetails")}
+              </summary>
+              {propertyCards}
+            </details>
+          </>
+        ) : (
+          propertyCards
+        )}
+        {cards.length === 0 && !query.isPending ? (
+          <p className="mt-4 text-sm text-muted-foreground">
+            {t("noProperties")}
+          </p>
+        ) : null}
+      </div>
+      <Dialog
+        open={collectionDialog?.open ?? false}
+        onOpenChange={collectionDialog?.onOpenChange}
+      >
+        <DialogContent
+          showCloseButton={false}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            collectionDialog?.onCloseAutoFocus();
+          }}
+          className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-xl"
+        >
+          <DialogHeader>
+            <DialogTitle>{t("collect")}</DialogTitle>
+            <DialogDescription>
+              {t("selected")} · {input.period.start} — {input.period.end} (UTC)
+            </DialogDescription>
+          </DialogHeader>
+          {collectionDialog ? (
+            <PeriodFields
+              value={input.period}
+              onChange={collectionDialog.onPeriodChange}
+            />
+          ) : null}
+          {collectionControls}
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                {t("close")}
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {!collectionDialog ? collectionControls : null}
+      {query.isError ? (
+        <div role="alert" className="mt-3">
+          <p className="text-sm text-destructive">{t("loadError")}</p>
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-2"
+            onClick={() => query.refetch()}
+          >
+            {t("retry")}
+          </Button>
+        </div>
+      ) : null}
       {query.isPending ? <Skeleton className="mt-6 h-48 w-full" /> : null}
-      {data?.snapshot && data.metrics ? (
+      {input.analysisId &&
+      data &&
+      (section === "trends" || section === "all") ? (
+        <ComparisonTrends period={input.period} role={role} data={data} />
+      ) : null}
+      {data?.metrics ? (
         <>
-          <div className="mt-6 text-sm text-muted-foreground">
-            <p>
-              {t("collected")}: {date(data.snapshot.createdAt)} · {t("version")}{" "}
-              {data.snapshot.version}
-            </p>
-            <p className="mt-1">
-              {t("snapshotDates")}: {data.snapshot.start} — {data.snapshot.end}{" "}
-              (UTC)
-            </p>
-            <p className="mt-3 leading-relaxed">{t("coverage")}</p>
-            {data.snapshot.version !== version ? (
-              <p className="mt-3 text-destructive">{t("changedConfig")}</p>
+          <div
+            hidden={Boolean(
+              input.propertyId && section === "trends" && !data.snapshot,
+            )}
+            className="mt-6 text-sm text-muted-foreground"
+          >
+            {data.snapshot ? (
+              <>
+                <p>
+                  {t("collected")}: {date(data.snapshot.createdAt)} ·{" "}
+                  {t("version")} {data.snapshot.version}
+                </p>
+                <p className="mt-1">
+                  {t("snapshotDates")}: {data.snapshot.start} —{" "}
+                  {data.snapshot.end} (UTC)
+                </p>
+              </>
             ) : null}
-            {input.period.start < data.snapshot.start ||
-            input.period.end > data.snapshot.end ? (
+            {section !== "shared" &&
+            !(input.propertyId && section === "trends") ? (
+              <p className="mt-3 leading-relaxed">{t("coverage")}</p>
+            ) : null}
+            {data.snapshot &&
+            (input.period.start < data.snapshot.start ||
+              input.period.end > data.snapshot.end) ? (
               <p className="mt-3 text-destructive">{t("outOfRange")}</p>
             ) : null}
           </div>
-          <h2 className="mt-7 text-lg font-semibold">
-            {t("selected")} · {input.period.start} — {input.period.end}
-          </h2>
-          <div className="mt-3 overflow-x-auto">
-            <table className="w-full min-w-[680px] text-sm">
-              <thead className="border-b text-left text-muted-foreground">
-                <tr>
-                  {[
-                    t("property"),
-                    t("reviews"),
-                    t("rated"),
-                    t("rating"),
-                    t("satisfied"),
-                    t("text"),
-                  ].map((h) => (
-                    <th className="px-2 py-3 font-medium" key={h}>
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {properties.map((p) => (
-                  <tr key={p.listingId}>
-                    <td className="px-2 py-4">
-                      <span className="font-medium">{p.label}</span>
-                      <span className="mt-1 block text-xs text-muted-foreground">
-                        {app(p.role as "primary")}
-                      </span>
-                    </td>
-                    {[
-                      p.reviews,
-                      p.ratedCount,
-                      p.rating,
-                      p.satisfaction,
-                      p.textReviews,
-                    ].map((v, i) => (
-                      <td key={i} className="px-2 py-4 tabular-nums">
-                        {p.available
-                          ? `${number(v, i === 2 ? 2 : i === 3 ? 1 : 0)}${i === 3 && v !== null ? "%" : ""}`
-                          : "—"}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {table(t("monthly"), data.metrics.monthly)}
-          {table(
-            t("rolling"),
-            data.metrics.rolling,
-            `${data.metrics.rollingStart} — ${data.metrics.rollingEnd}`,
-          )}
-          {table(t("annual"), data.metrics.annual)}
-          {input.period.kind === "quarter"
-            ? table(
-                `${t("quarters")} · Q${input.period.quarter}`,
-                data.metrics.quarters,
-              )
-            : null}
-          {data.metrics.shared.length ? (
-            <section className="mt-8">
-              <h3 className="text-lg font-semibold">{t("shared")}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {t("sharedNote")}
-              </p>
-              <div className="mt-3 overflow-x-auto">
-                <table className="w-full min-w-[800px] text-sm">
-                  <thead className="border-b text-left text-muted-foreground">
-                    <tr>
-                      {[
-                        t("property"),
-                        t("identities"),
-                        t("shared"),
-                        t("primaryShare"),
-                        t("competitorShare"),
-                        t("primaryRating"),
-                        t("competitorRating"),
-                      ].map((h) => (
-                        <th key={h} className="p-2 font-medium">
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {data.metrics.shared
-                      .filter((s) => role === "all" || ids.has(s.listingId))
-                      .map((s) => (
-                        <tr key={s.listingId}>
-                          <td className="p-2">{labels.get(s.listingId)}</td>
-                          <td className="p-2">
-                            {number(s.primaryReviewers)} /{" "}
-                            {number(s.competitorReviewers)}
-                          </td>
-                          <td className="p-2">{number(s.shared)}</td>
-                          <td className="p-2">
-                            {number(s.primaryShare, 1)}
-                            {s.primaryShare !== null ? "%" : ""}
-                          </td>
-                          <td className="p-2">
-                            {number(s.competitorShare, 1)}
-                            {s.competitorShare !== null ? "%" : ""}
-                          </td>
-                          <td className="p-2">{number(s.primaryRating, 2)}</td>
-                          <td className="p-2">
-                            {number(s.competitorRating, 2)}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="mt-3 space-y-1 text-sm text-muted-foreground">
-                {properties.map((p) => (
-                  <p key={p.listingId}>
-                    {p.label} · {t("identityCoverage")}:{" "}
-                    {number(p.identifiedReviews)} / {number(p.reviews)}
-                  </p>
-                ))}
-              </div>
-            </section>
+          {input.propertyId && (section === "trends" || section === "all") ? (
+            <PropertyTrends data={data} period={input.period} />
           ) : null}
-          <section className="mt-8">
+          <div hidden={section !== "all" && section !== "shared"}>
+            <SharedReviewersComparison
+              metrics={data.metrics}
+              listings={listings}
+              role={role}
+            />
+          </div>
+          <section
+            hidden={section !== "all" && section !== "evidence"}
+            className="mt-5"
+          >
             <h3 className="text-lg font-semibold">{t("evidence")}</h3>
-            <div className="mt-3 divide-y">
+            <div className="mt-4 space-y-3">
               {data.metrics.samples
                 .filter((r) => ids.has(r.listingId))
                 .map((r, i) => (
-                  <article key={i} className="py-4">
+                  <article key={i} className="rounded-xl border bg-card p-5">
                     <div className="flex flex-wrap gap-2 text-sm">
-                      <span className="font-medium">
-                        {labels.get(r.listingId)}
-                      </span>
+                      <Badge variant="secondary">
+                        <Star className="size-3" aria-hidden="true" />
+                        {number(r.rating)} / 5
+                      </Badge>
+                      {!input.propertyId ? (
+                        <span className="font-medium">
+                          {labels.get(r.listingId)}
+                        </span>
+                      ) : null}
                       <span className="text-muted-foreground">
-                        {r.publishedAt.slice(0, 10)} · {number(r.rating)} / 5{" "}
+                        {new Intl.DateTimeFormat(locale, {
+                          dateStyle: "medium",
+                          timeZone: "UTC",
+                        }).format(new Date(r.publishedAt))}{" "}
                         {r.language ? ` · ${r.language}` : ""}
                       </span>
                     </div>
@@ -446,15 +580,35 @@ export function ReviewDashboard({
                 ))}
             </div>
           </section>
-          <p className="mt-6 text-sm text-muted-foreground">
-            {t("refreshNote")}
-          </p>
+          <details className="mt-6 text-xs text-muted-foreground">
+            <summary className="cursor-pointer">{t("dataNotes")}</summary>
+            {input.propertyId && section === "trends" ? (
+              <p className="mt-2">{t("coverage")}</p>
+            ) : null}
+            <p className="mt-2">{t("refreshNote")}</p>
+          </details>
         </>
-      ) : !query.isPending ? (
+      ) : !query.isPending && !(input.analysisId && section === "trends") ? (
         <div className="mt-6 rounded-xl border border-dashed p-7">
           <MessageSquare className="size-7 text-primary" />
-          <h2 className="mt-4 text-xl font-medium">{t("noData")}</h2>
-          <p className="mt-3 text-muted-foreground">{t("noDataHint")}</p>
+          <h2 className="mt-4 text-xl font-medium">
+            {t(input.propertyId ? "noData" : "noAnalysisData")}
+          </h2>
+          <p className="mt-3 text-muted-foreground">
+            {t(input.propertyId ? "noDataHint" : "reuseHint")}
+          </p>
+          {onCollect && section !== "collection" ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-4"
+              onClick={onCollect}
+            >
+              {app(
+                input.analysisId ? "prepareComparison" : "collectionSection",
+              )}
+            </Button>
+          ) : null}
         </div>
       ) : null}
     </div>

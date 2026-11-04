@@ -24,44 +24,43 @@ async function request(
     cache: "no-store",
     signal: AbortSignal.timeout(20_000),
   });
-  if (!response.ok)
+  if (!response.ok) {
+    const body: unknown = await response.json().catch(() => null);
+    const failure = z
+      .object({ error: z.object({ type: z.string(), message: z.string() }) })
+      .safeParse(body);
+    if (
+      response.status === 403 &&
+      failure.success &&
+      failure.data.error.type === "platform-feature-disabled" &&
+      failure.data.error.message === "Monthly usage hard limit exceeded"
+    )
+      throw new Error("APIFY_USAGE_LIMIT_EXCEEDED");
     throw new Error(
       response.status === 401 || response.status === 403
         ? "APIFY_ACCESS_DENIED"
         : "APIFY_REQUEST_FAILED",
     );
+  }
   return response;
 }
 export async function startReviewActor(
-  url: string,
+  listingId: string,
   start: string,
   maxReviews: number,
 ): Promise<string> {
-  if (
-    !URL.canParse(url) ||
-    new URL(url).protocol !== "https:" ||
-    ![
-      "google.com",
-      "www.google.com",
-      "maps.google.com",
-      "maps.app.goo.gl",
-      "goo.gl",
-    ].includes(new URL(url).hostname)
-  )
-    throw new Error("INVALID_LISTING_URL");
+  const placeId = z.string().trim().min(1).parse(listingId);
   const actor =
-    process.env.APIFY_REVIEWS_ACTOR || "compass~google-maps-reviews-scraper";
+    process.env.APIFY_REVIEWS_ACTOR || "kaix~google-maps-reviews-scraper";
   const response = await request(
     `acts/${encodeURIComponent(actor)}/runs?timeout=1800`,
     {
       method: "POST",
       body: JSON.stringify({
-        startUrls: [{ url }],
+        urls: [placeId],
         maxReviews,
-        reviewsSort: "newest",
-        reviewsStartDate: `${start}T00:00:00Z`,
-        reviewsOrigin: "google",
-        personalData: true,
+        sort: "newest",
+        reviewsNewerThan: `${start}T00:00:00Z`,
         language: "en",
       }),
     },
@@ -109,5 +108,33 @@ export async function readReviewPage(
     `datasets/${encodeURIComponent(datasetId)}/items?format=json&offset=${offset}&limit=${limit}`,
   );
   const output = await response.json();
-  return z.array(z.unknown()).parse(output);
+  const rows = z.array(z.unknown()).parse(output);
+  const rowSchema = z.object({
+    reviewId: z.string().nullish(),
+    place: z.object({ placeId: z.string() }),
+    reviewOrigin: z.string().nullish(),
+    rating: z.unknown(),
+    publishedAt: z.string(),
+    text: z.string().nullish(),
+    originalLanguage: z.string().nullish(),
+    author: z.object({ id: z.string().nullish() }).nullish(),
+    url: z.string().nullish(),
+  });
+  return rows.map((raw) => {
+    const parsed = rowSchema.safeParse(raw);
+    // Existing Compass runs can still finish importing after the actor switch.
+    if (!parsed.success) return raw;
+    const row = parsed.data;
+    return {
+      reviewId: row.reviewId,
+      placeId: row.place.placeId,
+      reviewOrigin: row.reviewOrigin,
+      stars: row.rating,
+      publishedAtDate: row.publishedAt,
+      text: row.text,
+      originalLanguage: row.originalLanguage,
+      reviewerId: row.author?.id,
+      reviewUrl: row.url,
+    };
+  });
 }

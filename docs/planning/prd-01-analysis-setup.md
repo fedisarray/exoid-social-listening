@@ -6,9 +6,15 @@ Status: draft. Traces FR01–FR03 and AC01–AC02 in the [source specification](
 
 An analyst can create, save, reopen, and version an analysis with the exact source listings and reporting dates that will govern every comparison and export.
 
+## Property library (confirmed 3 November 2026)
+
+The default dashboard begins with source listing search and identity confirmation, followed by saved property cards. Properties belong to the analyst workspace independently of analyses. Each card opens the property’s own review workspace and shows its latest collected review count, average rating, rated-review denominator, and a source thumbnail when available. Missing photos and unavailable metrics remain explicit.
+
+Analysis setup selects properties from this saved library, then assigns comparison roles and reporting dates. Saving an analysis does not create or collect a property. Existing saved listings and review snapshots are migrated into the property library without changing earlier analysis snapshots.
+
 ## Users and workflow
 
-The analyst names an analysis, finds listings by name and location (with country refinement) or pastes a direct listing URL, examines name/address/country/source listing, and explicitly confirms identity. The analyst assigns exactly one primary own property, optionally adds other own properties, manually selects competitors and tenant anchors, labels and orders each series, chooses dates, then saves. Reopening reproduces all selections. Editing creates a new configuration version for subsequent calculations; existing reports stay tied to their prior version.
+The analyst finds and confirms source listings from the property dashboard, then names an analysis and selects saved properties. The analyst assigns exactly one primary own property, optionally adds other own properties, manually selects competitors and tenant anchors, labels and orders each series, chooses dates, then saves. Reopening reproduces all selections. Editing creates a new configuration version for subsequent calculations; existing reports stay tied to their prior version.
 
 Fiumara validation: Fiumara Shopping is primary; Fiumara Entertainment is an additional own series, never a competitor. L'Aquilone, Waterfront, and Mercato Corso Sardegna are competitors; Tuday Conad, MediaWorld, and UCI Cinemas are anchors. Source listing IDs must be confirmed rather than inferred from names.
 

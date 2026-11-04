@@ -1,5 +1,5 @@
 "use client";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { AnalysisConfig } from "../schemas/analysisConfig";
 import { resolvePeriod } from "@/features/_shared/domain/period";
 import { Choice } from "@/features/_shared/components/Choice";
@@ -13,6 +13,14 @@ export function PeriodFields({
   onChange: (value: AnalysisConfig["period"]) => void;
 }) {
   const t = useTranslations("app");
+  const locale = useLocale();
+  const date = (value: string) =>
+    /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value))
+      ? new Intl.DateTimeFormat(locale, {
+          dateStyle: "medium",
+          timeZone: "UTC",
+        }).format(new Date(`${value}T00:00:00Z`))
+      : value;
   function update(patch: Partial<typeof value>) {
     const next = { ...value, ...patch };
     if (
@@ -59,7 +67,7 @@ export function PeriodFields({
                 onChange={(quarter) => update({ quarter: Number(quarter) })}
                 options={[1, 2, 3, 4].map((q) => ({
                   value: String(q),
-                  label: `Q${q}`,
+                  label: `Q${q} · ${new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(new Date(Date.UTC(value.year, (q - 1) * 3, 1)))} – ${new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(new Date(Date.UTC(value.year, q * 3 - 1, 1)))}`,
                 }))}
               />
             </div>
@@ -103,7 +111,7 @@ export function PeriodFields({
       <div className="rounded-lg bg-secondary px-4 py-3">
         <p className="text-xs text-muted-foreground">{t("dateScope")}</p>
         <p className="mt-1 font-medium tabular-nums">
-          {value.start} — {value.end}
+          {date(value.start)} — {date(value.end)}
         </p>
       </div>
       <p className="text-sm leading-relaxed text-muted-foreground">

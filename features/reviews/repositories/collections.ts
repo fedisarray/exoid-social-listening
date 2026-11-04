@@ -1,4 +1,10 @@
 import "server-only";
+import { z } from "zod";
+import {
+  storedCoverageSchema,
+  type StoredCoverage,
+} from "../schemas/reviewCoverage";
+import type { EnsureComparisonCoverageInput } from "../schemas/ensureComparisonCoverageInput";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   Database,
@@ -24,12 +30,29 @@ export async function enqueueCollection(
 }
 export async function latestCollection(
   db: DB,
-  analysisId: string,
+  scope: { analysisId?: string; propertyId?: string },
+  snapshotId?: string,
 ): Promise<Collection | null> {
-  const { data, error } = await db
-    .from("review_collection_runs")
-    .select("*")
-    .eq("analysis_id", analysisId)
+  let runQuery = db.from("review_collection_runs").select("*");
+  if (snapshotId) {
+    const snapshot = await db
+      .from("review_snapshots")
+      .select("run_id")
+      .eq("id", snapshotId)
+      .eq(
+        scope.propertyId ? "property_id" : "analysis_id",
+        (scope.propertyId ?? scope.analysisId)!,
+      )
+      .maybeSingle();
+    if (snapshot.error) throw snapshot.error;
+    if (!snapshot.data) return null;
+    runQuery = runQuery.eq("id", snapshot.data.run_id);
+  }
+  const { data, error } = await runQuery
+    .eq(
+      scope.propertyId ? "property_id" : "analysis_id",
+      scope.propertyId ?? scope.analysisId!,
+    )
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -78,12 +101,15 @@ export async function collectionSources(
 }
 export async function listSnapshots(
   db: DB,
-  analysisId: string,
+  scope: { analysisId?: string; propertyId?: string },
 ): Promise<Snapshot[]> {
   const { data, error } = await db
     .from("review_snapshots")
     .select("*")
-    .eq("analysis_id", analysisId)
+    .eq(
+      scope.propertyId ? "property_id" : "analysis_id",
+      scope.propertyId ?? scope.analysisId!,
+    )
     .order("created_at", { ascending: false })
     .limit(20);
   if (error) throw error;
@@ -187,4 +213,145 @@ export async function releaseCollection(
     .eq("id", id)
     .eq("lease_token", lease);
   if (error) throw error;
+}
+
+export async function enqueuePropertyCollection(
+  db: DB,
+  propertyId: string,
+  maxReviews: number,
+  start: string,
+  end: string,
+): Promise<string> {
+  const { data, error } = await db.rpc("queue_property_collection", {
+    p_property_id: propertyId,
+    p_max_reviews: maxReviews,
+    p_start: start,
+    p_end: end,
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function readStoredDashboard(
+  db: DB,
+  input: GetReviewDashboardInput,
+): Promise<{
+  coverage: StoredCoverage[];
+  metrics: ReturnType<typeof rawMetricsSchema.parse>;
+}> {
+  const { data, error } = await db.rpc("get_stored_review_dashboard", {
+    p_scope: (input.propertyId ?? input.analysisId)!,
+    p_property: Boolean(input.propertyId),
+    p_start: input.period.start,
+    p_end: input.period.end,
+    p_kind: input.period.kind,
+    p_quarter: input.period.quarter,
+    p_year: input.period.year,
+  });
+  if (error) throw error;
+  return z
+    .object({
+      coverage: z.array(storedCoverageSchema),
+      metrics: rawMetricsSchema,
+    })
+    .parse(data);
+}
+export async function readFrozenCoverage(
+  db: DB,
+  snapshotId: string,
+): Promise<StoredCoverage[]> {
+  const { data, error } = await db.rpc("get_frozen_review_coverage", {
+    p_snapshot: snapshotId,
+  });
+  if (error) throw error;
+  return z.array(storedCoverageSchema).parse(data);
+}
+export async function ensureCoverage(
+  db: DB,
+  input: EnsureComparisonCoverageInput,
+): Promise<void> {
+  const { error } = await db.rpc("ensure_comparison_coverage", {
+    p_analysis: input.analysisId,
+    p_start: input.period.start,
+    p_end: input.period.end,
+    p_retry: input.retry,
+  });
+  if (error) throw error;
+}
+export async function findSnapshot(
+  db: DB,
+  scope: { propertyId?: string; analysisId?: string },
+  id: string,
+): Promise<Snapshot> {
+  const { data, error } = await db
+    .from("review_snapshots")
+    .select("*")
+    .eq(
+      scope.propertyId ? "property_id" : "analysis_id",
+      (scope.propertyId ?? scope.analysisId)!,
+    )
+    .eq("id", id)
+    .single();
+  if (error) throw error;
+  return {
+    id: data.id,
+    version: data.analysis_version,
+    createdAt: data.created_at,
+    start: data.requested_start,
+    end: data.requested_end,
+  };
+}
+
+export async function findRunSnapshot(
+  db: DB,
+  analysisId: string,
+  runId: string,
+): Promise<string> {
+  const { data, error } = await db
+    .from("review_snapshots")
+    .select("id")
+    .eq("analysis_id", analysisId)
+    .eq("run_id", runId)
+    .single();
+  if (error) throw error;
+  return data.id;
+}
+
+export async function nextCollectionAttempt(db: DB): Promise<string | null> {
+  const { data, error } = await db
+    .from("review_collection_runs")
+    .select("next_attempt_at,lease_until")
+    .in("status", ["queued", "running"]);
+  if (error) throw error;
+  if (!data.length) return null;
+  const next = Math.min(
+    ...data.map((run) =>
+      Math.max(
+        Date.parse(run.next_attempt_at),
+        run.lease_until ? Date.parse(run.lease_until) : 0,
+      ),
+    ),
+  );
+  return new Date(next).toISOString();
+}
+
+export async function wakeCollectionWorker(): Promise<boolean> {
+  const { spawn } = await import("node:child_process");
+  const { resolve } = await import("node:path");
+  return new Promise((resolveStarted) => {
+    const child = spawn(
+      process.execPath,
+      [resolve("scripts/collection-worker.mjs")],
+      {
+        detached: true,
+        stdio: "ignore",
+        env: process.env,
+      },
+    );
+    child.once("error", () => resolveStarted(false));
+    child.once("spawn", () => {
+      child.unref();
+      resolveStarted(true);
+    });
+  });
 }

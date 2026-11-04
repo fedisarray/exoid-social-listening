@@ -1,6 +1,11 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+
+/* Watch UI sources only; generated files and logs must not trigger rebuilds. */
+@source "../app";
+@source "../components";
+@source "../features";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -24,6 +29,8 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-metric-positive: var(--metric-positive);
+  --color-metric-negative: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -48,72 +55,75 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --background: #f5f7fb;
+  --foreground: #18263e;
+  --card: #ffffff;
+  --card-foreground: #18263e;
+  --popover: #ffffff;
+  --popover-foreground: #18263e;
+  --primary: #2459d3;
+  --primary-foreground: #ffffff;
+  --secondary: #eaf0f8;
+  --secondary-foreground: #30476a;
+  --muted: #edf1f7;
+  --muted-foreground: #5b6b83;
+  --accent: #e7efff;
+  --accent-foreground: #234ba1;
+  --destructive: #c03646;
+  --metric-positive: #15803d;
+  --border: #dce3ee;
+  --input: #8492a8;
+  --ring: #2459d3;
+  --chart-1: #5278d5;
+  --chart-2: #0f766e;
+  --chart-3: #b77912;
+  --chart-4: #8053b5;
+  --chart-5: #c04f6b;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #15243c;
+  --sidebar-foreground: #edf3ff;
+  --sidebar-primary: #99bbff;
+  --sidebar-primary-foreground: #15243c;
+  --sidebar-accent: #29436b;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #344865;
+  --sidebar-ring: #99bbff;
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #111b2c;
+  --foreground: #edf3ff;
+  --card: #19263b;
+  --card-foreground: #edf3ff;
+  --popover: #1d2d45;
+  --popover-foreground: #edf3ff;
+  --primary: #99bbff;
+  --primary-foreground: #15243c;
+  --secondary: #263851;
+  --secondary-foreground: #e0eaff;
+  --muted: #223249;
+  --muted-foreground: #a8b8d0;
+  --accent: #29436b;
+  --accent-foreground: #e0eaff;
+  --destructive: #ff8a99;
+  --metric-positive: #86efac;
+  --border: #354863;
+  --input: #7185a3;
+  --ring: #99bbff;
+  --chart-1: #99bbff;
+  --chart-2: #5ed4bf;
+  --chart-3: #efbd60;
+  --chart-4: #bfa0ed;
+  --chart-5: #f197b2;
+  --sidebar: #111b2c;
+  --sidebar-foreground: #edf3ff;
+  --sidebar-primary: #99bbff;
+  --sidebar-primary-foreground: #15243c;
+  --sidebar-accent: #29436b;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #344865;
+  --sidebar-ring: #99bbff;
 }
 
 @layer base {
@@ -127,39 +137,17 @@
     @apply font-sans;
   }
 }
-:root {
-  --background: #f3f6f8;
-  --foreground: #172d3b;
-  --card: #fff;
-  --card-foreground: #172d3b;
-  --primary: #215e88;
-  --primary-foreground: #fff;
-  --secondary: #e9eff3;
-  --secondary-foreground: #233f52;
-  --muted: #e9eff3;
-  --muted-foreground: #586d7b;
-  --accent: #e7eff5;
-  --accent-foreground: #172d3b;
-  --border: #dce4e9;
-  --input: #cbd7df;
-  --ring: #215e88;
-  --sidebar: #172d3b;
-  --sidebar-foreground: #f2f6f9;
-  --sidebar-accent: #294657;
-  --sidebar-accent-foreground: #fff;
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
-}
 body {
   font-family: var(--font-sans);
 }
 .font-display,
 .page-title {
-  font-family: Georgia, serif;
-  font-weight: 400;
+  font-family: var(--font-sans);
+  font-weight: 600;
   letter-spacing: -0.025em;
 }
 .page-title {
-  font-size: clamp(2rem, 4vw, 2.65rem);
+  font-size: 2rem;
   line-height: 1.15;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -169,4 +157,29 @@ body {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+input,
+textarea {
+  caret-color: var(--primary);
+}
+html {
+  scrollbar-color: var(--input) var(--background);
+}
+
+/* Comfortable targets on touch screens without increasing desktop data density. */
+@media (pointer: coarse) {
+  button,
+  input,
+  [role="combobox"],
+  summary {
+    min-height: 2.75rem;
+  }
+}
+summary {
+  outline-offset: 4px;
 }

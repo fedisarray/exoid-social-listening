@@ -1,15 +1,30 @@
 "use client";
+import { WorkspaceHeader } from "@/features/_shared/components/WorkspaceHeader";
 import Link from "next/link";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { Building2, ArrowLeft, SlidersHorizontal } from "lucide-react";
+import { useSearchParams, usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import {
+  ArrowLeft,
+  SlidersHorizontal,
+  CalendarRange,
+  ChevronDown,
+} from "lucide-react";
+import { ComparisonSyncControl } from "@/features/reviews/components/ComparisonSyncControl";
+import { ExportReviewExcel } from "@/features/reviews/components/ExportReviewExcel";
+import { useReviewDashboard } from "@/features/reviews/hooks/useReviewDashboard";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { dashboardPeriod } from "../domain/dashboardPeriod";
-import { ReviewDashboard } from "@/features/reviews/components/ReviewDashboard";
+import { ReviewDashboardContent } from "@/features/reviews/components/ReviewDashboard";
 import type { GetReviewDashboardInput } from "@/features/reviews/schemas/getReviewDashboardInput";
 import type { ReviewDashboard as ReviewData } from "@/features/reviews/schemas/getReviewDashboardOutput";
 import type { AnalysisDetail } from "../schemas/analysisDetail";
 import { PeriodFields } from "../components/PeriodFields";
 import { Choice } from "@/features/_shared/components/Choice";
+import { ListingThumbnail } from "@/features/_shared/components/ListingThumbnail";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -21,140 +36,251 @@ export function AnalysisDashboard({
   initialReviews: { input: GetReviewDashboardInput; data: ReviewData };
 }) {
   const t = useTranslations("app");
-  const router = useRouter();
+  const locale = useLocale();
   const path = usePathname();
   const search = useSearchParams();
+  const sections = {
+    overview: ["overview", "sectionOverview"],
+    trends: ["trends", "sectionTrends"],
+    shared: ["sharedSection", "sectionShared"],
+    evidence: ["evidenceSection", "sectionEvidence"],
+  } as const;
+  const requested = search.get("section") ?? "overview";
+  const section = Object.hasOwn(sections, requested)
+    ? (requested as keyof typeof sections)
+    : "overview";
   const saved = analysis.config.period;
   const params = Object.fromEntries(search.entries());
   const period = dashboardPeriod(saved, params);
+  const reviewInput: GetReviewDashboardInput = {
+    analysisId: analysis.id,
+    period,
+    ...(params.snapshot ? { snapshotId: params.snapshot } : {}),
+  };
+  const dashboard = useReviewDashboard(reviewInput, initialReviews);
   const role = ["primary", "additionalOwn", "competitor", "anchor"].includes(
     params.role,
   )
     ? params.role
     : "all";
-  const listings = analysis.config.listings.filter(
-    (x) => role === "all" || x.role === role,
+  const primary = analysis.config.listings.find(
+    (listing) => listing.role === "primary",
   );
+  const date = new Intl.DateTimeFormat(locale, {
+    dateStyle: "medium",
+    timeZone: "UTC",
+  });
+  // Intl range spacing differs between Node and browser locale data.
+  const range = (start: string, end: string) =>
+    date
+      .formatRange(new Date(`${start}T00:00:00Z`), new Date(`${end}T00:00:00Z`))
+      .replace(/\s/g, " ");
   function update(patch: Record<string, string>) {
-    const next = new URLSearchParams(search.toString());
-    Object.entries(patch).forEach(([k, v]) => next.set(k, v));
-    router.replace(`${path}?${next}`, { scroll: false });
+    const next = new URL(window.location.href);
+    for (const [key, value] of Object.entries(patch)) {
+      if (value) next.searchParams.set(key, value);
+      else next.searchParams.delete(key);
+    }
+    window.history.replaceState(null, "", next);
   }
   return (
     <>
       <Link
         href="/analyses"
-        className="inline-flex items-center gap-2 text-sm text-muted-foreground"
+        className="inline-flex items-center gap-2 rounded-sm text-sm text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
       >
         <ArrowLeft className="size-4" />
         {t("back")}
       </Link>
-      <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <Badge variant="secondary">
-            {t("version")} {analysis.version}
-          </Badge>
-          <h1 className="page-title mt-3 break-words">{analysis.name}</h1>
-          <p className="mt-3 text-muted-foreground">
-            {t("dashboardDescription")}
-          </p>
-        </div>
-        <Link
-          className={cn(buttonVariants({ variant: "outline" }))}
-          href={`/analyses/${analysis.id}/setup`}
-        >
-          <SlidersHorizontal className="size-4" />
-          {t("setup")}
-        </Link>
-      </div>
-      <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1fr)_300px]">
-        <section className="min-w-0">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-4">
-            <h2 className="font-semibold">{t("properties")}</h2>
-            <div className="w-full sm:w-60">
-              <Choice
-                label={t("role")}
-                value={role}
-                onChange={(role) => update({ role })}
-                options={[
-                  "all",
-                  "primary",
-                  "additionalOwn",
-                  "competitor",
-                  "anchor",
-                ].map((value) => ({ value, label: t(value) }))}
-              />
+      <header className="mt-5">
+        <div className="flex flex-wrap items-start justify-between gap-5">
+          <div className="flex w-full min-w-0 items-start gap-4 sm:w-auto sm:flex-1 md:gap-5">
+            <ListingThumbnail
+              listing={primary}
+              className="size-14 sm:size-16"
+            />
+            <div className="min-w-0">
+              <h1 className="page-title break-words">{analysis.name}</h1>
+              {primary ? (
+                <p className="mt-2 text-sm font-medium break-words">
+                  {primary.label}
+                </p>
+              ) : null}
+              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+                <Badge variant="secondary">
+                  {t("version")} {analysis.version}
+                </Badge>
+                <span className="text-sm text-muted-foreground">
+                  {t("propertyCount", {
+                    count: analysis.config.listings.length,
+                  })}
+                </span>
+                <span className="text-sm tabular-nums text-muted-foreground">
+                  {t("savedScope")}: {range(saved.start, saved.end)}
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {t("updated")}{" "}
+                <time dateTime={analysis.updatedAt}>
+                  {date.format(new Date(analysis.updatedAt))}
+                </time>
+              </p>
             </div>
           </div>
-          <div className="divide-y">
-            {listings.map((listing) => (
-              <div
-                key={listing.sourceId}
-                className="flex items-start gap-3 py-5"
-              >
-                <Building2 className="mt-1 size-5 shrink-0 text-muted-foreground" />
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-medium break-words">{listing.label}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground break-words">
-                    {listing.address}
-                  </p>
-                </div>
-                <Badge
-                  variant="outline"
-                  className="h-auto min-h-5 max-w-32 whitespace-normal text-center"
-                >
-                  {t(listing.role)}
-                </Badge>
-              </div>
-            ))}
+          <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto sm:justify-end">
+            <ComparisonSyncControl
+              analysisId={analysis.id}
+              period={period}
+              dashboard={dashboard}
+              onLive={() => update({ snapshot: "" })}
+            />
+            <ExportReviewExcel
+              analysisId={analysis.id}
+              version={analysis.version}
+              period={period}
+              savedPeriod={saved}
+              data={dashboard.query.data}
+              onSnapshot={(snapshot) => update({ snapshot })}
+            />
+            <Link
+              href={`/analyses/${analysis.id}/setup`}
+              className={cn(buttonVariants({ variant: "outline" }))}
+            >
+              <SlidersHorizontal className="size-4" />
+              {t("editAnalysis")}
+            </Link>
           </div>
-          <ReviewDashboard
-            version={analysis.version}
-            propertyCount={analysis.config.listings.length}
-            role={role}
-            initial={initialReviews}
-            input={{
-              analysisId: analysis.id,
-              period,
-              ...(params.snapshot ? { snapshotId: params.snapshot } : {}),
-            }}
-            onSnapshot={(snapshot) => {
-              const next = new URLSearchParams(search.toString());
-              if (snapshot === "latest") next.delete("snapshot");
-              else next.set("snapshot", snapshot);
-              router.replace(`${path}?${next}`, { scroll: false });
-            }}
+        </div>
+      </header>
+      <nav
+        aria-label={t("analysisSectionNavigation")}
+        className="mt-7 flex gap-x-6 overflow-x-auto border-b"
+      >
+        {Object.entries(sections).map(([value, copy]) => {
+          const next = new URLSearchParams(search.toString());
+          next.set("section", value);
+          return (
+            <Link
+              key={value}
+              href={`${path}?${next}`}
+              scroll={false}
+              prefetch={false}
+              onNavigate={(event) => {
+                event.preventDefault();
+                const url = new URL(window.location.href);
+                url.searchParams.set("section", value);
+                if (url.href !== window.location.href)
+                  window.history.pushState(null, "", url);
+              }}
+              aria-current={section === value ? "page" : undefined}
+              className={cn(
+                "min-h-11 shrink-0 border-b-2 px-1 py-3 text-sm whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-ring",
+                section === value
+                  ? "border-primary font-semibold text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {t(copy[0])}
+            </Link>
+          );
+        })}
+      </nav>
+      <WorkspaceHeader>
+        <div className="flex min-w-0 flex-wrap items-center gap-3">
+          <span className="text-sm font-medium">{t("periodFilters")}</span>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="h-auto min-h-10 max-w-full justify-start py-2 text-left whitespace-normal"
+              >
+                <CalendarRange className="size-4" aria-hidden="true" />
+                <span className="sr-only">{t("periodFilters")}: </span>
+                {range(period.start, period.end)}
+                <ChevronDown className="size-4" aria-hidden="true" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              align="end"
+              sideOffset={8}
+              collisionPadding={20}
+              className="max-h-[var(--radix-popover-content-available-height)] w-[min(40rem,calc(100vw-2.5rem))] overflow-y-auto p-5"
+            >
+              <div className="grid gap-6 sm:grid-cols-2">
+                <PeriodFields
+                  value={period}
+                  onChange={(value) =>
+                    update(
+                      Object.fromEntries(
+                        Object.entries(value).map(([key, value]) => [
+                          key,
+                          String(value),
+                        ]),
+                      ),
+                    )
+                  }
+                />
+                <div>
+                  <h2 className="text-sm font-medium">{t("savedScope")}</h2>
+                  <p className="mt-2 text-sm tabular-nums">
+                    {range(saved.start, saved.end)}
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    {t("exploreHint")}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="mt-4"
+                    onClick={() =>
+                      window.history.replaceState(
+                        null,
+                        "",
+                        `${path}?section=${section}`,
+                      )
+                    }
+                  >
+                    {t("reset")}
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div className="w-full sm:w-52">
+          <Choice
+            label={t("role")}
+            value={role}
+            onChange={(role) => update({ role })}
+            options={[
+              "all",
+              "primary",
+              "additionalOwn",
+              "competitor",
+              "anchor",
+            ].map((value) => ({ value, label: t(value) }))}
           />
-        </section>
-        <aside className="self-start rounded-xl border bg-card p-5">
-          <h2 className="font-semibold">{t("savedScope")}</h2>
-          <p className="mb-5 mt-2 text-sm tabular-nums text-muted-foreground">
-            {saved.start} — {saved.end}
-          </p>
-          <h3 className="mb-4 border-t pt-5 font-medium">{t("explore")}</h3>
-          <PeriodFields
-            value={period}
-            onChange={(value) =>
-              update(
-                Object.fromEntries(
-                  Object.entries(value).map(([k, v]) => [k, String(v)]),
-                ),
-              )
-            }
-          />
-          <p className="mt-4 text-sm text-muted-foreground">
-            {t("exploreHint")}
-          </p>
-          <Button
-            type="button"
-            variant="ghost"
-            className="mt-4 w-full"
-            onClick={() => router.replace(path, { scroll: false })}
-          >
-            {t("reset")}
-          </Button>
-        </aside>
-      </div>
+        </div>
+      </WorkspaceHeader>
+      <section className="mt-6 min-w-0">
+        <h2 className="text-lg font-semibold">{t(sections[section][0])}</h2>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          {t(sections[section][1])}
+        </p>
+        <ReviewDashboardContent
+          dashboard={dashboard}
+          section={section}
+          version={analysis.version}
+          listings={analysis.config.listings}
+          role={role}
+          initial={initialReviews}
+          input={reviewInput}
+          onSnapshot={(snapshot) =>
+            update({ snapshot: snapshot === "latest" ? "" : snapshot })
+          }
+        />
+      </section>
     </>
   );
 }

@@ -28,9 +28,11 @@ The local OTP template is configured under `[auth.email.template.magic_link]` in
 
 ## Listing discovery
 
-Add `APIFY_TOKEN` to `.env.local` and restart Next.js. The default actor is `compass~crawler-google-places`, configurable through `APIFY_DISCOVERY_ACTOR`.
+Add `APIFY_TOKEN` to `.env.local` and restart Next.js. Discovery uses `kaix~google-maps-places-scraper` (`APIFY_DISCOVERY_ACTOR`); review collection uses `kaix~google-maps-reviews-scraper` (`APIFY_REVIEWS_ACTOR`). These adapters use the Kaix input and output formats.
 
-Searches start only after an explicit submit. Each requests at most ten places and zero reviews; runs and normalized results are persisted per analyst. Polling reads the provider's actual status. Search name/location/country or paste a Google Maps URL, inspect identifying details, and confirm the listing. Unconfigured or failed providers display a useful error and never return demo data.
+Location autocomplete uses the public Photon/OpenStreetMap API, filtered by country. Enter a city and region or select a suggestion; search also works when suggestions are unavailable. Editing the location or country clears the selection. Suggestions are debounced and cached, require no API key, and show a retry option if unavailable. A direct Google Maps URL bypasses location entry. The public Photon service has usage limits and no availability guarantee.
+
+Searches start only after an explicit submit. Each requests at most ten places and zero reviews, without slower detail-page scraping. Runs and normalized results are persisted per analyst. The search ID stays in the URL so reopening the link resumes polling; temporary status errors can be retried without launching another provider run. Actual results appear while the provider is running. Completed searches refresh metadata for matching saved properties. Cards show source-provided categories, Google rating/review count, website and phone when available; Google totals stay separate from collected review counts. Search name/location/country or paste a Google Maps URL, inspect identifying details, and confirm the listing. Unconfigured or failed providers display a useful error and never return demo data.
 
 An Apify token and a paid provider run are required to verify real search output. No token is bundled. Full review acquisition, deterministic metrics, shared reviewers, Mastra/AI, and Gamma PowerPoint generation remain later milestones in `docs/planning`.
 

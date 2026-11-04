@@ -1,4 +1,6 @@
 "use client";
+import { ListingThumbnail } from "@/features/_shared/components/ListingThumbnail";
+import { ListingDetails } from "@/features/_shared/components/ListingDetails";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
@@ -26,7 +28,7 @@ import { getAnalysis } from "../actions/getAnalysis";
 import { useSaveAnalysis } from "../hooks/useSaveAnalysis";
 import { analysisKeys } from "../constants/queryKeys";
 import { PeriodFields } from "../components/PeriodFields";
-import { ListingSearch } from "@/features/discovery/components/ListingSearch";
+import { SavedPropertyPicker } from "@/features/properties/components/SavedPropertyPicker";
 import { Choice } from "@/features/_shared/components/Choice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -71,7 +73,7 @@ export function AnalysisEditor({
         name: saved.name,
         config: saved.config,
       });
-      if (!initial) router.replace(`/analyses/${saved.id}/setup`);
+      if (!initial) router.replace(`/analyses/${saved.id}/dashboard`);
       router.refresh();
     } catch {
       /* Mutation exposes a localized error and preserves RHF draft. */
@@ -99,7 +101,7 @@ export function AnalysisEditor({
         <ArrowLeft className="size-4" />
         {t("back")}
       </Link>
-      <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
+      <div className="mt-6 flex flex-wrap items-start justify-between gap-4 border-b pb-8">
         <div>
           <h1 className="page-title">
             {initial ? t("editTitle") : t("newTitle")}
@@ -117,13 +119,11 @@ export function AnalysisEditor({
       </div>
       <form
         onSubmit={form.handleSubmit(submit, () => setValidation(true))}
-        className="mt-8"
+        className="mt-8 max-w-3xl"
       >
-        <fieldset
-          disabled={mutation.isPending}
-          className="grid min-w-0 gap-8 xl:grid-cols-[minmax(0,1fr)_300px]"
-        >
-          <section className="min-w-0 space-y-7">
+        <fieldset disabled={mutation.isPending} className="grid min-w-0 gap-6">
+          <section className="min-w-0 space-y-7 rounded-xl border bg-card p-5 md:p-7">
+            <h2 className="text-lg font-semibold">{t("setupName")}</h2>
             <div className="space-y-2">
               <Label htmlFor="analysis-name">{t("name")}</Label>
               <Input
@@ -134,8 +134,11 @@ export function AnalysisEditor({
               />
             </div>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold">{t("properties")}</h2>
-              <ListingSearch
+              <h2 className="text-lg font-semibold">{t("setupPlaces")}</h2>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {t("setupRolesHint")}
+              </p>
+              <SavedPropertyPicker
                 selected={values.config.listings.map((x) => x.sourceId)}
                 onConfirm={(listing) =>
                   rows.append({
@@ -149,15 +152,17 @@ export function AnalysisEditor({
             {rows.fields.length ? (
               <div className="space-y-4">
                 {rows.fields.map((field, index) => (
-                  <div key={field.id} className="rounded-xl border bg-card p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
+                  <div key={field.id} className="border-t py-5">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <ListingThumbnail listing={field} />
+                      <div className="min-w-0 flex-1 basis-36">
                         <h3 className="font-medium break-words">
                           {field.name}
                         </h3>
                         <p className="mt-1 text-sm text-muted-foreground break-words">
                           {field.address} {field.country}
                         </p>
+                        <ListingDetails listing={field} />
                         <a
                           className="mt-2 inline-flex items-center gap-1 text-xs text-primary"
                           href={field.url}
@@ -248,7 +253,7 @@ export function AnalysisEditor({
             )}
           </section>
           <aside className="rounded-xl border bg-card p-5 self-start">
-            <h2 className="mb-5 font-semibold">{t("period")}</h2>
+            <h2 className="mb-5 text-lg font-semibold">{t("setupDates")}</h2>
             <PeriodFields
               value={values.config.period}
               onChange={(period) =>
@@ -257,7 +262,7 @@ export function AnalysisEditor({
             />
           </aside>
         </fieldset>
-        <div className="mt-8 border-t pt-5">
+        <div className="sticky bottom-0 z-10 mt-8 rounded-xl border bg-card p-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div
               aria-live="polite"
@@ -276,7 +281,9 @@ export function AnalysisEditor({
                   {t("saved")} · {t("version")}{" "}
                   {detail.data?.version ?? initial.version}
                 </>
-              ) : null}
+              ) : (
+                t("newDraft")
+              )}
             </div>
             <Button type="submit" disabled={mutation.isPending}>
               <Save className="size-4" />
@@ -285,7 +292,9 @@ export function AnalysisEditor({
                   ? "saving"
                   : mutation.isError
                     ? "retry"
-                    : "save",
+                    : initial
+                      ? "save"
+                      : "saveContinue",
               )}
             </Button>
           </div>

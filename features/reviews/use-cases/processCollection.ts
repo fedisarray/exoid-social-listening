@@ -2,6 +2,7 @@ import "server-only";
 import type { CollectionWorkerContext } from "@/lib/auth/dal";
 import {
   claimCollection,
+  nextCollectionAttempt,
   collectionSources,
   updateSource,
   ingestPage,
@@ -13,12 +14,16 @@ import {
   readReviewActor,
   readReviewPage,
 } from "../repositories/apify";
+import type { ProcessCollectionOutput } from "../schemas/processCollectionOutput";
 import { normalizeReviews } from "../domain/normalizeReviews";
 export async function processCollection(
   ctx: CollectionWorkerContext,
-): Promise<{ worked: boolean }> {
+): Promise<ProcessCollectionOutput> {
   const run = await claimCollection(ctx.db);
-  if (!run) return { worked: false };
+  if (!run) {
+    const nextAttemptAt = await nextCollectionAttempt(ctx.db);
+    return { worked: false, nextAttemptAt };
+  }
   const lease = run.lease_token;
   if (!lease) throw new Error("LEASE_MISSING");
   let delay = 3;
@@ -29,14 +34,22 @@ export async function processCollection(
     );
     if (!source) {
       await finishCollection(ctx.db, run.id, lease);
-      return { worked: true };
+      const nextAttemptAt = await nextCollectionAttempt(ctx.db);
+      return { worked: true, nextAttemptAt };
     }
     try {
       if (source.status === "queued") {
-        await updateSource(ctx.db, source.id, { status: "starting" });
+        await updateSource(ctx.db, source.id, {
+          status: "starting",
+          provider_start: run.requested_start,
+          // The actor scans newest-first without an end filter; only elapsed UTC days establish full-day coverage.
+          provider_end: new Date(Date.now() - 86_400_000)
+            .toISOString()
+            .slice(0, 10),
+        });
         try {
           const id = await startReviewActor(
-            source.listing_url,
+            source.listing_id,
             run.requested_start,
             run.max_reviews,
           );
@@ -51,6 +64,7 @@ export async function processCollection(
           const known = [
             "APIFY_NOT_CONFIGURED",
             "APIFY_ACCESS_DENIED",
+            "APIFY_USAGE_LIMIT_EXCEEDED",
             "INVALID_LISTING_URL",
           ].includes(message);
           await updateSource(ctx.db, source.id, {
@@ -153,5 +167,6 @@ export async function processCollection(
   } finally {
     await releaseCollection(ctx.db, run.id, lease, delay);
   }
-  return { worked: true };
+  const nextAttemptAt = await nextCollectionAttempt(ctx.db);
+  return { worked: true, nextAttemptAt };
 }

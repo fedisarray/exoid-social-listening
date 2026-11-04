@@ -6,11 +6,15 @@ Status: draft. Traces FR04, FR09 and AC03, AC08 in the [source specification](..
 
 Collect source reviews for all selected listings and windows in the background, preserve what was actually observed, and make partial coverage visible before metrics or reports are trusted.
 
+## Collection scope (confirmed 3 November 2026)
+
+Collection starts from one saved property and runs independently of any analysis. The property owns its collection history and frozen datasets. Live analyses reuse deduplicated review revisions from all finished property snapshots. Collection is manual: opening a view or changing the selected period never queues work. Users explicitly collect or refresh from My Places, or choose “Retry missing dates” in an analysis. Report preparation separately freezes revisions, contributing snapshot IDs, and coverage diagnostics, and requires coverage for every included listing in the saved report period. Missing properties or incomplete date coverage are disclosed per source. Refreshing a property never rewrites an earlier analysis snapshot.
+
 ## Required behavior
 
 | ID | Requirement |
 |---|---|
-| DATA-01 | Start an asynchronous collection from a saved configuration. Surface queued, running, complete, partial, and failed states without blocking search or setup. |
+| DATA-01 | Start an asynchronous collection for one saved property. Surface queued, running, complete, partial, and failed states without blocking search or setup. |
 | DATA-02 | Ask the provider for available history covering the selected window and relevant annual/quarter comparisons. Record requested windows, observed earliest/latest dates, counts, truncation signals, provider errors, and collection timestamps per listing. A provider success response alone does not prove completeness. |
 | DATA-03 | Normalize listing identity, source review ID, rating, publication time, original text/language, URL, opaque reviewer ID when available, collection run, and provider version. Preserve rating-only records. |
 | DATA-04 | Refresh idempotently. Deduplicate by source and stable review ID with listing consistency checks. Detect changed source records when exposed; preserve revisions so old reports remain reproducible. A fallback for missing stable IDs needs source-specific validation. |
@@ -36,3 +40,9 @@ The source review key is `(source, sourceReviewId)` when a stable ID exists. A c
 ## Pilot gate
 
 Measure Fiumara Shopping, one manually chosen competitor, one anchor, and a small cross-country discovery sample. Capture historic date depth, returned review IDs and reviewer IDs, pagination/truncation, refresh changes, runtime, and cost. Do not promise Monitora historical parity before this evidence exists.
+
+## Coverage reuse (3 November 2026)
+
+Coverage is a union of intervals backed by finished, uncapped, fully imported successful provider collections without skipped rows or missing review IDs. Requested dates, observed publication dates, collection timestamps, and provider scope remain distinct. Legacy collections lacking evidence are unverified. Today and future days do not have full-day coverage.
+
+Explicit missing-date requests are durable per property and normalized elapsed date window, capped at 10,000 reviews. Active jobs are shared across tabs and analyses; failures, uncertain starts, and capped results require explicit retry rather than repeated paid runs. Collection requests use newest-first ordering from the earliest missing date without an end-date filter; extending older coverage can rescan newer reviews. New collections record the provider scan start and last complete UTC day, retain newer returned review observations in their immutable property snapshot, and reuse the wider scope only when completeness diagnostics support it. Historical trend panels do not trigger additional collection. Narrower refreshes never discard older stored evidence.

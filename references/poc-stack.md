@@ -28,7 +28,7 @@ Gamma documents that chart generation is non-deterministic and exposes no dedica
 - [Mastra workflows](https://mastra.ai/docs/workflows/overview)
 - [Gamma generation and export](https://developers.gamma.app/guides)
 - [Gamma chart generation constraints](https://developers.gamma.app/guides/charts-and-structured-content)
-- [Apify Google Maps Reviews Scraper input settings](https://apify.com/compass/google-maps-reviews-scraper/input-schema)
+- [Apify Google Maps Reviews Scraper input settings](https://apify.com/kaix/google-maps-reviews-scraper/input-schema)
 - [Supabase local development](https://supabase.com/docs/guides/local-development/cli/getting-started)
 - [Next.js 16](https://nextjs.org/blog/next-16)
 - [GPT-6 Luna on OpenRouter](https://openrouter.ai/openai/gpt-6-luna)

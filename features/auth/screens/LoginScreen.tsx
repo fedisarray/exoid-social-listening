@@ -63,7 +63,7 @@ export function LoginScreen({ devInboxUrl }: { devInboxUrl?: string }) {
         setVerifyError(true);
         return;
       }
-      router.replace("/analyses");
+      router.replace("/properties");
       router.refresh();
     } catch {
       setVerifyError(true);

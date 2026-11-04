@@ -6,7 +6,10 @@ export const startCollectionOutputSchema = z.discriminatedUnion("ok", [
     code: z.enum([
       "APIFY_NOT_CONFIGURED",
       "WORKER_NOT_CONFIGURED",
+      "WORKER_UNAVAILABLE",
       "COLLECTION_FAILED",
+      "PROPERTIES_NOT_COLLECTED",
+      "COMPARISON_COVERAGE_INCOMPLETE",
     ]),
   }),
 ]);
