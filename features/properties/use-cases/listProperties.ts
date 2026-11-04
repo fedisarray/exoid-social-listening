@@ -1,6 +1,6 @@
 import "server-only";
 import type { OperationContext } from "@/lib/auth/dal";
-import { listOwnedProperties } from "../repositories/properties";
+import { listOrganizationProperties } from "../repositories/properties";
 import type { PropertySummary } from "../schemas/listPropertiesOutput";
 import { readConfirmedListings } from "@/features/discovery/repositories/discovery";
 import { withListingDetails } from "@/features/_shared/domain/withListingDetails";
@@ -8,8 +8,8 @@ export async function listProperties(
   ctx: OperationContext,
 ): Promise<PropertySummary[]> {
   const [properties, discovered] = await Promise.all([
-    listOwnedProperties(ctx.db),
-    readConfirmedListings(ctx.db, ctx.userId),
+    listOrganizationProperties(ctx.db),
+    readConfirmedListings(ctx.db, ctx.organizationId),
   ]);
   return properties.map((property) => ({
     ...property,

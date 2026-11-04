@@ -17,14 +17,14 @@ function summary(row: Tables<"analyses">): Omit<AnalysisDetail, "config"> {
     updatedAt: row.updated_at,
   };
 }
-export async function listOwnedAnalyses(
+export async function listOrganizationAnalyses(
   db: DB,
-  ownerId: string,
+  organizationId: string,
 ): Promise<AnalysisSummary[]> {
   const { data, error } = await db
     .from("analyses")
     .select("*")
-    .eq("owner_id", ownerId)
+    .eq("organization_id", organizationId)
     .order("updated_at", { ascending: false });
   if (error) throw error;
   if (!data.length) return [];
@@ -70,16 +70,16 @@ export async function listOwnedAnalyses(
     };
   });
 }
-export async function findOwnedAnalysis(
+export async function findOrganizationAnalysis(
   db: DB,
   id: string,
-  ownerId: string,
+  organizationId: string,
 ): Promise<AnalysisDetail | null> {
   const { data, error } = await db
     .from("analyses")
     .select("*")
     .eq("id", id)
-    .eq("owner_id", ownerId)
+    .eq("organization_id", organizationId)
     .maybeSingle();
   if (error) throw error;
   if (!data) return null;

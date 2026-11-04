@@ -1,6 +1,6 @@
 import "server-only";
 import type { OperationContext } from "@/lib/auth/dal";
-import { findOwnedAnalysis } from "@/features/analyses/repositories/analyses";
+import { findOrganizationAnalysis } from "@/features/analyses/repositories/analyses";
 import {
   enqueueCollection,
   findRunSnapshot,
@@ -21,10 +21,10 @@ export async function exportReviewExcel(
   ctx: OperationContext,
   input: ExportReviewExcelInput,
 ): Promise<ExportReviewExcelOutput> {
-  const analysis = await findOwnedAnalysis(
+  const analysis = await findOrganizationAnalysis(
     ctx.db,
     input.analysisId,
-    ctx.userId,
+    ctx.organizationId,
   );
   if (!analysis) return { ok: false, code: "ANALYSIS_NOT_FOUND" };
   let snapshotId = input.snapshotId;

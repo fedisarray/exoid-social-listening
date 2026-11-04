@@ -52,7 +52,7 @@ export function PropertyTrends({
     hint = t("propertyHistoryHint"),
   ) {
     return (
-      <section className="min-w-0 rounded-xl border bg-card" aria-label={title}>
+      <section className="min-w-0 exoid-panel" aria-label={title}>
         <div className="border-b px-5 py-4 sm:px-6">
           <h3 className="font-semibold">{title}</h3>
           <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
@@ -138,7 +138,7 @@ export function PropertyTrends({
         </p>
       </div>
       <section
-        className="min-w-0 rounded-xl border bg-card p-5 sm:p-6"
+        className="min-w-0 exoid-panel p-5 sm:p-6"
         aria-label={t("monthly")}
       >
         <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2">
@@ -222,7 +222,7 @@ export function PropertyTrends({
       <div className="grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         {history(t("annual"), annual)}
         <section
-          className="min-w-0 rounded-xl border bg-card p-5 sm:p-6"
+          className="min-w-0 exoid-panel p-5 sm:p-6"
           aria-label={t("rolling")}
         >
           <h3 className="font-semibold">{t("rolling")}</h3>
@@ -270,7 +270,7 @@ export function PropertyTrends({
           )
         : null}
       <section
-        className="rounded-xl border bg-card p-5 sm:p-6"
+        className="exoid-panel p-5 sm:p-6"
         aria-label={t("propertyPeriodChanges")}
       >
         <h3 className="font-semibold">{t("propertyPeriodChanges")}</h3>

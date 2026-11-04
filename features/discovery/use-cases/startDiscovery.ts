@@ -9,7 +9,7 @@ export async function startDiscovery(
   ctx: OperationContext,
   input: StartDiscoveryInput,
 ): Promise<DiscoveryRun> {
-  const run = await insertRun(ctx.db, ctx.userId, input);
+  const run = await insertRun(ctx.db, ctx.organizationId, input);
   try {
     const providerId = await startProviderSearch(input);
     const updated = await updateRun(ctx.db, run.id, {

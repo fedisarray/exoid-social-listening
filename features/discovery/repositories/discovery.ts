@@ -13,12 +13,12 @@ import type { StartDiscoveryInput } from "../schemas/startDiscoveryInput";
 type DB = SupabaseClient<Database>;
 export async function findLatestRun(
   db: DB,
-  userId: string,
+  organizationId: string,
 ): Promise<Tables<"discovery_runs"> | null> {
   const { data, error } = await db
     .from("discovery_runs")
     .select("*")
-    .eq("owner_id", userId)
+    .eq("organization_id", organizationId)
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
     .limit(1)
@@ -28,12 +28,12 @@ export async function findLatestRun(
 }
 export async function insertRun(
   db: DB,
-  userId: string,
+  organizationId: string,
   input: StartDiscoveryInput,
 ): Promise<Tables<"discovery_runs">> {
   const { data, error } = await db
     .from("discovery_runs")
-    .insert({ owner_id: userId, input, status: "queued" })
+    .insert({ organization_id: organizationId, input, status: "queued" })
     .select()
     .single();
   if (error) throw error;
@@ -41,13 +41,13 @@ export async function insertRun(
 }
 export async function findRun(
   db: DB,
-  userId: string,
+  organizationId: string,
   id: string,
 ): Promise<Tables<"discovery_runs"> | null> {
   const { data, error } = await db
     .from("discovery_runs")
     .select("*")
-    .eq("owner_id", userId)
+    .eq("organization_id", organizationId)
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
@@ -69,12 +69,12 @@ export async function updateRun(
 }
 export async function readConfirmedListings(
   db: DB,
-  userId: string,
+  organizationId: string,
 ): Promise<Listing[]> {
   const { data, error } = await db
     .from("discovery_runs")
     .select("results")
-    .eq("owner_id", userId)
+    .eq("organization_id", organizationId)
     .eq("status", "completed")
     .order("created_at", { ascending: false });
   if (error) throw error;

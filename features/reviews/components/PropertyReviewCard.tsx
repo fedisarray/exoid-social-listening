@@ -102,7 +102,7 @@ export function PropertyReviewCard({
     <article
       aria-label={showIdentity ? undefined : label}
       className={cn(
-        "@container min-w-0 overflow-hidden rounded-xl border bg-card text-card-foreground",
+        "@container min-w-0 overflow-hidden exoid-panel text-card-foreground",
         compact && "flex h-full flex-col",
         rows &&
           "xl:grid xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.1fr)_minmax(0,1.2fr)]",

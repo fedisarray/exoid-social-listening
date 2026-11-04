@@ -1,5 +1,9 @@
 export const en = {
   app: {
+    organizationRequiredTitle: "Organization access required",
+    organizationRequiredDescription:
+      "Ask your organization owner or administrator to add your account to the workspace.",
+    toggleSidebar: "Toggle sidebar",
     exports: "Exports",
     propertyDetails: "Individual property details",
     analysisLibraryDescription:

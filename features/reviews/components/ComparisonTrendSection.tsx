@@ -59,7 +59,7 @@ export function ComparisonTrendSection({
           );
   return (
     <section
-      className="min-w-0 rounded-xl border bg-card p-4 sm:p-6"
+      className="min-w-0 exoid-panel p-4 sm:p-6"
       aria-labelledby={`${id}-title`}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">

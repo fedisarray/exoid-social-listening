@@ -31,10 +31,16 @@ export async function ExportsScreen({
         <p className="mt-3 max-w-2xl text-muted-foreground">
           {t("exportWorkspaceDescription")}
         </p>
-        <div className="mt-10 space-y-4">
+        <div className="mt-8 max-w-2xl exoid-panel p-5 sm:p-6">
           <h2 className="text-lg font-medium">{app("analysisEmptyTitle")}</h2>
           <p className="text-muted-foreground">{t("exportEmpty")}</p>
-          <Link href="/analyses/new" className={cn(buttonVariants())}>
+          <Link
+            data-slot="button"
+            data-variant="default"
+            data-size="default"
+            href="/analyses/new"
+            className={cn(buttonVariants())}
+          >
             {app("newAnalysis")}
           </Link>
         </div>

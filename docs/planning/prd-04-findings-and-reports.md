@@ -6,6 +6,12 @@ Status: draft. Traces FR07–FR09 and AC06–AC08 in the [source specification](
 
 Produce an evidence-linked draft that an analyst can edit and approve, then export a reproducible PowerPoint report from frozen figures, commentary, and source coverage.
 
+## Reporting iteration (confirmed 4 November 2026)
+
+Generation follows the current Exports configuration for places, selected sheets, dates, dataset, history and language. The first content section is Key Learnings, followed by one chart page per selected Excel sheet, a separate Shared Visitors L12M page, and sources/methodology. Selecting all seven Excel sheets yields seven detailed chart pages. Native chart data and embedded workbooks reuse the deterministic Excel builder; generated chart screenshots do not satisfy this requirement. Shared Visitors uses the actual L12M window and explicit reviewer denominators. Key Learnings in this iteration are draft metric-backed summaries and review actions; the full reviewed-findings workflow below remains separate.
+
+Users can cancel local report processing or resume an existing job. Cancellation must describe the limit of the remote API and must not imply that remote work or charges have been cancelled. See [implementation and verification](../implementation/powerpoint-reports.md).
+
 ## Findings workflow
 
 AI proposes strengths, weaknesses, and actions grounded in selected metric results or specific review revisions. The analyst can edit, add, remove, and mark findings reviewed. A finding stores its origin, evidence links, status, and version. Regeneration creates a new candidate and preserves accepted manual text unless the analyst explicitly replaces it. If the underlying dataset or configuration changes, the proposed rule is to require review again before a final export.
@@ -34,7 +40,7 @@ An export binds an analysis configuration version, frozen dataset snapshot, metr
 
 Variable competitor/anchor counts may split crowded slides. If no anchors are selected, omit those sections and update contents. If overlap is unavailable, retain an explanatory section. Custom dates must be labelled with their actual range; historical quarter panels may be omitted with explanation when no quarter applies. Every chart states measure, unit, source, period, and sample size. Trailing 12 months and calendar years must remain distinct.
 
-Editable text and native PowerPoint charts with embedded data are the proposed output baseline. Gamma API is the selected POC generator, but its ability to produce exact figures, editable chart data, and acceptable slide layout is **unverified**. A fixed-fixture PowerPoint inspection is an implementation gate; if Gamma cannot meet it, we must change generation approach or explicitly renegotiate that output requirement.
+Editable text and native PowerPoint charts with embedded data are required. The selected provider export produced chart images in the initial inspection, so the application now constructs native chart pages from the deterministic Excel data and retains the organization template cover and styling. Values, embedded workbooks and package relationships are verified, with a LibreOffice render check. Desktop Microsoft PowerPoint editing remains a separate acceptance check.
 
 ## Acceptance examples
 

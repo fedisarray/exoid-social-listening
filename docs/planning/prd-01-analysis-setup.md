@@ -12,6 +12,10 @@ The default dashboard begins with source listing search and identity confirmatio
 
 Analysis setup selects properties from this saved library, then assigns comparison roles and reporting dates. Saving an analysis does not create or collect a property. Existing saved listings and review snapshots are migrated into the property library without changing earlier analysis snapshots.
 
+## Organization workspace (confirmed 4 November 2026)
+
+Saved properties, comparisons, discovery and collected review evidence belong to an organization and are shared by its members. Each account belongs to one organization. Owner, admin and member roles can perform normal analysis work; owners and admins manage organization settings and ordinary membership, while only owners manage admins or transfer ownership. Existing accounts receive separate organizations to preserve prior privacy. See the [organization foundation](../implementation/organization-foundation.md) for migration, authorization and provisioning details.
+
 ## Users and workflow
 
 The analyst finds and confirms source listings from the property dashboard, then names an analysis and selects saved properties. The analyst assigns exactly one primary own property, optionally adds other own properties, manually selects competitors and tenant anchors, labels and orders each series, chooses dates, then saves. Reopening reproduces all selections. Editing creates a new configuration version for subsequent calculations; existing reports stay tied to their prior version.

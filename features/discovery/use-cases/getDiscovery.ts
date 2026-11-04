@@ -8,7 +8,7 @@ export async function getDiscovery(
   ctx: OperationContext,
   id: string,
 ): Promise<DiscoveryRun> {
-  const run = await findRun(ctx.db, ctx.userId, id);
+  const run = await findRun(ctx.db, ctx.organizationId, id);
   if (!run) throw new Error("DISCOVERY_NOT_FOUND");
   if (["completed", "failed"].includes(run.status)) return toDiscoveryRun(run);
   try {

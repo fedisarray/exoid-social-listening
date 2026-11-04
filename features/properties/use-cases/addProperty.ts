@@ -7,8 +7,8 @@ export async function addProperty(
   ctx: OperationContext,
   sourceId: string,
 ): Promise<Property> {
-  const listings = await readConfirmedListings(ctx.db, ctx.userId);
+  const listings = await readConfirmedListings(ctx.db, ctx.organizationId);
   const listing = listings.find((candidate) => candidate.sourceId === sourceId);
   if (!listing) throw new Error("UNCONFIRMED_LISTING");
-  return insertProperty(ctx.db, ctx.userId, listing);
+  return insertProperty(ctx.db, ctx.organizationId, listing);
 }

@@ -15,6 +15,11 @@ import type { Collection, Snapshot } from "../schemas/collection";
 import type { NormalizedReview } from "../domain/normalizeReviews";
 import type { GetReviewDashboardInput } from "../schemas/getReviewDashboardInput";
 import { rawMetricsSchema } from "../schemas/getReviewDashboardOutput";
+import type { GetSharedReviewerEvidenceInput } from "../schemas/getSharedReviewerEvidenceInput";
+import {
+  getSharedReviewerEvidenceOutputSchema,
+  type SharedReviewerEvidence,
+} from "../schemas/getSharedReviewerEvidenceOutput";
 type DB = SupabaseClient<Database>;
 export async function enqueueCollection(
   db: DB,
@@ -354,4 +359,23 @@ export async function wakeCollectionWorker(): Promise<boolean> {
       resolveStarted(true);
     });
   });
+}
+
+export async function readSharedReviewerEvidence(
+  db: DB,
+  input: GetSharedReviewerEvidenceInput,
+): Promise<SharedReviewerEvidence> {
+  const { data, error } = await db.rpc("get_shared_reviewer_evidence", {
+    p_analysis: input.analysisId,
+    p_snapshot: input.snapshotId,
+    p_competitor: input.competitorId,
+    p_start: input.period.start,
+    p_end: input.period.end,
+    p_offset: input.offset,
+  });
+  if (error) throw error;
+  const evidence = getSharedReviewerEvidenceOutputSchema
+    .omit({ available: true })
+    .parse(data);
+  return { ...evidence, available: true };
 }

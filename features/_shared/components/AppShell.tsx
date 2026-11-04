@@ -1,14 +1,25 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
+import { LogOut, UserRound } from "lucide-react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { signOut } from "@/features/auth/actions/signOut";
 import { WorkspaceNavigation } from "./WorkspaceNavigation";
 import { WorkspaceHeaderProvider } from "./WorkspaceHeader";
 import { WorkspaceHelp } from "./WorkspaceHelp";
-import { getTranslations } from "next-intl/server";
-import { ChartNoAxesCombined, LogOut } from "lucide-react";
+import { WorkspaceBackdrop } from "./WorkspaceBackdrop";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { ThemeSwitcher } from "./ThemeSwitcher";
-import { signOut } from "@/features/auth/actions/signOut";
-import { Button } from "@/components/ui/button";
+
 export async function AppShell({
   children,
   email,
@@ -18,61 +29,87 @@ export async function AppShell({
 }) {
   const t = await getTranslations("app");
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[224px_1fr]">
+    <SidebarProvider className="exoid-shell relative isolate h-dvh min-h-0 overflow-hidden">
+      <WorkspaceBackdrop className="opacity-60" />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-card focus:p-3"
       >
         {t("skipToContent")}
       </a>
-      <aside className="border-sidebar-border bg-sidebar text-sidebar-foreground flex flex-col lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
-        <Link
-          href="/properties"
-          className="flex items-center gap-3 px-6 py-4 lg:py-7 font-semibold"
-        >
-          <ChartNoAxesCombined className="size-6" />
-          {t("brand")}
-        </Link>
-        <div className="hidden px-6 pb-5 lg:block text-sm leading-relaxed text-sidebar-foreground/80">
-          {t("workspace")}
-        </div>
-        <Suspense>
-          <WorkspaceNavigation />
-        </Suspense>
-        <div className="mt-auto border-t border-sidebar-border px-3 py-3 lg:py-5">
-          <p className="break-all px-3 pb-3 text-sm text-sidebar-foreground/80">
-            {email}
-          </p>
-          <div className="flex flex-wrap items-center gap-2 px-3 pb-3 text-foreground">
-            <ThemeSwitcher />
-            <LanguageSwitcher />
-          </div>
-          <form action={signOut} className="px-3 pb-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+      <Sidebar
+        variant="inset"
+        collapsible="offcanvas"
+        className="bg-transparent"
+      >
+        <SidebarHeader className="gap-3 p-4 pb-5">
+          <div className="flex items-center gap-2">
+            <Link
+              href="/properties"
+              className="flex min-w-0 flex-1 items-center gap-3 rounded-sm text-sm font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-ring"
             >
-              <LogOut className="size-4" />
-              {t("signOut")}
-            </Button>
-          </form>
-          <WorkspaceHelp />
-          <p className="hidden px-3 pt-3 text-sm text-sidebar-foreground/60 lg:block">
-            {t("privateWorkspace")}
+              <Image
+                src="/exoid-logo.svg"
+                alt=""
+                width={32}
+                height={32}
+                className="size-8 shrink-0"
+              />
+              {t("brand")}
+            </Link>
+            <SidebarTrigger
+              aria-label={t("toggleSidebar")}
+              className="md:hidden"
+            />
+          </div>
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            {t("workspace")}
           </p>
-        </div>
-      </aside>
-      <div className="min-w-0">
+        </SidebarHeader>
+        <SidebarContent>
+          <Suspense>
+            <WorkspaceNavigation />
+          </Suspense>
+        </SidebarContent>
+        <SidebarFooter className="gap-2 p-3">
+          <WorkspaceHelp />
+          <div className="rounded-sm bg-white/35 p-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary">
+                <UserRound className="size-4" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="break-all text-xs font-medium leading-relaxed">
+                  {email}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t("privateWorkspace")}
+                </p>
+              </div>
+            </div>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border/50 pt-2">
+              <LanguageSwitcher />
+              <form action={signOut}>
+                <Button variant="ghost" size="sm">
+                  <LogOut className="size-4" aria-hidden="true" />
+                  {t("signOut")}
+                </Button>
+              </form>
+            </div>
+          </div>
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset className="exoid-workspace relative z-10 m-2 min-h-0 min-w-0 overflow-y-auto">
         <WorkspaceHeaderProvider>
-          <main
+          <div
             id="main-content"
-            className="mx-auto max-w-screen-2xl p-5 md:px-10 md:py-10 lg:p-6"
+            tabIndex={-1}
+            className="relative z-10 mx-auto w-full max-w-screen-2xl p-4 outline-none sm:p-6 lg:p-8"
           >
             {children}
-          </main>
+          </div>
         </WorkspaceHeaderProvider>
-      </div>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

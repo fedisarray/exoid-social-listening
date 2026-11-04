@@ -5,5 +5,5 @@ import { readConfirmedListings } from "../repositories/discovery";
 export async function confirmedListings(
   ctx: OperationContext,
 ): Promise<Listing[]> {
-  return readConfirmedListings(ctx.db, ctx.userId);
+  return readConfirmedListings(ctx.db, ctx.organizationId);
 }

@@ -31,7 +31,7 @@ export function AnalysisComparisonTable({
         }).format(value);
   return (
     <div
-      className="mt-5 overflow-x-auto rounded-xl border bg-card focus-visible:outline-2 focus-visible:outline-ring"
+      className="mt-5 overflow-x-auto exoid-panel focus-visible:outline-2 focus-visible:outline-ring"
       tabIndex={0}
       role="region"
       aria-label={app("analysisComparison")}

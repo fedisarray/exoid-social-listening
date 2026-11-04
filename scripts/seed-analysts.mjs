@@ -18,5 +18,19 @@ for (const email of ["fedi.sarray@exoid.io", "second@exoid.local"]) {
       })
     : await db.auth.admin.createUser({ email, email_confirm: true });
   if (result.error) throw result.error;
+  const userId = result.data.user.id;
+  const membership = await db
+    .from("organization_memberships")
+    .select("organization_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (membership.error) throw membership.error;
+  if (!membership.data) {
+    const provisioned = await db.rpc("provision_organization", {
+      p_user_id: userId,
+      p_name: `Workspace ${userId.slice(0, 8)}`,
+    });
+    if (provisioned.error) throw provisioned.error;
+  }
   console.log(`Local account ready: ${email}`);
 }

@@ -48,7 +48,7 @@ export function ReviewIndicators({
         })}
       </p>
       <div
-        className="mt-3 overflow-x-auto rounded-xl border bg-card focus-visible:outline-2 focus-visible:outline-ring"
+        className="mt-3 overflow-x-auto exoid-panel focus-visible:outline-2 focus-visible:outline-ring"
         role="region"
         tabIndex={0}
         aria-label={t("indicators")}

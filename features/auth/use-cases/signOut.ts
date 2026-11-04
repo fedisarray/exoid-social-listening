@@ -1,6 +1,6 @@
 import "server-only";
-import type { OperationContext } from "@/lib/auth/dal";
+import type { AuthenticatedContext } from "@/lib/auth/dal";
 import { removeSession } from "../repositories/session";
-export async function signOut(ctx: OperationContext): Promise<void> {
+export async function signOut(ctx: AuthenticatedContext): Promise<void> {
   await removeSession(ctx.db);
 }

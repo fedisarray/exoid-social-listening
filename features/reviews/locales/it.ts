@@ -236,6 +236,24 @@ export const reviewsIT = {
   identityCoverage: "Recensioni con ID autore",
   sharedComparisonHint:
     "Autori che hanno recensito anche {primary}, in base alle recensioni Google nelle date selezionate.",
+  sharedEvidenceOpen: "Leggi le recensioni di {count} autori condivisi",
+  sharedEvidenceNote:
+    "Ultima recensione di ogni autore per ciascun luogo nelle date selezionate, ordinate per pubblicazione più recente. Gli autori sono identificati tramite ID Google; i nomi non vengono raccolti. La differenza di voto è principale meno concorrente. Le date sono in UTC; l’intervallo tra pubblicazioni non indica una visita o uno spostamento.",
+  sharedReviewerId: "Autore · {id}",
+  sharedReviewDays:
+    "{count, plural, =0 {Pubblicate lo stesso giorno} one {# giorno tra le recensioni} other {# giorni tra le recensioni}}",
+  sharedEvidenceGap: "Differenza di voto: {gap}",
+  reviewLanguage: "Lingua: {language}",
+  sharedEvidenceNoText: "Testo della recensione non disponibile",
+  sharedEvidenceLoading: "Caricamento delle recensioni condivise…",
+  sharedEvidenceError: "Impossibile caricare le recensioni condivise. Riprova.",
+  sharedEvidenceRetry: "Riprova",
+  sharedEvidenceEmpty:
+    "Nessun autore condiviso per questo luogo nelle date selezionate.",
+  sharedEvidencePage: "Autori {start}–{end} di {total}",
+  sharedEvidencePagination: "Pagine degli autori condivisi",
+  sharedEvidencePrevious: "Autori precedenti",
+  sharedEvidenceNext: "Autori successivi",
   sharedCount: "Autori condivisi",
   sharedDirection: "Quota degli autori identificati per luogo",
   sharedRatings: "Voti degli autori condivisi",

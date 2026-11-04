@@ -111,32 +111,9 @@ export function PropertiesDashboard({
           </div>
         </form>
       </WorkspaceHeader>
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="page-title">{t("title")}</h1>
-          <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
-            {t("description")}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {properties.length > 0 ? (
-            <Button asChild variant="outline">
-              <Link href="/analyses/new">
-                <Plus aria-hidden="true" />
-                {t("compare")}
-              </Link>
-            </Button>
-          ) : null}
-          <ListingSearch
-            selected={properties.map((p) => p.listing.sourceId)}
-            onConfirm={async (listing) => {
-              await add.mutateAsync({ sourceId: listing.sourceId });
-            }}
-          />
-        </div>
-      </div>
-      <section className="mt-8">
-        <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-5">
+      <h1 className="sr-only">{t("title")}</h1>
+      <section>
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/50 pb-5">
           <h2
             ref={savedHeading}
             tabIndex={-1}
@@ -147,34 +124,52 @@ export function PropertiesDashboard({
               {properties.length}
             </span>
           </h2>
-          <div
-            role="group"
-            aria-label={t("viewMode")}
-            className="flex flex-wrap gap-1 rounded-lg border bg-card p-1"
-          >
-            {(
-              [
-                { value: "table", label: "tableView", icon: Table2 },
-                { value: "cards", label: "cardsView", icon: LayoutGrid },
-                { value: "rows", label: "rowsView", icon: Rows3 },
-              ] as const
-            ).map(({ value, label, icon: Icon }) => (
-              <Button
-                key={value}
-                type="button"
-                size="sm"
-                variant={view === value ? "default" : "ghost"}
-                aria-pressed={view === value}
-                onClick={() => {
-                  const params = new URLSearchParams(search.toString());
-                  params.set("view", value);
-                  router.replace(`${path}?${params}`, { scroll: false });
+          <div className="flex min-w-0 flex-wrap items-center gap-3">
+            <div
+              role="group"
+              aria-label={t("viewMode")}
+              className="flex flex-wrap gap-1 rounded-lg border bg-muted/60 p-1"
+            >
+              {(
+                [
+                  { value: "table", label: "tableView", icon: Table2 },
+                  { value: "cards", label: "cardsView", icon: LayoutGrid },
+                  { value: "rows", label: "rowsView", icon: Rows3 },
+                ] as const
+              ).map(({ value, label, icon: Icon }) => (
+                <Button
+                  key={value}
+                  type="button"
+                  size="sm"
+                  variant={view === value ? "default" : "ghost"}
+                  aria-pressed={view === value}
+                  onClick={() => {
+                    const params = new URLSearchParams(search.toString());
+                    params.set("view", value);
+                    router.replace(`${path}?${params}`, { scroll: false });
+                  }}
+                >
+                  <Icon aria-hidden="true" />
+                  {t(label)}
+                </Button>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {properties.length > 0 ? (
+                <Button asChild variant="outline">
+                  <Link href="/analyses/new">
+                    <Plus aria-hidden="true" />
+                    {t("compare")}
+                  </Link>
+                </Button>
+              ) : null}
+              <ListingSearch
+                selected={properties.map((p) => p.listing.sourceId)}
+                onConfirm={async (listing) => {
+                  await add.mutateAsync({ sourceId: listing.sourceId });
                 }}
-              >
-                <Icon aria-hidden="true" />
-                {t(label)}
-              </Button>
-            ))}
+              />
+            </div>
           </div>
         </div>
         {query.isError ? (
@@ -190,7 +185,7 @@ export function PropertiesDashboard({
           </div>
         ) : null}
         {properties.length > 0 ? (
-          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
             {t("metricsScope")}
           </p>
         ) : null}

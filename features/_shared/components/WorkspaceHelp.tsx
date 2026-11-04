@@ -18,7 +18,7 @@ export function WorkspaceHelp() {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sidebar-ring"
+          className="flex min-h-11 w-full items-center gap-3 rounded-sm px-3 py-2 text-sm text-muted-foreground hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sidebar-ring"
         >
           <CircleHelp className="size-4 shrink-0" aria-hidden="true" />
           {t("journey")}

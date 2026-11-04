@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
-import { ArrowRight, Trash2 } from "lucide-react";
+import { ArrowRight, Star, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ListingThumbnail } from "@/features/_shared/components/ListingThumbnail";
 import type { PropertySummary } from "../schemas/listPropertiesOutput";
@@ -20,7 +20,7 @@ export function SavedPlacesTable({
   const router = useRouter();
   return (
     <div
-      className="mt-6 overflow-x-auto rounded-xl border bg-card focus-visible:outline-2 focus-visible:outline-ring"
+      className="mt-6 overflow-x-auto exoid-panel focus-visible:outline-2 focus-visible:outline-ring"
       role="region"
       aria-label={t("saved")}
       tabIndex={0}
@@ -90,9 +90,21 @@ export function SavedPlacesTable({
                   : format.number(property.reviews)}
               </td>
               <td className="whitespace-nowrap px-4 py-4 tabular-nums">
-                {property.rating === null
-                  ? "—"
-                  : `${format.number(property.rating, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / 5`}
+                {property.rating === null ? (
+                  "—"
+                ) : (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Star
+                      className="size-3.5 shrink-0 fill-primary/10 text-primary"
+                      aria-hidden="true"
+                    />
+                    {format.number(property.rating, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}{" "}
+                    / 5
+                  </span>
+                )}
               </td>
               <td className="px-4 py-4 tabular-nums">
                 {property.textReviews === null

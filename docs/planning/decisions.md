@@ -5,6 +5,7 @@ Status: draft. “Selected” records the user's planning choice; it does not im
 | Area | Current decision | Validation or unresolved point |
 |---|---|---|
 | Product navigation | Analysis setup and Dashboard are the two primary areas. | Evidence, findings, and report workflow remain in scope within Dashboard. |
+| Organization access | One organization per user; owner/admin/member roles; shared workspace data. | Backend foundation implemented; organization management screens and invitations are deferred. Each organization stores its own nullable report template ID. |
 | Frontend | Next.js 16. | Pin a patched release and choose UI/design approach at implementation. |
 | Local backend | Local Supabase for database, authentication, and private files. | Confirm container runtime, persistence/backup, local auth configuration, and eventual deployment model. External APIs still process data remotely. |
 | Collection | Apify for POC; Google review source first. | Choose/validate actor, IDs, history, pagination, coverage signals, terms, cost, and refresh behavior. TripAdvisor remains optional. |

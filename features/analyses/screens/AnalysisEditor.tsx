@@ -101,7 +101,7 @@ export function AnalysisEditor({
         <ArrowLeft className="size-4" />
         {t("back")}
       </Link>
-      <div className="mt-6 flex flex-wrap items-start justify-between gap-4 border-b pb-8">
+      <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="page-title">
             {initial ? t("editTitle") : t("newTitle")}
@@ -119,10 +119,10 @@ export function AnalysisEditor({
       </div>
       <form
         onSubmit={form.handleSubmit(submit, () => setValidation(true))}
-        className="mt-8 max-w-3xl"
+        className="mt-7 max-w-3xl"
       >
         <fieldset disabled={mutation.isPending} className="grid min-w-0 gap-6">
-          <section className="min-w-0 space-y-7 rounded-xl border bg-card p-5 md:p-7">
+          <section className="min-w-0 space-y-7 exoid-panel p-4 sm:p-5 md:p-6">
             <h2 className="text-lg font-semibold">{t("setupName")}</h2>
             <div className="space-y-2">
               <Label htmlFor="analysis-name">{t("name")}</Label>
@@ -152,7 +152,10 @@ export function AnalysisEditor({
             {rows.fields.length ? (
               <div className="space-y-4">
                 {rows.fields.map((field, index) => (
-                  <div key={field.id} className="border-t py-5">
+                  <div
+                    key={field.id}
+                    className="border-t py-5 first:border-t-0"
+                  >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <ListingThumbnail listing={field} />
                       <div className="min-w-0 flex-1 basis-36">
@@ -252,7 +255,7 @@ export function AnalysisEditor({
               </div>
             )}
           </section>
-          <aside className="rounded-xl border bg-card p-5 self-start">
+          <aside className="self-start exoid-panel p-4 sm:p-5">
             <h2 className="mb-5 text-lg font-semibold">{t("setupDates")}</h2>
             <PeriodFields
               value={values.config.period}
@@ -262,7 +265,7 @@ export function AnalysisEditor({
             />
           </aside>
         </fieldset>
-        <div className="sticky bottom-0 z-10 mt-8 rounded-xl border bg-card p-5">
+        <div className="sticky bottom-0 z-10 mt-6 exoid-panel p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div
               aria-live="polite"

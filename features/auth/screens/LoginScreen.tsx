@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
+import { WorkspaceBackdrop } from "@/features/_shared/components/WorkspaceBackdrop";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChartNoAxesCombined, ArrowRight, Mail } from "lucide-react";
+import { ArrowRight, Mail } from "lucide-react";
 import {
   requestLoginCodeInputSchema,
   type RequestLoginCodeInput,
@@ -90,27 +92,28 @@ export function LoginScreen({ devInboxUrl }: { devInboxUrl?: string }) {
     }
   }
   return (
-    <main className="min-h-screen grid lg:grid-cols-2">
-      <section className="bg-sidebar text-sidebar-foreground flex flex-col justify-between gap-12 p-8 lg:p-16">
+    <main className="relative isolate grid min-h-screen lg:grid-cols-2">
+      <WorkspaceBackdrop className="-z-10 opacity-60" />
+      <section className="relative m-2 flex flex-col justify-between gap-12 exoid-workspace p-8 lg:p-16">
         <div className="flex items-center gap-3 font-semibold">
-          <ChartNoAxesCombined />
+          <Image src="/exoid-logo.svg" alt="" width={36} height={36} />
           {t("brand")}
         </div>
         <div className="max-w-lg">
           <h1 className="font-display text-5xl leading-tight md:text-6xl">
             {t("loginTitle")}
           </h1>
-          <p className="mt-6 max-w-md text-lg leading-relaxed opacity-75">
+          <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
             {t("loginDescription")}
           </p>
         </div>
-        <p className="text-sm opacity-60">{t("workspace")}</p>
+        <p className="text-sm text-muted-foreground">{t("workspace")}</p>
       </section>
-      <section className="flex flex-col p-6 md:p-12">
+      <section className="relative flex flex-col p-6 md:p-12">
         <div className="self-end">
           <LanguageSwitcher />
         </div>
-        <div className="m-auto w-full max-w-sm space-y-6 py-12">
+        <div className="m-auto w-full max-w-sm space-y-6 exoid-panel p-6 py-8 sm:p-8">
           <div>
             <h2 className="text-2xl font-semibold">
               {t(email ? "checkInbox" : "signIn")}

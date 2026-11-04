@@ -1,5 +1,7 @@
 "use client";
 
+import { ComparisonReports } from "@/features/reports/components/ComparisonReports";
+import { reviewExcelOptionsSchema } from "../schemas/reviewExcelOptions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -62,6 +64,7 @@ export function ExportWorkspace({
     },
   });
   const period = useWatch({ control: form.control, name: "period" });
+  const reportLocale = useWatch({ control: form.control, name: "locale" });
   const snapshotId = useWatch({ control: form.control, name: "snapshotId" });
   const options = useWatch({ control: form.control, name: "options" });
   const validPeriod =
@@ -159,13 +162,13 @@ export function ExportWorkspace({
       </div>
       <form
         onSubmit={form.handleSubmit((values) => download.mutate(values))}
-        className="mt-8 grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_22rem]"
+        className="mt-7 grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]"
       >
         <fieldset
           disabled={download.isPending}
-          className="min-w-0 space-y-8 disabled:opacity-70"
+          className="min-w-0 space-y-4 disabled:opacity-70"
         >
-          <section className="space-y-4 border-t pt-6">
+          <section className="space-y-4 exoid-panel p-4 sm:p-5">
             <h2 className="text-lg font-semibold">{t("exportScope")}</h2>
             <Controller
               control={form.control}
@@ -206,7 +209,7 @@ export function ExportWorkspace({
               </p>
             </div>
           </section>
-          <section className="space-y-4 border-t pt-6">
+          <section className="space-y-4 exoid-panel p-4 sm:p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-lg font-semibold">{t("exportProperties")}</h2>
               <Button
@@ -277,7 +280,7 @@ export function ExportWorkspace({
               </div>
             ) : null}
           </section>
-          <section className="space-y-4 border-t pt-6">
+          <section className="space-y-4 exoid-panel p-4 sm:p-5">
             <h2 className="text-lg font-semibold">{t("exportContent")}</h2>
             <p className="text-sm text-muted-foreground">
               {t("exportContentHint")}
@@ -345,7 +348,7 @@ export function ExportWorkspace({
             </label>
           </section>
         </fieldset>
-        <aside className="space-y-5 rounded-xl border bg-card p-5 xl:sticky xl:top-6">
+        <aside className="space-y-5 exoid-panel p-4 sm:p-5 xl:sticky xl:top-6">
           <h2 className="text-lg font-semibold">{t("exportSummary")}</h2>
           <dl className="space-y-3 text-sm">
             <div>
@@ -410,6 +413,23 @@ export function ExportWorkspace({
             )}
             {t(download.isPending ? "excelGenerating" : "excelDownload")}
           </Button>
+          <ComparisonReports
+            embedded
+            key={analysis.id}
+            analysisId={analysis.id}
+            version={analysis.version}
+            period={input.period}
+            snapshotId={snapshotId || undefined}
+            options={options}
+            reportLocale={reportLocale}
+            ready={Boolean(
+              selectedCovered &&
+              validPeriod.success &&
+              reviewExcelOptionsSchema.safeParse(options).success &&
+              !query.isFetching &&
+              !query.isError,
+            )}
+          />
           <Button
             type="button"
             variant="ghost"
@@ -431,6 +451,9 @@ export function ExportWorkspace({
             {t("exportReset")}
           </Button>
           <Link
+            data-slot="button"
+            data-variant="outline"
+            data-size="default"
             href={`/analyses/${analysis.id}/dashboard`}
             className={cn(buttonVariants({ variant: "outline" }), "w-full")}
           >

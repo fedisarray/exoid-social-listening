@@ -21,7 +21,7 @@ export function ReviewCoverage({
 }) {
   const t = useTranslations("reviews");
   return (
-    <section className="mt-5 rounded-xl border bg-card p-5" aria-live="polite">
+    <section className="mt-5 exoid-panel p-5" aria-live="polite">
       <h3 className="font-semibold">{t("coverageTitle")}</h3>
       <p className="mt-2 text-sm text-muted-foreground">
         {t(frozen ? "frozenCoverageHint" : "manualCoverageHint")}

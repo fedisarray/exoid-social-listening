@@ -12,10 +12,11 @@ export function LanguageSwitcher() {
   return (
     <Button
       type="button"
-      variant="outline"
+      variant="ghost"
       size="sm"
       disabled={pending}
       aria-label={t("language")}
+      className="text-muted-foreground hover:bg-primary/5 hover:text-primary"
       onClick={() =>
         start(async () => {
           await setLocale(locale === "it" ? "en" : "it");

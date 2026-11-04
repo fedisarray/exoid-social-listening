@@ -4,52 +4,58 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Building2, Folders, FileDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  useSidebar,
+} from "@/components/ui/sidebar";
 
 export function WorkspaceNavigation() {
   const t = useTranslations("app");
   const pathname = usePathname();
-  const linkClass = (active: boolean) =>
-    cn(
-      "flex min-h-11 shrink-0 items-center gap-3 rounded-lg whitespace-nowrap px-3 py-2.5 text-sm transition-colors hover:bg-sidebar-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sidebar-ring",
-      active
-        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-        : "text-sidebar-foreground/80",
-    );
+  const { setOpenMobile } = useSidebar();
   return (
-    <nav
-      aria-label={t("navigation")}
-      className="space-y-3 px-3 pb-4 lg:space-y-7 lg:pb-5"
-    >
-      <div className="flex flex-wrap gap-1 lg:block">
-        <p className="hidden px-3 pb-2 text-xs lg:block font-medium text-sidebar-foreground/60">
+    <nav aria-label={t("navigation")}>
+      <SidebarGroup>
+        <SidebarGroupLabel className="text-xs font-medium text-muted-foreground">
           {t("workspaceSections")}
-        </p>
-        <Link
-          href="/properties"
-          className={linkClass(pathname.startsWith("/properties"))}
-          aria-current={pathname.startsWith("/properties") ? "page" : undefined}
-        >
-          <Building2 className="size-4 shrink-0" />
-          {t("properties")}
-        </Link>
-        <Link
-          href="/analyses"
-          className={linkClass(pathname.startsWith("/analyses"))}
-          aria-current={pathname.startsWith("/analyses") ? "page" : undefined}
-        >
-          <Folders className="size-4 shrink-0" />
-          {t("comparisons")}
-        </Link>
-        <Link
-          href="/exports"
-          className={linkClass(pathname.startsWith("/exports"))}
-          aria-current={pathname.startsWith("/exports") ? "page" : undefined}
-        >
-          <FileDown className="size-4 shrink-0" aria-hidden="true" />
-          {t("exports")}
-        </Link>
-      </div>
+        </SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu className="gap-1">
+            {(
+              [
+                { href: "/properties", label: "properties", icon: Building2 },
+                { href: "/analyses", label: "comparisons", icon: Folders },
+                { href: "/exports", label: "exports", icon: FileDown },
+              ] as const
+            ).map(({ href, label, icon: Icon }) => {
+              const active = pathname.startsWith(href);
+              return (
+                <SidebarMenuItem key={href}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={active}
+                    className="rounded-sm text-slate-600 transition-colors duration-150 hover:bg-primary/5 hover:text-primary data-[active=true]:bg-primary/10 data-[active=true]:font-semibold data-[active=true]:text-primary motion-reduce:transition-none"
+                  >
+                    <Link
+                      href={href}
+                      aria-current={active ? "page" : undefined}
+                      onClick={() => setOpenMobile(false)}
+                    >
+                      <Icon aria-hidden="true" />
+                      <span>{t(label)}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
     </nav>
   );
 }

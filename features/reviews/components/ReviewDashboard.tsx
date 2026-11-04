@@ -168,7 +168,7 @@ export function ReviewDashboardContent({
         !collectionDialog?.open && section !== "all" && section !== "collection"
       }
     >
-      <div className="mt-7 flex flex-wrap items-end gap-3 border-t pt-6">
+      <div className="mt-7 flex flex-wrap items-end gap-3 border-t pt-5">
         {input.propertyId ? (
           <div className="min-w-48 flex-1 space-y-2">
             <Label htmlFor="review-limit">{t("limit")}</Label>
@@ -240,10 +240,7 @@ export function ReviewDashboardContent({
         </p>
       ) : null}
       {data?.run ? (
-        <section
-          aria-live="polite"
-          className="mt-5 rounded-xl border bg-card p-4"
-        >
+        <section aria-live="polite" className="mt-5 exoid-panel p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <span className="text-sm font-medium">
               {t("collection")} · {t("version")} {data.run.version}
@@ -345,8 +342,8 @@ export function ReviewDashboardContent({
           defaultOpen={false}
           className={
             section === "evidence"
-              ? "order-last mt-6 rounded-lg border bg-card"
-              : "mt-4 rounded-lg border bg-card"
+              ? "order-last mt-6 exoid-panel"
+              : "mt-4 exoid-panel"
           }
         >
           <CollapsibleTrigger asChild>
@@ -385,7 +382,7 @@ export function ReviewDashboardContent({
         </Collapsible>
       ) : null}
       {data?.snapshot ? (
-        <details className="mt-4 rounded-xl border bg-card px-4 py-3 text-sm">
+        <details className="mt-4 exoid-panel px-4 py-3 text-sm">
           <summary className="cursor-pointer font-medium">
             {t("scopeTitle")}
           </summary>
@@ -529,6 +526,10 @@ export function ReviewDashboardContent({
           ) : null}
           <div hidden={section !== "all" && section !== "shared"}>
             <SharedReviewersComparison
+              input={input}
+              datasetKey={JSON.stringify(
+                data.coverage.map((place) => place.sourceSnapshotIds),
+              )}
               metrics={data.metrics}
               listings={listings}
               role={role}
@@ -543,7 +544,7 @@ export function ReviewDashboardContent({
               {data.metrics.samples
                 .filter((r) => ids.has(r.listingId))
                 .map((r, i) => (
-                  <article key={i} className="rounded-xl border bg-card p-5">
+                  <article key={i} className="exoid-panel p-5">
                     <div className="flex flex-wrap gap-2 text-sm">
                       <Badge variant="secondary">
                         <Star className="size-3" aria-hidden="true" />

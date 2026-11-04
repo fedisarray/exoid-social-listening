@@ -1,5 +1,9 @@
 export const it = {
   app: {
+    organizationRequiredTitle: "È necessario l’accesso a un’organizzazione",
+    organizationRequiredDescription:
+      "Chiedi al proprietario o a un amministratore della tua organizzazione di aggiungere il tuo account allo spazio di lavoro.",
+    toggleSidebar: "Apri o chiudi il menu",
     exports: "Esportazioni",
     propertyDetails: "Dettagli delle singole proprietà",
     analysisLibraryDescription:

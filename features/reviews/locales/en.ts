@@ -236,6 +236,24 @@ export const reviewsEN = {
   identityCoverage: "Reviews with reviewer IDs",
   sharedComparisonHint:
     "Reviewers who also reviewed {primary}, using Google reviews from the selected dates.",
+  sharedEvidenceOpen: "Read reviews from {count} shared reviewers",
+  sharedEvidenceNote:
+    "Latest review per reviewer at each place within the selected dates, ordered by most recent publication. Google source IDs identify reviewers; names are not collected. Rating differences are primary minus competitor. Dates are in UTC; the interval between publications does not imply a visit or journey.",
+  sharedReviewerId: "Reviewer · {id}",
+  sharedReviewDays:
+    "{count, plural, =0 {Published on the same day} one {# day between reviews} other {# days between reviews}}",
+  sharedEvidenceGap: "Rating difference: {gap}",
+  reviewLanguage: "Language: {language}",
+  sharedEvidenceNoText: "Review text unavailable",
+  sharedEvidenceLoading: "Loading shared reviews…",
+  sharedEvidenceError: "Could not load the shared reviews. Try again.",
+  sharedEvidenceRetry: "Retry",
+  sharedEvidenceEmpty:
+    "No shared reviewers found for this place in the selected dates.",
+  sharedEvidencePage: "Reviewers {start}–{end} of {total}",
+  sharedEvidencePagination: "Shared reviewer pages",
+  sharedEvidencePrevious: "Previous reviewers",
+  sharedEvidenceNext: "Next reviewers",
   sharedCount: "Shared reviewers",
   sharedDirection: "Share of each place’s identified reviewers",
   sharedRatings: "Ratings by shared reviewers",

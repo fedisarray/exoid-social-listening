@@ -90,7 +90,7 @@ export function PropertyDashboard({
         {t("back")}
       </Link>
       {section === "evidence" ? (
-        <header className="mt-3">
+        <header className="mt-4 exoid-panel p-4 sm:p-5">
           <h1 className="text-xl font-semibold tracking-tight">
             {property.listing.name}
           </h1>
@@ -99,7 +99,7 @@ export function PropertyDashboard({
           </p>
         </header>
       ) : section === "trends" ? (
-        <header className="mt-5 flex flex-wrap items-start justify-between gap-4">
+        <header className="mt-4 flex flex-wrap items-start justify-between gap-4 exoid-panel p-4 sm:p-5">
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <ListingThumbnail
               listing={property.listing}
@@ -120,7 +120,7 @@ export function PropertyDashboard({
           </Button>
         </header>
       ) : (
-        <header className="mt-4 overflow-hidden rounded-xl border bg-card">
+        <header className="mt-4 overflow-hidden exoid-panel">
           <div className="flex flex-wrap items-start gap-4 p-5 sm:p-6">
             <div className="min-w-0 flex-1">
               <h1 className="page-title break-words">
@@ -177,7 +177,7 @@ export function PropertyDashboard({
         onValueChange={(value) => update({ section: value })}
         className="mt-5"
       >
-        <TabsList className="h-auto w-full justify-start overflow-x-auto">
+        <TabsList className="h-auto w-full justify-start overflow-x-auto border bg-card p-1">
           {Object.keys(sectionLabels).map((value) => (
             <TabsTrigger key={value} value={value} className="flex-1 py-2">
               {t(

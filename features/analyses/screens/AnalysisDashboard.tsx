@@ -1,4 +1,6 @@
 "use client";
+import { ComparisonReports } from "@/features/reports/components/ComparisonReports";
+import type { ListComparisonReportsOutput } from "@/features/reports/schemas/listComparisonReportsOutput";
 import { WorkspaceHeader } from "@/features/_shared/components/WorkspaceHeader";
 import Link from "next/link";
 import { useSearchParams, usePathname } from "next/navigation";
@@ -31,8 +33,10 @@ import { cn } from "@/lib/utils";
 export function AnalysisDashboard({
   analysis,
   initialReviews,
+  initialReports,
 }: {
   analysis: AnalysisDetail;
+  initialReports: ListComparisonReportsOutput;
   initialReviews: { input: GetReviewDashboardInput; data: ReviewData };
 }) {
   const t = useTranslations("app");
@@ -92,7 +96,7 @@ export function AnalysisDashboard({
         <ArrowLeft className="size-4" />
         {t("back")}
       </Link>
-      <header className="mt-5">
+      <header className="mt-4 exoid-panel p-4 sm:p-5">
         <div className="flex flex-wrap items-start justify-between gap-5">
           <div className="flex w-full min-w-0 items-start gap-4 sm:w-auto sm:flex-1 md:gap-5">
             <ListingThumbnail
@@ -135,6 +139,9 @@ export function AnalysisDashboard({
               onLive={() => update({ snapshot: "" })}
             />
             <Link
+              data-slot="button"
+              data-variant="outline"
+              data-size="default"
               href={`/exports?${new URLSearchParams({ analysis: analysis.id, ...Object.fromEntries(Object.entries(period).map(([key, value]) => [key, String(value)])), ...(params.snapshot ? { snapshot: params.snapshot } : {}) })}`}
               className={cn(buttonVariants({ variant: "outline" }))}
             >
@@ -142,6 +149,9 @@ export function AnalysisDashboard({
               {t("exports")}
             </Link>
             <Link
+              data-slot="button"
+              data-variant="outline"
+              data-size="default"
               href={`/analyses/${analysis.id}/setup`}
               className={cn(buttonVariants({ variant: "outline" }))}
             >
@@ -151,9 +161,17 @@ export function AnalysisDashboard({
           </div>
         </div>
       </header>
+      <ComparisonReports
+        analysisId={analysis.id}
+        version={analysis.version}
+        period={period}
+        snapshotId={params.snapshot || undefined}
+        ready={Boolean(dashboard.query.data?.comparisonReady)}
+        initialData={initialReports}
+      />
       <nav
         aria-label={t("analysisSectionNavigation")}
-        className="mt-7 flex gap-x-6 overflow-x-auto border-b"
+        className="mt-5 flex gap-x-2 overflow-x-auto border-b"
       >
         {Object.entries(sections).map(([value, copy]) => {
           const next = new URLSearchParams(search.toString());
@@ -173,7 +191,7 @@ export function AnalysisDashboard({
               }}
               aria-current={section === value ? "page" : undefined}
               className={cn(
-                "min-h-11 shrink-0 border-b-2 px-1 py-3 text-sm whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-ring",
+                "min-h-11 shrink-0 border-b-2 px-3 py-3 text-sm whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-ring",
                 section === value
                   ? "border-primary font-semibold text-primary"
                   : "border-transparent text-muted-foreground hover:text-foreground",

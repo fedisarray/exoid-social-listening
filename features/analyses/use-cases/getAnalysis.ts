@@ -1,6 +1,6 @@
 import "server-only";
 import type { OperationContext } from "@/lib/auth/dal";
-import { findOwnedAnalysis } from "../repositories/analyses";
+import { findOrganizationAnalysis } from "../repositories/analyses";
 import { findSavedListings } from "@/features/properties/repositories/properties";
 import type { AnalysisDetail } from "../schemas/analysisDetail";
 import { readConfirmedListings } from "@/features/discovery/repositories/discovery";
@@ -9,15 +9,19 @@ export async function getAnalysis(
   ctx: OperationContext,
   id: string,
 ): Promise<AnalysisDetail | null> {
-  const analysis = await findOwnedAnalysis(ctx.db, id, ctx.userId);
+  const analysis = await findOrganizationAnalysis(
+    ctx.db,
+    id,
+    ctx.organizationId,
+  );
   if (!analysis) return null;
   const [savedListings, discovered] = await Promise.all([
     findSavedListings(
       ctx.db,
-      ctx.userId,
+      ctx.organizationId,
       analysis.config.listings.map((listing) => listing.sourceId),
     ),
-    readConfirmedListings(ctx.db, ctx.userId),
+    readConfirmedListings(ctx.db, ctx.organizationId),
   ]);
   return {
     ...analysis,

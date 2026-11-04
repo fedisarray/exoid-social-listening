@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { SharedReviewerEvidence } from "./SharedReviewerEvidence";
+import type { GetReviewDashboardInput } from "../schemas/getReviewDashboardInput";
 import { useLocale, useTranslations } from "next-intl";
 import { Users } from "lucide-react";
 import { ListingThumbnail } from "@/features/_shared/components/ListingThumbnail";
@@ -13,11 +16,16 @@ export function SharedReviewersComparison({
   metrics,
   listings,
   role,
+  input,
+  datasetKey,
 }: {
   metrics: Metrics;
   listings: Selection[];
   role: string;
+  input: GetReviewDashboardInput;
+  datasetKey: string;
 }) {
+  const [expanded, setExpanded] = useState<string[]>([]);
   const t = useTranslations("reviews");
   const locale = useLocale();
   const primary = metrics.properties.find(
@@ -42,7 +50,7 @@ export function SharedReviewersComparison({
         {t("sharedComparisonHint", { primary: primary?.label ?? "—" })}
       </p>
       {rows.length ? (
-        <div className="mt-4 overflow-hidden rounded-xl border bg-card">
+        <div className="mt-4 overflow-hidden exoid-panel">
           <div
             className="hidden gap-6 border-b bg-muted/30 px-5 py-3 text-xs font-medium text-muted-foreground lg:grid lg:grid-cols-[minmax(0,1.1fr)_6rem_minmax(0,1.8fr)_minmax(0,1fr)]"
             aria-hidden="true"
@@ -190,6 +198,45 @@ export function SharedReviewersComparison({
                       </div>
                     ))}
                   </dl>
+                  {input.analysisId && row.shared !== null && row.shared > 0 ? (
+                    <details
+                      open={expanded.includes(row.listingId)}
+                      className="min-w-0 border-t pt-4 sm:col-span-2 lg:col-span-4"
+                      onToggle={(event) => {
+                        const open = event.currentTarget.open;
+                        setExpanded((current) =>
+                          open
+                            ? current.includes(row.listingId)
+                              ? current
+                              : [...current, row.listingId]
+                            : current.filter((id) => id !== row.listingId),
+                        );
+                      }}
+                    >
+                      <summary className="cursor-pointer text-sm font-medium text-primary">
+                        {t("sharedEvidenceOpen", { count: row.shared })}
+                      </summary>
+                      {expanded.includes(row.listingId) ? (
+                        <SharedReviewerEvidence
+                          key={JSON.stringify([
+                            input,
+                            row.listingId,
+                            datasetKey,
+                          ])}
+                          input={{
+                            analysisId: input.analysisId,
+                            snapshotId: input.snapshotId,
+                            period: input.period,
+                            competitorId: row.listingId,
+                            offset: 0,
+                          }}
+                          primaryLabel={primary?.label ?? "—"}
+                          competitorLabel={property?.label ?? row.listingId}
+                          datasetKey={datasetKey}
+                        />
+                      ) : null}
+                    </details>
+                  ) : null}
                 </article>
               );
             })}
@@ -200,7 +247,7 @@ export function SharedReviewersComparison({
           {t("sharedNoMatches")}
         </p>
       )}
-      <details className="mt-5 rounded-lg border bg-card px-4 py-3">
+      <details className="mt-5 exoid-panel px-4 py-3">
         <summary className="cursor-pointer text-sm font-medium">
           {t("sharedMethod")}
         </summary>

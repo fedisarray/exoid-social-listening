@@ -1,3 +1,5 @@
+import { reportsIT } from "@/features/reports/locales/it";
+import { reportsEN } from "@/features/reports/locales/en";
 import { getRequestConfig } from "next-intl/server";
 import { cookies } from "next/headers";
 import { it } from "@/features/_shared/locales/it";
@@ -13,7 +15,17 @@ export default getRequestConfig(async () => {
     locale,
     messages:
       locale === "it"
-        ? { ...it, reviews: reviewsIT, properties: propertiesIT }
-        : { ...en, reviews: reviewsEN, properties: propertiesEN },
+        ? {
+            ...it,
+            reviews: reviewsIT,
+            properties: propertiesIT,
+            reports: reportsIT,
+          }
+        : {
+            ...en,
+            reviews: reviewsEN,
+            properties: propertiesEN,
+            reports: reportsEN,
+          },
   };
 });

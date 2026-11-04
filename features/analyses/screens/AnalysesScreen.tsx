@@ -65,24 +65,30 @@ export async function AnalysesScreen({ search = "" }: { search?: string }) {
             {t("analysisLibraryDescription")}
           </p>
         </div>
-        <Link href="/analyses/new" className={cn(buttonVariants())}>
+        <Link
+          data-slot="button"
+          data-variant="default"
+          data-size="default"
+          href="/analyses/new"
+          className={cn(buttonVariants())}
+        >
           <Plus className="size-4" />
           {t("newAnalysis")}
         </Link>
       </div>
       {analyses.length ? (
         <>
-          <div className="mt-9 flex flex-wrap items-end justify-between gap-4 border-b pb-5">
+          <div className="mt-8 flex flex-wrap items-end justify-between gap-4 exoid-panel px-4 py-3">
             <p className="font-medium">
               {t("analysisCount", { count: analyses.length })}
             </p>
           </div>
           {shown.length ? (
-            <div className="mt-5 space-y-4">
+            <div className="mt-5 space-y-3">
               {shown.map((analysis) => (
                 <article
                   key={analysis.id}
-                  className="rounded-xl border bg-card p-5 md:p-6"
+                  className="exoid-panel p-4 transition-colors hover:border-primary/30 sm:p-5"
                 >
                   <div className="flex flex-wrap items-start gap-4 md:gap-5">
                     <ListingThumbnail
@@ -141,7 +147,9 @@ export async function AnalysesScreen({ search = "" }: { search?: string }) {
                         name={analysis.name}
                         labels={{
                           delete: t("deleteAnalysis"),
-                          deleteNamed: t("deleteNamedAnalysis"),
+                          deleteNamed: t("deleteNamedAnalysis", {
+                            name: analysis.name,
+                          }),
                           confirmTitle: t("deleteAnalysisTitle"),
                           confirmDescription: t("deleteAnalysisDescription", {
                             name: analysis.name,
@@ -152,6 +160,9 @@ export async function AnalysesScreen({ search = "" }: { search?: string }) {
                         }}
                       />
                       <Link
+                        data-slot="button"
+                        data-variant="ghost"
+                        data-size="sm"
                         href={`/analyses/${analysis.id}/setup`}
                         className={cn(
                           buttonVariants({ variant: "ghost", size: "sm" }),
@@ -161,6 +172,9 @@ export async function AnalysesScreen({ search = "" }: { search?: string }) {
                         {t("editAnalysis")}
                       </Link>
                       <Link
+                        data-slot="button"
+                        data-variant="outline"
+                        data-size="sm"
                         href={`/analyses/${analysis.id}/dashboard`}
                         className={cn(
                           buttonVariants({ variant: "outline", size: "sm" }),
@@ -191,6 +205,9 @@ export async function AnalysesScreen({ search = "" }: { search?: string }) {
                 {t("noAnalysesMatchHint")}
               </p>
               <Link
+                data-slot="button"
+                data-variant="outline"
+                data-size="default"
                 href="/analyses"
                 className={cn(buttonVariants({ variant: "outline" }), "mt-5")}
               >
@@ -200,7 +217,7 @@ export async function AnalysesScreen({ search = "" }: { search?: string }) {
           )}
         </>
       ) : (
-        <div className="mt-10 rounded-xl border border-dashed bg-card px-6 py-16 text-center">
+        <div className="mt-10 exoid-panel border-dashed px-6 py-16 text-center">
           <Folders
             className="mx-auto size-10 text-muted-foreground"
             aria-hidden="true"
@@ -211,7 +228,13 @@ export async function AnalysesScreen({ search = "" }: { search?: string }) {
           <p className="mx-auto mt-3 max-w-md text-muted-foreground">
             {t("analysisEmptyDescription")}
           </p>
-          <Link href="/analyses/new" className={cn(buttonVariants(), "mt-6")}>
+          <Link
+            data-slot="button"
+            data-variant="default"
+            data-size="default"
+            href="/analyses/new"
+            className={cn(buttonVariants(), "mt-6")}
+          >
             {t("newAnalysis")}
           </Link>
         </div>
