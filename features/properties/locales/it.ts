@@ -53,8 +53,15 @@ export const propertiesIT = {
   emptyHint:
     "Apri “Aggiungi un luogo” qui sopra, cerca per nome e città e salva la scheda Google corretta.",
   back: "Tutti i luoghi",
+  defaultDates: "Date predefinite",
+  exploreDatesHint:
+    "Esplora le recensioni di questo luogo per date diverse. Ripristina per tornare al periodo predefinito.",
   collectionScope:
     "La raccolta riguarda questo luogo. Potrai riutilizzare le recensioni in qualsiasi confronto.",
+  selectedPlacesCount:
+    "{count, plural, one {# luogo selezionato} other {# luoghi selezionati}}",
+  loadingSaved: "Caricamento dei luoghi salvati…",
+  noSavedPlaces: "Salva un luogo per aggiungerlo al confronto.",
   chooseSaved: "Scegli tra i luoghi salvati",
   manage: "Cerca e salva un altro luogo",
   add: "Aggiungi un luogo",

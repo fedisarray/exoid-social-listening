@@ -7,7 +7,6 @@ import Link from "next/link";
 import {
   Building2,
   Trash2,
-  Plus,
   ArrowRight,
   LayoutGrid,
   Rows3,
@@ -155,14 +154,6 @@ export function PropertiesDashboard({
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {properties.length > 0 ? (
-                <Button asChild variant="outline">
-                  <Link href="/analyses/new">
-                    <Plus aria-hidden="true" />
-                    {t("compare")}
-                  </Link>
-                </Button>
-              ) : null}
               <ListingSearch
                 selected={properties.map((p) => p.listing.sourceId)}
                 onConfirm={async (listing) => {

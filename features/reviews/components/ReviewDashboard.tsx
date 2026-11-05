@@ -585,7 +585,11 @@ export function ReviewDashboardContent({
             <p className="mt-2">{t("refreshNote")}</p>
           </details>
         </>
-      ) : !query.isPending && !(input.analysisId && section === "trends") ? (
+      ) : !query.isPending &&
+        !(
+          input.analysisId &&
+          (section === "trends" || section === "overview")
+        ) ? (
         <div className="mt-6 rounded-xl border border-dashed p-7">
           <MessageSquare className="size-7 text-primary" />
           <h2 className="mt-4 text-xl font-medium">

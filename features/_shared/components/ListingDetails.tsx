@@ -17,7 +17,7 @@ export function ListingDetails({
   return (
     <div className="mt-2 space-y-2 text-sm text-muted-foreground">
       {listing.categories?.length ? (
-        <p className="break-words">
+        <p className="truncate" title={listing.categories.join(" · ")}>
           <span className="sr-only">{t("placeType")}: </span>
           {listing.categories.join(" · ")}
         </p>
@@ -25,14 +25,17 @@ export function ListingDetails({
       {showReviews ? (
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 tabular-nums">
           {listing.googleMapsRating !== undefined ? (
-            <span className="inline-flex items-center gap-1">
-              <Star className="size-3.5" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-rating/10 px-2 py-1 font-semibold text-rating">
+              <Star
+                className="size-4 shrink-0 fill-current"
+                aria-hidden="true"
+              />
               {t("mapsRating", {
                 rating: number.format(listing.googleMapsRating),
               })}
             </span>
           ) : null}
-          <span>
+          <span className="rounded-md bg-secondary px-2 py-1 font-semibold text-secondary-foreground">
             {listing.googleMapsReviews
               ? t("mapsReviewCount", {
                   count: number.format(listing.googleMapsReviews.count),

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import {
   useCallback,
   useEffect,
@@ -470,7 +471,7 @@ export function ComparisonAiWorkspace({
                 </p>
                 {selected ? (
                   <a
-                    className="text-sm font-medium text-primary underline underline-offset-4"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-primary underline underline-offset-4"
                     download
                     href={`/api/analyses/${analysisId}/ai/workbook?${new URLSearchParams(
                       {
@@ -484,6 +485,13 @@ export function ComparisonAiWorkspace({
                       },
                     )}`}
                   >
+                    <Image
+                      src="/icons/excel.svg"
+                      alt=""
+                      width={16}
+                      height={16}
+                      aria-hidden="true"
+                    />
                     {copy("downloadWorkbook")}
                   </a>
                 ) : null}
@@ -527,11 +535,15 @@ export function ComparisonAiWorkspace({
               : copy("chatNoSnapshot")}
           </p>
         </header>
-        <MessageScrollerProvider key={selectedImport} autoScroll>
+        <MessageScrollerProvider
+          key={selectedImport}
+          autoScroll
+          defaultScrollPosition="end"
+        >
           <MessageScroller className="flex-1 bg-background">
             <MessageScrollerViewport aria-label={copy("chat")} tabIndex={0}>
               <MessageScrollerContent
-                className="mx-auto w-full gap-6 px-3 py-4 sm:px-4 lg:w-3/5"
+                className="mx-auto w-full justify-end gap-6 px-3 py-4 sm:px-4 lg:w-3/5"
                 aria-live="polite"
               >
                 {selected?.kind !== "review_rows" ? (

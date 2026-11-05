@@ -204,14 +204,14 @@ export function buildDetailedPowerPoint(
         0.943,
         0.8,
         0.025,
-        `${t.draft} · ${period.start} – ${period.end} · Google · v${data.snapshot.version}`,
+        `${period.start} – ${period.end} · Google · v${data.snapshot.version}`,
         8,
       ) + box(0.93, 0.943, 0.04, 0.025, String(number), 8);
     files[name] = strToU8(
       cover
         ? body.replace(
             "</p:spTree>",
-            `${box(0.04, 0.92, 0.65, 0.045, `${t.draft} · ${period.start} – ${period.end} · v${data.snapshot.version}`, 10, "003D30", true).replace("<a:noFill/>", '<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>')}</p:spTree>`,
+            `${box(0.04, 0.92, 0.65, 0.045, `${period.start} – ${period.end} · v${data.snapshot.version}`, 10, "003D30", true).replace("<a:noFill/>", '<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>')}</p:spTree>`,
           )
         : `<p:sld xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:a="${drawing}" xmlns:r="${office}"><p:cSld>${style.match(/<p:bg\b[\s\S]*?<\/p:bg>/)?.[0] ?? ""}<p:spTree>${withBanner ? chrome : plainChrome}${body}${footer}</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>`,
     );

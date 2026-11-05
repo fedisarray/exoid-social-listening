@@ -55,6 +55,13 @@ export const propertiesEN = {
   back: "All places",
   collectionScope:
     "This collects reviews for this place. You can reuse them in any comparison.",
+  defaultDates: "Default dates",
+  exploreDatesHint:
+    "Explore this place’s reviews for different dates. Reset to return to the default period.",
+  selectedPlacesCount:
+    "{count, plural, one {# place selected} other {# places selected}}",
+  loadingSaved: "Loading saved places…",
+  noSavedPlaces: "Save a place first to add it to your comparison.",
   chooseSaved: "Choose from your saved places",
   manage: "Find and save another place",
   add: "Add a place",

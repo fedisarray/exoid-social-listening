@@ -57,7 +57,7 @@ export function powerPointBrief(
   };
   return [
     `Create a PowerPoint in ${locale === "it" ? "Italian" : "English"} using the supplied organization template. Preserve its branding and chart layouts.`,
-    `Every slide must be visibly marked “${t.draft}”. ${t.draftHint}`,
+    t.draftHint,
     `Use a cover, index, Key Learnings as the first content section, ${workbook.sheets.length} chart pages in chartPages order, Shared Visitors L12M, then sources and methodology. The Key Learnings must be grounded in the supplied metrics; never copy template sample conclusions. Preserve the chart page layout and branding.`,
     "The chartPages are produced by the SAME deterministic report builder as the configured Excel export. Use exactly their row/column labels, series order, periods, values, notes and sample sizes. Do not merge, substitute or reinterpret charts. For numberFormat 0.0%, numeric cells are fractions: 0.85 displays as 85.0%; do not multiply the displayed percentage twice. Numeric null is unavailable, never zero. Other share fields are already percentages. Preserve counts exactly. Use editable text and native editable PowerPoint charts with embedded data. Each chart states measure, unit, dates, source and denominator.",
     "The Shared Visitors page must use ONLY sharedVisitors.rows from its explicit L12M dates, never selected-period overlap. Show shared counts and both primaryShare and competitorShare, with their primaryReviewers and competitorReviewers denominators clearly distinguished. The source measures identifiable reviewers, not physical visitor footfall. If sharedVisitors.available is false, retain the page with the unavailable-data explanation and no numeric overlap claims.",

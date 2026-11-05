@@ -3,25 +3,15 @@ import { WorkspaceHeader } from "@/features/_shared/components/WorkspaceHeader";
 import Link from "next/link";
 import { useSearchParams, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import {
-  SlidersHorizontal,
-  CalendarRange,
-  ChevronDown,
-  FileDown,
-} from "lucide-react";
+import { SlidersHorizontal, FileDown } from "lucide-react";
 import { ComparisonSyncControl } from "@/features/reviews/components/ComparisonSyncControl";
 import { useReviewDashboard } from "@/features/reviews/hooks/useReviewDashboard";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { dashboardPeriod } from "../domain/dashboardPeriod";
 import { ReviewDashboardContent } from "@/features/reviews/components/ReviewDashboard";
 import type { GetReviewDashboardInput } from "@/features/reviews/schemas/getReviewDashboardInput";
 import type { ReviewDashboard as ReviewData } from "@/features/reviews/schemas/getReviewDashboardOutput";
 import type { AnalysisDetail } from "../schemas/analysisDetail";
-import { PeriodFields } from "../components/PeriodFields";
+import { ReviewPeriodPicker } from "@/features/reviews/components/ReviewPeriodPicker";
 import { Choice } from "@/features/_shared/components/Choice";
 import { ListingThumbnail } from "@/features/_shared/components/ListingThumbnail";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -88,68 +78,41 @@ export function AnalysisDashboard({
     <>
       <h1 className="sr-only">{analysis.name}</h1>
       <WorkspaceHeader>
-        <div className="flex min-w-0 flex-wrap items-center gap-3">
-          <span className="text-sm font-medium">{t("periodFilters")}</span>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                className="h-auto min-h-10 max-w-full justify-start py-2 text-left whitespace-normal"
-              >
-                <CalendarRange className="size-4" aria-hidden="true" />
-                <span className="sr-only">{t("periodFilters")}: </span>
-                {range(period.start, period.end)}
-                <ChevronDown className="size-4" aria-hidden="true" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              align="end"
-              sideOffset={8}
-              collisionPadding={20}
-              className="max-h-[var(--radix-popover-content-available-height)] w-[min(40rem,calc(100vw-2.5rem))] overflow-y-auto p-5"
-            >
-              <div className="grid gap-6 sm:grid-cols-2">
-                <PeriodFields
-                  value={period}
-                  onChange={(value) =>
-                    update(
-                      Object.fromEntries(
-                        Object.entries(value).map(([key, value]) => [
-                          key,
-                          String(value),
-                        ]),
-                      ),
-                    )
-                  }
-                />
-                <div>
-                  <h2 className="text-sm font-medium">{t("savedScope")}</h2>
-                  <p className="mt-2 text-sm tabular-nums">
-                    {range(saved.start, saved.end)}
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    {t("exploreHint")}
-                  </p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="mt-4"
-                    onClick={() =>
-                      window.history.replaceState(
-                        null,
-                        "",
-                        `${path}?section=${section}`,
-                      )
-                    }
-                  >
-                    {t("reset")}
-                  </Button>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
+        <ReviewPeriodPicker
+          period={period}
+          onChange={(value) =>
+            update(
+              Object.fromEntries(
+                Object.entries(value).map(([key, value]) => [
+                  key,
+                  String(value),
+                ]),
+              ),
+            )
+          }
+        >
+          <h2 className="text-sm font-medium">{t("savedScope")}</h2>
+          <p className="mt-2 text-sm tabular-nums">
+            {range(saved.start, saved.end)}
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            {t("exploreHint")}
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-4"
+            onClick={() =>
+              window.history.replaceState(
+                null,
+                "",
+                `${path}?section=${section}`,
+              )
+            }
+          >
+            {t("reset")}
+          </Button>
+        </ReviewPeriodPicker>
         <div className="w-full sm:w-52">
           <Choice
             label={t("role")}

@@ -5,7 +5,6 @@ import { reviewExcelOptionsSchema } from "@/features/reviews/schemas/reviewExcel
 import { useLocale, useTranslations } from "next-intl";
 import { CircleAlert, Download, LoaderCircle, RotateCw } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { Period } from "@/features/_shared/schemas/period";
 import type {
@@ -141,7 +140,6 @@ export function ComparisonReports({
             >
               {t("title")}
             </h2>
-            <Badge variant="outline">{t("draft")}</Badge>
           </div>
           {!embedded ? (
             <>

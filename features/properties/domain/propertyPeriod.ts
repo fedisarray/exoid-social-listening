@@ -1,7 +1,8 @@
 import type { Period } from "@/features/_shared/schemas/period";
+import { lastCompleteDate } from "@/features/_shared/domain/period";
 export function propertyPeriod(): Period {
   const now = new Date();
-  const end = now.toISOString().slice(0, 10);
+  const end = lastCompleteDate(now);
   return {
     kind: "custom",
     year: now.getUTCFullYear(),

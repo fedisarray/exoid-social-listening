@@ -126,9 +126,11 @@ export const reviewsEN = {
     "Historical charts need full date coverage: whole calendar years, the complete quarter, or the last 12 complete months. Completed coverage is reused. Today and future dates remain incomplete.",
   syncAllPlaces:
     "All {count} comparison places are included, regardless of the displayed group.",
-  syncInvalidDates: "Enter valid dates with the start on or before the end.",
+  syncInvalidDates:
+    "Choose dates before today, with the start on or before the end.",
   syncStart: "Collect missing reviews",
   syncCovered: "Dates already covered",
+  syncDone: "Done",
   syncFrozen:
     "This saved dataset is frozen. Return to live data to collect missing reviews.",
   syncReturnLive: "Return to live data",

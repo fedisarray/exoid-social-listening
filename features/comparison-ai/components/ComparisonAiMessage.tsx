@@ -7,6 +7,7 @@ import { Message, MessageContent } from "@/components/ui/message";
 import type { ComparisonAiWorkspace } from "../schemas/workspace";
 import { comparisonAiEN } from "../locales/en";
 import { ComparisonAiVisualization } from "./ComparisonAiVisualization";
+import { ComparisonAiMarkdown } from "./ComparisonAiMarkdown";
 
 export function ComparisonAiMessage({
   message,
@@ -30,8 +31,12 @@ export function ComparisonAiMessage({
           variant={message.role === "user" ? "muted" : "ghost"}
           align={message.role === "user" ? "end" : "start"}
         >
-          <BubbleContent className="leading-relaxed whitespace-pre-wrap">
-            {message.content}
+          <BubbleContent className="leading-relaxed">
+            {message.role === "user" ? (
+              <p className="whitespace-pre-wrap">{message.content}</p>
+            ) : (
+              <ComparisonAiMarkdown content={message.content} />
+            )}
           </BubbleContent>
         </Bubble>
         {message.id === "pending-assistant" ? (

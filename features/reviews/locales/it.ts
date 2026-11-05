@@ -126,9 +126,10 @@ export const reviewsIT = {
   syncAllPlaces:
     "Sono inclusi tutti i {count} luoghi del confronto, indipendentemente dal gruppo visualizzato.",
   syncInvalidDates:
-    "Inserisci date valide con la data iniziale precedente o uguale a quella finale.",
+    "Scegli date precedenti a oggi, con la data iniziale precedente o uguale a quella finale.",
   syncStart: "Raccogli recensioni mancanti",
   syncCovered: "Date già coperte",
+  syncDone: "Fatto",
   syncFrozen:
     "Questo dataset salvato è immutabile. Torna ai dati aggiornati per raccogliere le recensioni mancanti.",
   syncReturnLive: "Torna ai dati aggiornati",

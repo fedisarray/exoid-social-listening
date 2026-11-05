@@ -139,8 +139,6 @@ export const en = {
     additionalOwn: "Another place you manage",
     competitor: "Competitor",
     anchor: "Key store or tenant",
-    noProperties:
-      "Choose your main place from the saved list above. Add competitors if you want to compare them.",
     moveUp: "Move up",
     moveDown: "Move down",
     remove: "Remove place",
@@ -191,7 +189,7 @@ export const en = {
     placeType: "Place type",
     placeWebsite: "Website",
     mapsRating: "Google rating {rating}/5",
-    mapsReviewCount: "{count} Google reviews",
+    mapsReviewCount: "{count} reviews",
     mapsReviewCountUnavailable: "Google review count unavailable",
     discoveryProgress:
       "Searching Google Maps. You can leave this page and return later; your results will be waiting here.",
@@ -256,7 +254,7 @@ export const en = {
     searchByLinkHint:
       "Paste the link to search directly. You can leave name and city blank.",
     setupName: "1. Name your comparison",
-    setupPlaces: "2. Choose your places",
+    setupPlaces: "Choose your places",
     setupDates: "3. Choose the dates",
     setupRolesHint:
       "The first place is your main place. Additional places are competitors by default; change their role if needed.",

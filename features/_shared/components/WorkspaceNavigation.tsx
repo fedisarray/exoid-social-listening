@@ -31,14 +31,20 @@ export function WorkspaceNavigation() {
   const pathname = usePathname();
   const search = useSearchParams();
   const { setOpenMobile } = useSidebar();
+  const isPropertyDashboard = /^\/properties\/[^/]+$/.test(pathname);
   const isComparisonDashboard = /^\/analyses\/[^/]+\/dashboard$/.test(pathname);
-  const sections = [
-    { value: "overview", label: "overview", icon: LayoutDashboard },
-    { value: "trends", label: "trends", icon: ChartLine },
-    { value: "shared", label: "sharedSection", icon: Users },
-    { value: "evidence", label: "evidenceSection", icon: MessageSquareText },
-    { value: "ai", label: "aiAnalysis", icon: Sparkles },
-  ] as const;
+  const sections = (
+    [
+      { value: "overview", label: "overview", icon: LayoutDashboard },
+      { value: "trends", label: "trends", icon: ChartLine },
+      { value: "shared", label: "sharedSection", icon: Users },
+      { value: "evidence", label: "evidenceSection", icon: MessageSquareText },
+      { value: "ai", label: "aiAnalysis", icon: Sparkles },
+    ] as const
+  ).filter(
+    ({ value }) =>
+      !isPropertyDashboard || (value !== "shared" && value !== "ai"),
+  );
   const requestedSection = search.get("section");
   const section = sections.some(({ value }) => value === requestedSection)
     ? requestedSection
@@ -75,7 +81,8 @@ export function WorkspaceNavigation() {
                       <span>{t(label)}</span>
                     </Link>
                   </SidebarMenuButton>
-                  {href === "/analyses" && isComparisonDashboard ? (
+                  {(href === "/properties" && isPropertyDashboard) ||
+                  (href === "/analyses" && isComparisonDashboard) ? (
                     <SidebarMenuSub>
                       {sections.map(({ value, label, icon: Icon }) => {
                         const next = new URLSearchParams(search.toString());

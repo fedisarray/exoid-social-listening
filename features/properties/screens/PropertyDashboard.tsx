@@ -1,15 +1,8 @@
 "use client";
 import { WorkspaceHeader } from "@/features/_shared/components/WorkspaceHeader";
 import Link from "next/link";
-import { useRef, useState, type MouseEvent } from "react";
-import {
-  ArrowLeft,
-  CalendarDays,
-  ChevronDown,
-  MapPin,
-  ExternalLink,
-  Download,
-} from "lucide-react";
+import { useRef, type MouseEvent } from "react";
+import { ArrowLeft, MapPin, ExternalLink, Download } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Property } from "../schemas/property";
@@ -17,17 +10,11 @@ import type { Period } from "@/features/_shared/schemas/period";
 import type { GetReviewDashboardInput } from "@/features/reviews/schemas/getReviewDashboardInput";
 import type { ReviewDashboard as ReviewData } from "@/features/reviews/schemas/getReviewDashboardOutput";
 import { ReviewDashboard } from "@/features/reviews/components/ReviewDashboard";
-import { PeriodFields } from "@/features/analyses/components/PeriodFields";
+import { ReviewPeriodPicker } from "@/features/reviews/components/ReviewPeriodPicker";
 import { dashboardPeriod } from "@/features/analyses/domain/dashboardPeriod";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
 import { ListingThumbnail } from "@/features/_shared/components/ListingThumbnail";
 import { ListingDetails } from "@/features/_shared/components/ListingDetails";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 export function PropertyDashboard({
   property,
   defaultPeriod,
@@ -40,7 +27,6 @@ export function PropertyDashboard({
   const t = useTranslations("properties");
   const app = useTranslations("app");
   const locale = useLocale();
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const collectionTrigger = useRef<HTMLElement | null>(null);
   function openCollection(event: MouseEvent<HTMLButtonElement>) {
     collectionTrigger.current = event.currentTarget;
@@ -71,7 +57,7 @@ export function PropertyDashboard({
     year: "numeric",
     timeZone: "UTC",
   });
-  const dateRange = `${dateFormat.format(new Date(`${period.start}T00:00:00Z`))} – ${dateFormat.format(new Date(`${period.end}T00:00:00Z`))}`;
+  const defaultDateRange = `${dateFormat.format(new Date(`${defaultPeriod.start}T00:00:00Z`))} – ${dateFormat.format(new Date(`${defaultPeriod.end}T00:00:00Z`))}`;
   function update(patch: Record<string, string>) {
     const params = new URLSearchParams(search.toString());
     for (const [k, v] of Object.entries(patch)) {
@@ -172,132 +158,82 @@ export function PropertyDashboard({
           </div>
         </header>
       )}
-      <Tabs
-        value={section}
-        onValueChange={(value) => update({ section: value })}
-        className="mt-5"
-      >
-        <TabsList className="h-auto w-full justify-start overflow-x-auto border bg-card p-1">
-          {Object.keys(sectionLabels).map((value) => (
-            <TabsTrigger key={value} value={value} className="flex-1 py-2">
-              {t(
-                value === "evidence"
-                  ? "reviewsTab"
-                  : value === "trends"
-                    ? "trendsTab"
-                    : "overviewTab",
-              )}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <div className="mt-4 flex flex-col gap-4">
-          <WorkspaceHeader>
-            <div className="flex min-w-0 items-center gap-3">
-              <CalendarDays
-                className="hidden size-5 shrink-0 text-primary sm:block"
-                aria-hidden="true"
-              />
-              <div className="min-w-0">
-                <p className="text-xs text-muted-foreground">
-                  {app("dateScope")}
-                </p>
-                <p className="mt-1 text-sm font-medium tabular-nums">
-                  {dateRange}
-                </p>
-              </div>
-            </div>
-            <Popover open={filtersOpen} onOpenChange={setFiltersOpen}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="shrink-0" type="button">
-                  {app("explore")}
-                  <ChevronDown aria-hidden="true" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                align="end"
-                sideOffset={8}
-                collisionPadding={20}
-                className="max-h-[var(--radix-popover-content-available-height)] w-[min(30rem,calc(100vw-2.5rem))] overflow-y-auto p-5"
-              >
-                <PeriodFields
-                  value={period}
-                  onChange={(value) =>
-                    update(
-                      Object.fromEntries(
-                        Object.entries(value).map(([k, v]) => [k, String(v)]),
-                      ),
-                    )
-                  }
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="mt-4 w-full"
-                  onClick={() =>
-                    router.replace(`${path}?section=${section}`, {
-                      scroll: false,
-                    })
-                  }
-                >
-                  {app("reset")}
-                </Button>
-                <Button
-                  className="mt-5 w-full"
-                  type="button"
-                  onClick={() => setFiltersOpen(false)}
-                >
-                  {t("done")}
-                </Button>
-              </PopoverContent>
-            </Popover>
-          </WorkspaceHeader>
-          <TabsContent value={section} className="min-w-0">
-            <h2 className="sr-only">
-              {app(sectionLabels[section as keyof typeof sectionLabels])}
-            </h2>
-            <ReviewDashboard
-              section={section}
-              onCollect={openCollection}
-              collectionDialog={{
-                open: collectionOpen,
-                onOpenChange: (open) =>
-                  update({ collect: open ? "1" : "", section }),
-                onPeriodChange: (value) =>
-                  update(
-                    Object.fromEntries(
-                      Object.entries(value).map(([key, value]) => [
-                        key,
-                        String(value),
-                      ]),
-                    ),
-                  ),
-                onCloseAutoFocus: () =>
-                  collectionTrigger.current?.focus({ preventScroll: true }),
-              }}
-              input={{
-                propertyId: property.id,
-                period,
-                ...(search.get("snapshot")
-                  ? { snapshotId: search.get("snapshot")! }
-                  : {}),
-              }}
-              initial={initial}
-              version={1}
-              listings={[
-                {
-                  ...property.listing,
-                  label: property.listing.name,
-                  role: "primary",
-                },
-              ]}
-              role="all"
-              onSnapshot={(id) =>
-                update({ snapshot: id === "latest" ? "" : id })
+      <div className="mt-5 flex flex-col gap-4">
+        <WorkspaceHeader>
+          <ReviewPeriodPicker
+            period={period}
+            onChange={(value) =>
+              update(
+                Object.fromEntries(
+                  Object.entries(value).map(([key, value]) => [
+                    key,
+                    String(value),
+                  ]),
+                ),
+              )
+            }
+          >
+            <h2 className="text-sm font-medium">{t("defaultDates")}</h2>
+            <p className="mt-2 text-sm tabular-nums">{defaultDateRange}</p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              {t("exploreDatesHint")}
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-4"
+              onClick={() =>
+                router.replace(`${path}?section=${section}`, { scroll: false })
               }
-            />
-          </TabsContent>
-        </div>
-      </Tabs>
+            >
+              {app("reset")}
+            </Button>
+          </ReviewPeriodPicker>
+        </WorkspaceHeader>
+        <section className="min-w-0">
+          <h2 className="sr-only">
+            {app(sectionLabels[section as keyof typeof sectionLabels])}
+          </h2>
+          <ReviewDashboard
+            section={section}
+            onCollect={openCollection}
+            collectionDialog={{
+              open: collectionOpen,
+              onOpenChange: (open) =>
+                update({ collect: open ? "1" : "", section }),
+              onPeriodChange: (value) =>
+                update(
+                  Object.fromEntries(
+                    Object.entries(value).map(([key, value]) => [
+                      key,
+                      String(value),
+                    ]),
+                  ),
+                ),
+              onCloseAutoFocus: () =>
+                collectionTrigger.current?.focus({ preventScroll: true }),
+            }}
+            input={{
+              propertyId: property.id,
+              period,
+              ...(search.get("snapshot")
+                ? { snapshotId: search.get("snapshot")! }
+                : {}),
+            }}
+            initial={initial}
+            version={1}
+            listings={[
+              {
+                ...property.listing,
+                label: property.listing.name,
+                role: "primary",
+              },
+            ]}
+            role="all"
+            onSnapshot={(id) => update({ snapshot: id === "latest" ? "" : id })}
+          />
+        </section>
+      </div>
     </>
   );
 }

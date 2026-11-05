@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { sourceStatusSchema } from "../schemas/collection";
 import type { ReviewCoverage as Coverage } from "../schemas/reviewCoverage";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 export function ReviewCoverage({
   coverage,
   ready,
@@ -11,6 +12,7 @@ export function ReviewCoverage({
   pending,
   error,
   onRetry,
+  className,
 }: {
   coverage: Coverage[];
   ready: boolean;
@@ -18,10 +20,14 @@ export function ReviewCoverage({
   pending: boolean;
   error: boolean;
   onRetry?: () => void;
+  className?: string;
 }) {
   const t = useTranslations("reviews");
   return (
-    <section className="mt-5 exoid-panel p-5" aria-live="polite">
+    <section
+      className={cn("mt-5 exoid-panel p-5", className)}
+      aria-live="polite"
+    >
       <h3 className="font-semibold">{t("coverageTitle")}</h3>
       <p className="mt-2 text-sm text-muted-foreground">
         {t(frozen ? "frozenCoverageHint" : "manualCoverageHint")}

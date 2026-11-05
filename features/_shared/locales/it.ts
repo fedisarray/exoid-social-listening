@@ -143,8 +143,6 @@ export const it = {
     additionalOwn: "Altro luogo che gestisci",
     competitor: "Concorrente",
     anchor: "Negozio o attività di riferimento",
-    noProperties:
-      "Scegli il luogo principale dall’elenco qui sopra. Aggiungi altri luoghi se vuoi confrontarli.",
     moveUp: "Sposta su",
     moveDown: "Sposta giù",
     remove: "Rimuovi luogo",
@@ -195,7 +193,7 @@ export const it = {
     placeType: "Tipo di luogo",
     placeWebsite: "Sito web",
     mapsRating: "Voto Google {rating}/5",
-    mapsReviewCount: "{count} recensioni Google",
+    mapsReviewCount: "{count} recensioni",
     mapsReviewCountUnavailable: "Numero di recensioni Google non disponibile",
     discoveryProgress:
       "Ricerca su Google Maps in corso. Puoi lasciare la pagina e tornare più tardi: ritroverai qui i risultati.",
@@ -262,7 +260,7 @@ export const it = {
     searchByLinkHint:
       "Incolla il link per cercare direttamente. Puoi lasciare nome e città vuoti.",
     setupName: "1. Dai un nome al confronto",
-    setupPlaces: "2. Scegli i luoghi",
+    setupPlaces: "Scegli i luoghi",
     setupDates: "3. Scegli le date",
     setupRolesHint:
       "Il primo luogo è quello principale. Gli altri vengono aggiunti come concorrenti: puoi cambiare il loro ruolo.",
