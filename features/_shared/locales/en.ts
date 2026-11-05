@@ -1,5 +1,7 @@
 export const en = {
   app: {
+    metadataDescription:
+      "Private workspace for analyzing reviews, comparing properties and creating reports.",
     organizationRequiredTitle: "Organization access required",
     organizationRequiredDescription:
       "Ask your organization owner or administrator to add your account to the workspace.",
@@ -65,12 +67,16 @@ export const en = {
     sectionShared:
       "Inspect shared source identities across your comparison set.",
     sectionEvidence: "Read the original reviews behind the numbers.",
+    aiAnalysis: "AI analysis",
+    sectionAi: "AI review analysis",
+    sectionAiDescription:
+      "Interrogate an imported review snapshot for exact evidence, themes, sentiment, and visuals.",
     collectionLink: "Go to review collection",
     setupSection: "Edit comparison",
     workspaceHint:
       "Open a saved place to read its reviews, or create a comparison.",
 
-    brand: "Exoid Reviews",
+    brand: "Exoid social listening",
     workspace: "Understand your customer reviews",
     analyses: "Analyses",
     newAnalysis: "New comparison",
@@ -80,9 +86,13 @@ export const en = {
     language: "Language",
     toggleTheme: "Toggle light or dark theme",
     privateWorkspace: "Your private workspace",
-    loginTitle: "Understand every property.",
+    loginTitle: "Every review is a voice. Hear the bigger picture.",
     loginDescription:
-      "Sign in to build your comparison set and prepare your next review analysis.",
+      "Bring customer reviews together, discover recurring themes, and understand how sentiment changes across your places.",
+    loginFlowLabel: "From reviews to insight",
+    loginReviews: "Reviews",
+    loginThemes: "Themes",
+    loginSentiment: "Sentiment",
     email: "Email",
     signIn: "Sign in",
     signingIn: "Signing in…",

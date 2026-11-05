@@ -19,6 +19,8 @@ export const reviewsEN = {
     "0–20 years. Zero keeps the last-12-month and selected-period rows only.",
   exportCharts: "Include editable Excel charts",
   exportSummary: "Download summary",
+  exportSharedScope:
+    "New Excel and PowerPoint exports use the period, review dataset, and places selected here.",
   exportReset: "Reset configuration",
   exportNewDataset: "Create a frozen copy from collected reviews",
   exportFrozenHint:
@@ -236,7 +238,10 @@ export const reviewsEN = {
   identityCoverage: "Reviews with reviewer IDs",
   sharedComparisonHint:
     "Reviewers who also reviewed {primary}, using Google reviews from the selected dates.",
-  sharedEvidenceOpen: "Read reviews from {count} shared reviewers",
+  sharedEvidenceOpen: "View reviews ({count})",
+  sharedEvidenceTitle: "Shared reviews",
+  sharedEvidenceClose: "Close shared reviews",
+  sharedEvidenceMethod: "About these reviews",
   sharedEvidenceNote:
     "Latest review per reviewer at each place within the selected dates, ordered by most recent publication. Google source IDs identify reviewers; names are not collected. Rating differences are primary minus competitor. Dates are in UTC; the interval between publications does not imply a visit or journey.",
   sharedReviewerId: "Reviewer · {id}",
@@ -254,6 +259,7 @@ export const reviewsEN = {
   sharedEvidencePagination: "Shared reviewer pages",
   sharedEvidencePrevious: "Previous reviewers",
   sharedEvidenceNext: "Next reviewers",
+  sharedGapShort: "Rating gap",
   sharedCount: "Shared reviewers",
   sharedDirection: "Share of each place’s identified reviewers",
   sharedRatings: "Ratings by shared reviewers",

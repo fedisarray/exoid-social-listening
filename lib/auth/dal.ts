@@ -56,8 +56,17 @@ export async function requireCollectionWorker(authorization: string | null) {
 export async function requireReportWorker(authorization: string | null) {
   return requireInternalWorker(authorization, process.env.REPORT_WORKER_SECRET);
 }
+export async function requireComparisonAiWorker(authorization: string | null) {
+  return requireInternalWorker(
+    authorization,
+    process.env.COMPARISON_AI_WORKER_SECRET,
+  );
+}
 export type ReportWorkerContext = NonNullable<
   Awaited<ReturnType<typeof requireReportWorker>>
+>;
+export type ComparisonAiWorkerContext = NonNullable<
+  Awaited<ReturnType<typeof requireComparisonAiWorker>>
 >;
 export type CollectionWorkerContext = NonNullable<
   Awaited<ReturnType<typeof requireCollectionWorker>>

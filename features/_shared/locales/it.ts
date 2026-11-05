@@ -1,5 +1,7 @@
 export const it = {
   app: {
+    metadataDescription:
+      "Spazio di lavoro privato per analizzare recensioni, confrontare proprietà e creare report.",
     organizationRequiredTitle: "È necessario l’accesso a un’organizzazione",
     organizationRequiredDescription:
       "Chiedi al proprietario o a un amministratore della tua organizzazione di aggiungere il tuo account allo spazio di lavoro.",
@@ -68,12 +70,16 @@ export const it = {
     sectionShared:
       "Esamina le identità condivise tra le proprietà del confronto.",
     sectionEvidence: "Leggi le recensioni originali alla base dei numeri.",
+    aiAnalysis: "Analisi AI",
+    sectionAi: "Analisi AI delle recensioni",
+    sectionAiDescription:
+      "Esamina uno snapshot importato con prove testuali, temi, sentiment e visualizzazioni.",
     collectionLink: "Vai alla raccolta recensioni",
     setupSection: "Modifica confronto",
     workspaceHint:
       "Apri un luogo salvato per leggere le recensioni oppure crea un confronto.",
 
-    brand: "Exoid Reviews",
+    brand: "Exoid social listening",
     workspace: "Comprendi le recensioni dei clienti",
     analyses: "Analisi",
     newAnalysis: "Nuovo confronto",
@@ -83,9 +89,13 @@ export const it = {
     language: "Lingua",
     toggleTheme: "Cambia tema chiaro o scuro",
     privateWorkspace: "Il tuo spazio privato",
-    loginTitle: "Comprendi ogni proprietà.",
+    loginTitle: "Ogni recensione è una voce. Ascolta il quadro d’insieme.",
     loginDescription:
-      "Accedi per scegliere i confronti e preparare la prossima analisi delle recensioni.",
+      "Riunisci le recensioni dei clienti, scopri i temi ricorrenti e comprendi come cambia il sentiment nei tuoi luoghi.",
+    loginFlowLabel: "Dalle recensioni agli insight",
+    loginReviews: "Recensioni",
+    loginThemes: "Temi",
+    loginSentiment: "Sentiment",
     email: "Email",
     signIn: "Accedi",
     signingIn: "Accesso in corso…",

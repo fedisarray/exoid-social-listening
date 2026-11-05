@@ -11,7 +11,8 @@ const relationships =
 const chartNamespace = "http://schemas.openxmlformats.org/drawingml/2006/chart";
 const drawingNamespace =
   "http://schemas.openxmlformats.org/drawingml/2006/main";
-const colors = ["2459D3", "0F766E", "8B5CB5", "D58A24", "52667F", "B34D65"];
+// Match the chart tokens in app/globals.css; exports add a sixth blue series.
+const colors = ["4F5BFC", "222AA0", "1770CF", "162C69", "3E91EA", "4053B5"];
 
 function xml(value: string): string {
   return value

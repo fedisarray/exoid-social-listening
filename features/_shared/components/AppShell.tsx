@@ -17,7 +17,6 @@ import { signOut } from "@/features/auth/actions/signOut";
 import { WorkspaceNavigation } from "./WorkspaceNavigation";
 import { WorkspaceHeaderProvider } from "./WorkspaceHeader";
 import { WorkspaceHelp } from "./WorkspaceHelp";
-import { WorkspaceBackdrop } from "./WorkspaceBackdrop";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export async function AppShell({
@@ -30,7 +29,6 @@ export async function AppShell({
   const t = await getTranslations("app");
   return (
     <SidebarProvider className="exoid-shell relative isolate h-dvh min-h-0 overflow-hidden">
-      <WorkspaceBackdrop className="opacity-60" />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-card focus:p-3"
@@ -104,7 +102,7 @@ export async function AppShell({
           <div
             id="main-content"
             tabIndex={-1}
-            className="relative z-10 mx-auto w-full max-w-screen-2xl p-4 outline-none sm:p-6 lg:p-8"
+            className="relative z-10 mx-auto w-full max-w-screen-2xl p-4 outline-none has-[.comparison-ai-section]:flex has-[.comparison-ai-section]:min-h-0 has-[.comparison-ai-section]:max-w-none has-[.comparison-ai-section]:flex-1 has-[.comparison-ai-section]:flex-col has-[.comparison-ai-section]:overflow-hidden has-[.comparison-ai-section]:p-0 has-[.comparison-ai-section]:[&>a]:shrink-0 has-[.comparison-ai-section]:[&>nav]:shrink-0 sm:p-6 sm:has-[.comparison-ai-section]:p-0 lg:p-8 lg:has-[.comparison-ai-section]:p-0"
           >
             {children}
           </div>

@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { ReviewCoverage } from "./ReviewCoverage";
 import { PropertyTrends } from "./PropertyTrends";
-import { ReviewIndicators } from "./ReviewIndicators";
 import { ComparisonTrends } from "./ComparisonTrends";
 import { SharedReviewersComparison } from "./SharedReviewersComparison";
 import { useReviewDashboard } from "../hooks/useReviewDashboard";
@@ -407,9 +406,6 @@ export function ReviewDashboardContent({
             currentVersion: version,
           })}
         </p>
-      ) : null}
-      {data && (section === "all" || section === "overview") ? (
-        <ReviewIndicators data={data} role={role} />
       ) : null}
       <div hidden={section !== "all" && section !== "overview"}>
         {input.analysisId ? (

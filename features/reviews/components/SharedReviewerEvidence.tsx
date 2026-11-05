@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ExternalLink, Star } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSharedReviewerEvidence } from "../hooks/useSharedReviewerEvidence";
 import type { GetSharedReviewerEvidenceInput } from "../schemas/getSharedReviewerEvidenceInput";
 import type { SharedReviewerEvidence as Evidence } from "../schemas/getSharedReviewerEvidenceOutput";
+import { SharedReviewRating } from "./SharedReviewRating";
 import { cn } from "@/lib/utils";
 
 function ReviewEvidence({
@@ -24,12 +25,7 @@ function ReviewEvidence({
     <section className="min-w-0">
       <h5 className="text-sm font-semibold break-words">{label}</h5>
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-        <span className="inline-flex items-center gap-1 font-medium text-foreground">
-          <Star className="size-3.5" aria-hidden="true" />
-          {review.rating === null
-            ? t("unavailable")
-            : `${new Intl.NumberFormat(locale).format(review.rating)} / 5`}
-        </span>
+        <SharedReviewRating rating={review.rating} />
         <time dateTime={review.publishedAt}>
           {new Intl.DateTimeFormat(locale, {
             day: "numeric",
@@ -87,9 +83,14 @@ export function SharedReviewerEvidence({
   const evidence = query.data;
   return (
     <div className="mt-4" aria-busy={query.isFetching}>
-      <p className="max-w-prose text-xs leading-relaxed text-muted-foreground">
-        {t("sharedEvidenceNote")}
-      </p>
+      <details className="text-xs text-muted-foreground">
+        <summary className="w-fit font-medium">
+          {t("sharedEvidenceMethod")}
+        </summary>
+        <p className="mt-2 max-w-prose leading-relaxed">
+          {t("sharedEvidenceNote")}
+        </p>
+      </details>
       {query.isPending ? (
         <p role="status" className="mt-4 text-sm text-muted-foreground">
           {t("sharedEvidenceLoading")}
@@ -147,9 +148,9 @@ export function SharedReviewerEvidence({
                 ),
               );
               return (
-                <article key={reviewer.reviewerId} className="py-5">
+                <article key={reviewer.reviewerId} className="py-5 sm:py-6">
                   <div className="flex flex-wrap items-baseline justify-between gap-3">
-                    <h4 className="min-w-0 break-all text-sm font-medium">
+                    <h4 className="min-w-0 break-all text-xs font-medium text-muted-foreground">
                       {t("sharedReviewerId", { id: reviewer.reviewerId })}
                     </h4>
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
@@ -173,7 +174,7 @@ export function SharedReviewerEvidence({
                       </span>
                     </div>
                   </div>
-                  <div className="mt-4 grid gap-6 md:grid-cols-2">
+                  <div className="mt-4 grid gap-5 sm:grid-cols-2 sm:gap-8">
                     <ReviewEvidence
                       review={reviewer.primaryReview}
                       label={primaryLabel}

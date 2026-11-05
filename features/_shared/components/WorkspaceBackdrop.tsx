@@ -14,26 +14,26 @@ export function WorkspaceBackdrop({ className }: { className?: string }) {
     <div
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 overflow-hidden bg-white [--workspace-brand:236_97%_65%] [--workspace-violet:267_72%_54%] [--workspace-pink:326_62%_36%] [--workspace-ink:263_50%_24%]",
+        "pointer-events-none absolute inset-0 overflow-hidden bg-white opacity-90 [--workspace-brand:221_83%_53%] [--workspace-blue:229_82%_65%] [--workspace-ice:201_91%_72%] [--workspace-ink:224_66%_34%]",
         className,
       )}
     >
       <svg
         viewBox="0 0 1600 1000"
         preserveAspectRatio="xMidYMid slice"
-        className="absolute inset-0 h-full w-full blur-[56px] motion-safe:animate-workspace-drift motion-reduce:animate-none"
+        className="absolute inset-0 h-full w-full -rotate-12 scale-125 blur-[72px] motion-safe:animate-workspace-drift motion-reduce:animate-none"
       >
         <defs>
           <linearGradient id={ribbonId} x1="0%" y1="100%" x2="100%" y2="0%">
             <stop stopColor="hsl(var(--workspace-brand))" stopOpacity="0.9" />
             <stop
               offset="0.35"
-              stopColor="hsl(var(--workspace-violet))"
+              stopColor="hsl(var(--workspace-blue))"
               stopOpacity="0.8"
             />
             <stop
               offset="0.65"
-              stopColor="hsl(var(--workspace-pink))"
+              stopColor="hsl(var(--workspace-ice))"
               stopOpacity="0.65"
             />
             <stop
@@ -51,7 +51,7 @@ export function WorkspaceBackdrop({ className }: { className?: string }) {
             />
             <stop
               offset="0.75"
-              stopColor="hsl(var(--workspace-pink))"
+              stopColor="hsl(var(--workspace-ice))"
               stopOpacity="0.5"
             />
             <stop offset="1" stopColor="#edf0ff" />

@@ -1,12 +1,9 @@
 "use client";
-import { ComparisonReports } from "@/features/reports/components/ComparisonReports";
-import type { ListComparisonReportsOutput } from "@/features/reports/schemas/listComparisonReportsOutput";
 import { WorkspaceHeader } from "@/features/_shared/components/WorkspaceHeader";
 import Link from "next/link";
 import { useSearchParams, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  ArrowLeft,
   SlidersHorizontal,
   CalendarRange,
   ChevronDown,
@@ -30,13 +27,12 @@ import { ListingThumbnail } from "@/features/_shared/components/ListingThumbnail
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { ComparisonAiWorkspace } from "@/features/comparison-ai/components/ComparisonAiWorkspace";
 export function AnalysisDashboard({
   analysis,
   initialReviews,
-  initialReports,
 }: {
   analysis: AnalysisDetail;
-  initialReports: ListComparisonReportsOutput;
   initialReviews: { input: GetReviewDashboardInput; data: ReviewData };
 }) {
   const t = useTranslations("app");
@@ -48,6 +44,7 @@ export function AnalysisDashboard({
     trends: ["trends", "sectionTrends"],
     shared: ["sharedSection", "sectionShared"],
     evidence: ["evidenceSection", "sectionEvidence"],
+    ai: ["aiAnalysis", "sectionAi"],
   } as const;
   const requested = search.get("section") ?? "overview";
   const section = Object.hasOwn(sections, requested)
@@ -89,119 +86,7 @@ export function AnalysisDashboard({
   }
   return (
     <>
-      <Link
-        href="/analyses"
-        className="inline-flex items-center gap-2 rounded-sm text-sm text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
-      >
-        <ArrowLeft className="size-4" />
-        {t("back")}
-      </Link>
-      <header className="mt-4 exoid-panel p-4 sm:p-5">
-        <div className="flex flex-wrap items-start justify-between gap-5">
-          <div className="flex w-full min-w-0 items-start gap-4 sm:w-auto sm:flex-1 md:gap-5">
-            <ListingThumbnail
-              listing={primary}
-              className="size-14 sm:size-16"
-            />
-            <div className="min-w-0">
-              <h1 className="page-title break-words">{analysis.name}</h1>
-              {primary ? (
-                <p className="mt-2 text-sm font-medium break-words">
-                  {primary.label}
-                </p>
-              ) : null}
-              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
-                <Badge variant="secondary">
-                  {t("version")} {analysis.version}
-                </Badge>
-                <span className="text-sm text-muted-foreground">
-                  {t("propertyCount", {
-                    count: analysis.config.listings.length,
-                  })}
-                </span>
-                <span className="text-sm tabular-nums text-muted-foreground">
-                  {t("savedScope")}: {range(saved.start, saved.end)}
-                </span>
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">
-                {t("updated")}{" "}
-                <time dateTime={analysis.updatedAt}>
-                  {date.format(new Date(analysis.updatedAt))}
-                </time>
-              </p>
-            </div>
-          </div>
-          <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto sm:justify-end">
-            <ComparisonSyncControl
-              analysisId={analysis.id}
-              period={period}
-              dashboard={dashboard}
-              onLive={() => update({ snapshot: "" })}
-            />
-            <Link
-              data-slot="button"
-              data-variant="outline"
-              data-size="default"
-              href={`/exports?${new URLSearchParams({ analysis: analysis.id, ...Object.fromEntries(Object.entries(period).map(([key, value]) => [key, String(value)])), ...(params.snapshot ? { snapshot: params.snapshot } : {}) })}`}
-              className={cn(buttonVariants({ variant: "outline" }))}
-            >
-              <FileDown className="size-4" aria-hidden="true" />
-              {t("exports")}
-            </Link>
-            <Link
-              data-slot="button"
-              data-variant="outline"
-              data-size="default"
-              href={`/analyses/${analysis.id}/setup`}
-              className={cn(buttonVariants({ variant: "outline" }))}
-            >
-              <SlidersHorizontal className="size-4" />
-              {t("editAnalysis")}
-            </Link>
-          </div>
-        </div>
-      </header>
-      <ComparisonReports
-        analysisId={analysis.id}
-        version={analysis.version}
-        period={period}
-        snapshotId={params.snapshot || undefined}
-        ready={Boolean(dashboard.query.data?.comparisonReady)}
-        initialData={initialReports}
-      />
-      <nav
-        aria-label={t("analysisSectionNavigation")}
-        className="mt-5 flex gap-x-2 overflow-x-auto border-b"
-      >
-        {Object.entries(sections).map(([value, copy]) => {
-          const next = new URLSearchParams(search.toString());
-          next.set("section", value);
-          return (
-            <Link
-              key={value}
-              href={`${path}?${next}`}
-              scroll={false}
-              prefetch={false}
-              onNavigate={(event) => {
-                event.preventDefault();
-                const url = new URL(window.location.href);
-                url.searchParams.set("section", value);
-                if (url.href !== window.location.href)
-                  window.history.pushState(null, "", url);
-              }}
-              aria-current={section === value ? "page" : undefined}
-              className={cn(
-                "min-h-11 shrink-0 border-b-2 px-3 py-3 text-sm whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-ring",
-                section === value
-                  ? "border-primary font-semibold text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t(copy[0])}
-            </Link>
-          );
-        })}
-      </nav>
+      <h1 className="sr-only">{analysis.name}</h1>
       <WorkspaceHeader>
         <div className="flex min-w-0 flex-wrap items-center gap-3">
           <span className="text-sm font-medium">{t("periodFilters")}</span>
@@ -280,23 +165,112 @@ export function AnalysisDashboard({
           />
         </div>
       </WorkspaceHeader>
-      <section className="mt-6 min-w-0">
-        <h2 className="text-lg font-semibold">{t(sections[section][0])}</h2>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          {t(sections[section][1])}
-        </p>
-        <ReviewDashboardContent
-          dashboard={dashboard}
-          section={section}
-          version={analysis.version}
-          listings={analysis.config.listings}
-          role={role}
-          initial={initialReviews}
-          input={reviewInput}
-          onSnapshot={(snapshot) =>
-            update({ snapshot: snapshot === "latest" ? "" : snapshot })
-          }
-        />
+      <section
+        className={cn(
+          "mt-6 min-w-0",
+          section === "ai" &&
+            "comparison-ai-section mt-0 flex min-h-0 flex-1 flex-col",
+        )}
+      >
+        {section === "overview" ? (
+          <header className="mt-4 exoid-panel p-4 sm:p-5">
+            <div className="flex flex-wrap items-start justify-between gap-5">
+              <div className="flex w-full min-w-0 items-start gap-4 sm:w-auto sm:flex-1 md:gap-5">
+                <ListingThumbnail
+                  listing={primary}
+                  className="size-14 sm:size-16"
+                />
+                <div className="min-w-0">
+                  <h2 className="page-title break-words">{analysis.name}</h2>
+                  {primary ? (
+                    <p className="mt-2 text-sm font-medium break-words">
+                      {primary.label}
+                    </p>
+                  ) : null}
+                  <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+                    <Badge variant="secondary">
+                      {t("version")} {analysis.version}
+                    </Badge>
+                    <span className="text-sm text-muted-foreground">
+                      {t("propertyCount", {
+                        count: analysis.config.listings.length,
+                      })}
+                    </span>
+                    <span className="text-sm tabular-nums text-muted-foreground">
+                      {t("savedScope")}: {range(saved.start, saved.end)}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {t("updated")}{" "}
+                    <time dateTime={analysis.updatedAt}>
+                      {date.format(new Date(analysis.updatedAt))}
+                    </time>
+                  </p>
+                </div>
+              </div>
+              <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto sm:justify-end">
+                <ComparisonSyncControl
+                  analysisId={analysis.id}
+                  period={period}
+                  dashboard={dashboard}
+                  onLive={() => update({ snapshot: "" })}
+                />
+                <Link
+                  data-slot="button"
+                  data-variant="outline"
+                  data-size="default"
+                  href={`/exports?${new URLSearchParams({ analysis: analysis.id, ...Object.fromEntries(Object.entries(period).map(([key, value]) => [key, String(value)])), ...(params.snapshot ? { snapshot: params.snapshot } : {}) })}`}
+                  className={cn(buttonVariants({ variant: "outline" }))}
+                >
+                  <FileDown className="size-4" aria-hidden="true" />
+                  {t("exports")}
+                </Link>
+                <Link
+                  data-slot="button"
+                  data-variant="outline"
+                  data-size="default"
+                  href={`/analyses/${analysis.id}/setup`}
+                  className={cn(buttonVariants({ variant: "outline" }))}
+                >
+                  <SlidersHorizontal className="size-4" />
+                  {t("editAnalysis")}
+                </Link>
+              </div>
+            </div>
+          </header>
+        ) : null}
+        {section !== "ai" ? (
+          <>
+            <h2 className="mt-5 text-lg font-semibold">
+              {t(sections[section][0])}
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              {t(sections[section][1])}
+            </p>
+          </>
+        ) : null}
+        {section === "ai" ? (
+          <ComparisonAiWorkspace
+            analysisId={analysis.id}
+            period={period}
+            snapshotIds={(
+              dashboard.query.data?.snapshots ?? initialReviews.data.snapshots
+            ).map((snapshot) => snapshot.id)}
+          />
+        ) : (
+          <ReviewDashboardContent
+            dashboard={dashboard}
+            section={section}
+            version={analysis.version}
+            listings={analysis.config.listings}
+            role={role}
+            initial={initialReviews}
+            input={reviewInput}
+            onSnapshot={(snapshot) =>
+              update({ snapshot: snapshot === "latest" ? "" : snapshot })
+            }
+          />
+        )}
       </section>
     </>
   );

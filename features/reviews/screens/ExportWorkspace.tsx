@@ -350,6 +350,9 @@ export function ExportWorkspace({
         </fieldset>
         <aside className="space-y-5 exoid-panel p-4 sm:p-5 xl:sticky xl:top-6">
           <h2 className="text-lg font-semibold">{t("exportSummary")}</h2>
+          <p className="text-sm text-muted-foreground">
+            {t("exportSharedScope")}
+          </p>
           <dl className="space-y-3 text-sm">
             <div>
               <dt className="text-muted-foreground">{t("exportComparison")}</dt>

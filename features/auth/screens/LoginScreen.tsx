@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { WorkspaceBackdrop } from "@/features/_shared/components/WorkspaceBackdrop";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
@@ -21,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/features/_shared/components/LanguageSwitcher";
+import { LoginReactionPointer } from "../components/LoginReactionPointer";
 export function LoginScreen({ devInboxUrl }: { devInboxUrl?: string }) {
   const t = useTranslations("app");
   const router = useRouter();
@@ -93,19 +93,57 @@ export function LoginScreen({ devInboxUrl }: { devInboxUrl?: string }) {
   }
   return (
     <main className="relative isolate grid min-h-screen lg:grid-cols-2">
-      <WorkspaceBackdrop className="-z-10 opacity-60" />
-      <section className="relative m-2 flex flex-col justify-between gap-12 exoid-workspace p-8 lg:p-16">
+      <section className="relative isolate m-2 flex flex-col justify-between gap-12 overflow-hidden rounded-xl border border-border/50 bg-background p-8 lg:p-16">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10"
+          aria-hidden="true"
+        >
+          <Image
+            src="/login-abstract.png"
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            preload
+            className="object-cover object-right-bottom"
+          />
+          <div className="absolute inset-0 bg-linear-to-r from-background/95 via-background/70 to-background/10" />
+        </div>
         <div className="flex items-center gap-3 font-semibold">
           <Image src="/exoid-logo.svg" alt="" width={36} height={36} />
           {t("brand")}
         </div>
         <div className="max-w-lg">
-          <h1 className="font-display text-5xl leading-tight md:text-6xl">
+          <h1 className="font-display text-4xl leading-tight text-balance md:text-5xl xl:text-6xl">
             {t("loginTitle")}
           </h1>
           <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
             {t("loginDescription")}
           </p>
+          <div className="relative mt-5 w-fit py-3 [&>div:empty]:hidden">
+            <ol
+              aria-label={t("loginFlowLabel")}
+              className="flex flex-wrap items-center gap-x-4 gap-y-3"
+            >
+              {(["loginReviews", "loginThemes", "loginSentiment"] as const).map(
+                (label, index) => (
+                  <li key={label} className="flex items-center gap-4">
+                    <span className="text-sm font-medium text-foreground">
+                      {t(label)}
+                    </span>
+                    {index < 2 ? (
+                      <span
+                        className="text-sm text-muted-foreground/50"
+                        aria-hidden="true"
+                      >
+                        /
+                      </span>
+                    ) : null}
+                  </li>
+                ),
+              )}
+            </ol>
+            <LoginReactionPointer />
+          </div>
         </div>
         <p className="text-sm text-muted-foreground">{t("workspace")}</p>
       </section>
@@ -233,7 +271,7 @@ export function LoginScreen({ devInboxUrl }: { devInboxUrl?: string }) {
               {t("codeResent")}
             </p>
           ) : null}
-          {devInboxUrl ? (
+          {process.env.NODE_ENV === "development" && devInboxUrl ? (
             <a
               className="inline-flex items-center gap-2 text-sm text-primary underline underline-offset-4"
               href={devInboxUrl}

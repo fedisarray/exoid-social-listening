@@ -19,6 +19,8 @@ export const reviewsIT = {
     "Da 0 a 20 anni. Zero mantiene solo le righe degli ultimi dodici mesi e del periodo selezionato.",
   exportCharts: "Includi grafici Excel modificabili",
   exportSummary: "Riepilogo download",
+  exportSharedScope:
+    "Le nuove esportazioni Excel e PowerPoint usano il periodo, il dataset di recensioni e i luoghi selezionati qui.",
   exportReset: "Ripristina configurazione",
   exportNewDataset: "Crea una copia congelata delle recensioni raccolte",
   exportFrozenHint:
@@ -236,7 +238,10 @@ export const reviewsIT = {
   identityCoverage: "Recensioni con ID autore",
   sharedComparisonHint:
     "Autori che hanno recensito anche {primary}, in base alle recensioni Google nelle date selezionate.",
-  sharedEvidenceOpen: "Leggi le recensioni di {count} autori condivisi",
+  sharedEvidenceOpen: "Vedi recensioni ({count})",
+  sharedEvidenceTitle: "Recensioni condivise",
+  sharedEvidenceClose: "Chiudi recensioni condivise",
+  sharedEvidenceMethod: "Informazioni sulle recensioni",
   sharedEvidenceNote:
     "Ultima recensione di ogni autore per ciascun luogo nelle date selezionate, ordinate per pubblicazione più recente. Gli autori sono identificati tramite ID Google; i nomi non vengono raccolti. La differenza di voto è principale meno concorrente. Le date sono in UTC; l’intervallo tra pubblicazioni non indica una visita o uno spostamento.",
   sharedReviewerId: "Autore · {id}",
@@ -254,6 +259,7 @@ export const reviewsIT = {
   sharedEvidencePagination: "Pagine degli autori condivisi",
   sharedEvidencePrevious: "Autori precedenti",
   sharedEvidenceNext: "Autori successivi",
+  sharedGapShort: "Divario di voto",
   sharedCount: "Autori condivisi",
   sharedDirection: "Quota degli autori identificati per luogo",
   sharedRatings: "Voti degli autori condivisi",

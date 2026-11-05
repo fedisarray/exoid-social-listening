@@ -91,6 +91,304 @@ export type Database = {
           },
         ];
       };
+      comparison_ai_annotations: {
+        Row: {
+          created_at: string;
+          id: string;
+          import_id: string;
+          model_version: string;
+          organization_id: string;
+          review_id: string;
+          sentiment: string;
+          themes: string[];
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          import_id: string;
+          model_version: string;
+          organization_id: string;
+          review_id: string;
+          sentiment: string;
+          themes?: string[];
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          import_id?: string;
+          model_version?: string;
+          organization_id?: string;
+          review_id?: string;
+          sentiment?: string;
+          themes?: string[];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "comparison_ai_annotations_import_id_organization_id_fkey";
+            columns: ["import_id", "organization_id"];
+            isOneToOne: false;
+            referencedRelation: "comparison_ai_imports";
+            referencedColumns: ["id", "organization_id"];
+          },
+          {
+            foreignKeyName: "comparison_ai_annotations_review_id_import_id_organization_fkey";
+            columns: ["review_id", "import_id", "organization_id"];
+            isOneToOne: false;
+            referencedRelation: "comparison_ai_reviews";
+            referencedColumns: ["id", "import_id", "organization_id"];
+          },
+        ];
+      };
+      comparison_ai_imports: {
+        Row: {
+          aggregate_content: Json | null;
+          analysis_id: string;
+          analysis_version: number;
+          created_at: string;
+          created_by: string | null;
+          file_name: string;
+          id: string;
+          import_kind: string;
+          organization_id: string;
+          row_count: number;
+          source_snapshot_ids: string[];
+        };
+        ComputedFields: never;
+        Insert: {
+          aggregate_content?: Json | null;
+          analysis_id: string;
+          analysis_version: number;
+          created_at?: string;
+          created_by?: string | null;
+          file_name: string;
+          id?: string;
+          import_kind: string;
+          organization_id?: string;
+          row_count?: number;
+          source_snapshot_ids?: string[];
+        };
+        Update: {
+          aggregate_content?: Json | null;
+          analysis_id?: string;
+          analysis_version?: number;
+          created_at?: string;
+          created_by?: string | null;
+          file_name?: string;
+          id?: string;
+          import_kind?: string;
+          organization_id?: string;
+          row_count?: number;
+          source_snapshot_ids?: string[];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "comparison_ai_imports_analysis_id_analysis_version_organiz_fkey";
+            columns: ["analysis_id", "analysis_version", "organization_id"];
+            isOneToOne: false;
+            referencedRelation: "analysis_versions";
+            referencedColumns: ["analysis_id", "version", "organization_id"];
+          },
+        ];
+      };
+      comparison_ai_jobs: {
+        Row: {
+          analysis_id: string;
+          created_at: string;
+          error_code: string | null;
+          finished_at: string | null;
+          id: string;
+          import_id: string;
+          lease_token: string | null;
+          lease_until: string | null;
+          message_id: string;
+          next_attempt_at: string;
+          organization_id: string;
+          period_end: string;
+          period_start: string;
+          processed_count: number;
+          status: string;
+          total_count: number;
+          visualization_type: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          analysis_id: string;
+          created_at?: string;
+          error_code?: string | null;
+          finished_at?: string | null;
+          id?: string;
+          import_id: string;
+          lease_token?: string | null;
+          lease_until?: string | null;
+          message_id: string;
+          next_attempt_at?: string;
+          organization_id: string;
+          period_end: string;
+          period_start: string;
+          processed_count?: number;
+          status?: string;
+          total_count?: number;
+          visualization_type: string;
+        };
+        Update: {
+          analysis_id?: string;
+          created_at?: string;
+          error_code?: string | null;
+          finished_at?: string | null;
+          id?: string;
+          import_id?: string;
+          lease_token?: string | null;
+          lease_until?: string | null;
+          message_id?: string;
+          next_attempt_at?: string;
+          organization_id?: string;
+          period_end?: string;
+          period_start?: string;
+          processed_count?: number;
+          status?: string;
+          total_count?: number;
+          visualization_type?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "comparison_ai_jobs_analysis_id_organization_id_fkey";
+            columns: ["analysis_id", "organization_id"];
+            isOneToOne: false;
+            referencedRelation: "analyses";
+            referencedColumns: ["id", "organization_id"];
+          },
+          {
+            foreignKeyName: "comparison_ai_jobs_import_id_organization_id_fkey";
+            columns: ["import_id", "organization_id"];
+            isOneToOne: false;
+            referencedRelation: "comparison_ai_imports";
+            referencedColumns: ["id", "organization_id"];
+          },
+          {
+            foreignKeyName: "comparison_ai_jobs_message_id_fkey";
+            columns: ["message_id"];
+            isOneToOne: false;
+            referencedRelation: "comparison_ai_messages";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      comparison_ai_messages: {
+        Row: {
+          analysis_id: string;
+          citations: NonNullable<Json>;
+          content: string;
+          created_at: string;
+          id: string;
+          import_id: string;
+          locale: string;
+          organization_id: string;
+          period_end: string;
+          period_start: string;
+          role: string;
+          visualization: Json | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          analysis_id: string;
+          citations?: NonNullable<Json>;
+          content: string;
+          created_at?: string;
+          id?: string;
+          import_id: string;
+          locale?: string;
+          organization_id: string;
+          period_end: string;
+          period_start: string;
+          role: string;
+          visualization?: Json | null;
+        };
+        Update: {
+          analysis_id?: string;
+          citations?: NonNullable<Json>;
+          content?: string;
+          created_at?: string;
+          id?: string;
+          import_id?: string;
+          locale?: string;
+          organization_id?: string;
+          period_end?: string;
+          period_start?: string;
+          role?: string;
+          visualization?: Json | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "comparison_ai_messages_analysis_id_organization_id_fkey";
+            columns: ["analysis_id", "organization_id"];
+            isOneToOne: false;
+            referencedRelation: "analyses";
+            referencedColumns: ["id", "organization_id"];
+          },
+          {
+            foreignKeyName: "comparison_ai_messages_import_id_organization_id_fkey";
+            columns: ["import_id", "organization_id"];
+            isOneToOne: false;
+            referencedRelation: "comparison_ai_imports";
+            referencedColumns: ["id", "organization_id"];
+          },
+        ];
+      };
+      comparison_ai_reviews: {
+        Row: {
+          id: string;
+          import_id: string;
+          language: string | null;
+          listing_id: string | null;
+          listing_label: string | null;
+          organization_id: string;
+          published_at: string | null;
+          rating: number | null;
+          review_text: string;
+          row_number: number;
+          sheet_name: string;
+          source_url: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          id?: string;
+          import_id: string;
+          language?: string | null;
+          listing_id?: string | null;
+          listing_label?: string | null;
+          organization_id: string;
+          published_at?: string | null;
+          rating?: number | null;
+          review_text: string;
+          row_number: number;
+          sheet_name: string;
+          source_url?: string | null;
+        };
+        Update: {
+          id?: string;
+          import_id?: string;
+          language?: string | null;
+          listing_id?: string | null;
+          listing_label?: string | null;
+          organization_id?: string;
+          published_at?: string | null;
+          rating?: number | null;
+          review_text?: string;
+          row_number?: number;
+          sheet_name?: string;
+          source_url?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "comparison_ai_reviews_import_id_organization_id_fkey";
+            columns: ["import_id", "organization_id"];
+            isOneToOne: false;
+            referencedRelation: "comparison_ai_imports";
+            referencedColumns: ["id", "organization_id"];
+          },
+        ];
+      };
       comparison_reports: {
         Row: {
           analysis_id: string;
@@ -805,6 +1103,34 @@ export type Database = {
         Args: { p_role: string; p_user_id: string };
         Returns: undefined;
       };
+      claim_comparison_ai_job: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          analysis_id: string;
+          created_at: string;
+          error_code: string | null;
+          finished_at: string | null;
+          id: string;
+          import_id: string;
+          lease_token: string | null;
+          lease_until: string | null;
+          message_id: string;
+          next_attempt_at: string;
+          organization_id: string;
+          period_end: string;
+          period_start: string;
+          processed_count: number;
+          status: string;
+          total_count: number;
+          visualization_type: string;
+        }[];
+        SetofOptions: {
+          from: "*";
+          to: "comparison_ai_jobs";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
       claim_comparison_report: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -866,6 +1192,18 @@ export type Database = {
           isOneToOne: false;
           isSetofReturn: true;
         };
+      };
+      enqueue_comparison_ai_job: {
+        Args: {
+          p_analysis: string;
+          p_end: string;
+          p_import: string;
+          p_message: string;
+          p_start: string;
+          p_total: number;
+          p_type: string;
+        };
+        Returns: string;
       };
       enqueue_comparison_report: {
         Args: {
@@ -944,6 +1282,13 @@ export type Database = {
       list_property_metrics: {
         Args: Record<PropertyKey, never>;
         Returns: Json;
+      };
+      prepare_comparison_ai_snapshots: {
+        Args: { p_analysis: string; p_snapshot_ids: string[] };
+        Returns: {
+          import_id: string;
+          row_count: number;
+        }[];
       };
       provision_organization: {
         Args: { p_name: string; p_user_id: string };

@@ -1,4 +1,3 @@
-import { listComparisonReports } from "@/features/reports/queries/listComparisonReports";
 import { notFound } from "next/navigation";
 import { getAnalysisInputSchema } from "../schemas/getAnalysisInput";
 import { getAnalysis } from "../queries/getAnalysis";
@@ -26,15 +25,8 @@ export async function AnalysisDashboardScreen({
     period,
     ...(snapshotId ? { snapshotId } : {}),
   };
-  const [data, reports] = await Promise.all([
-    getReviewDashboard(input),
-    listComparisonReports({ analysisId: id }),
-  ]);
+  const data = await getReviewDashboard(input);
   return (
-    <AnalysisDashboard
-      analysis={analysis}
-      initialReviews={{ input, data }}
-      initialReports={reports}
-    />
+    <AnalysisDashboard analysis={analysis} initialReviews={{ input, data }} />
   );
 }

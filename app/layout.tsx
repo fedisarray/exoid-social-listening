@@ -1,21 +1,37 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Manrope } from "next/font/google";
 
-const interfaceFont = Inter({
+const interfaceFont = Manrope({
   subsets: ["latin"],
   variable: "--font-interface",
   display: "swap",
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   fallback: ["Arial", "sans-serif"],
 });
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { Providers } from "@/components/providers";
-export const metadata: Metadata = {
-  title: "Exoid Reviews",
-  description: "Retail review analysis workspace",
-};
+import { WorkspaceBackdrop } from "@/features/_shared/components/WorkspaceBackdrop";
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("app");
+  return {
+    title: t("brand"),
+    applicationName: t("brand"),
+    description: t("metadataDescription"),
+    robots: { index: false, follow: false },
+    openGraph: {
+      title: t("brand"),
+      description: t("metadataDescription"),
+      siteName: t("brand"),
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: t("brand"),
+      description: t("metadataDescription"),
+    },
+  };
+}
 export default async function RootLayout({
   children,
 }: {
@@ -24,7 +40,8 @@ export default async function RootLayout({
   const [locale, messages] = await Promise.all([getLocale(), getMessages()]);
   return (
     <html lang={locale} className={interfaceFont.variable}>
-      <body>
+      <body className="relative isolate min-h-dvh">
+        <WorkspaceBackdrop className="fixed -z-10" />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>

@@ -2,6 +2,8 @@
 
 Private retail review analysis workspace. This milestone includes analyst authentication, live Google listing discovery through Apify, versioned saved analysis setup, and Dashboard scope exploration. The UI supports Italian (default) and English.
 
+For production runtime, environment, authentication and worker setup, see [Hosting](docs/hosting.md).
+
 ## Local development
 
 Requirements: Node 24+, pnpm 12.9.1, and a running Docker-compatible engine. Supabase CLI 3.0.0 is pinned in this project; no global CLI or hosted Supabase project is needed.
@@ -34,7 +36,13 @@ Location autocomplete uses the public Photon/OpenStreetMap API, filtered by coun
 
 Searches start only after an explicit submit. Each requests at most ten places and zero reviews, without slower detail-page scraping. Runs and normalized results are persisted per analyst. The search ID stays in the URL so reopening the link resumes polling; temporary status errors can be retried without launching another provider run. Actual results appear while the provider is running. Completed searches refresh metadata for matching saved properties. Cards show source-provided categories, Google rating/review count, website and phone when available; Google totals stay separate from collected review counts. Search name/location/country or paste a Google Maps URL, inspect identifying details, and confirm the listing. Unconfigured or failed providers display a useful error and never return demo data.
 
-An Apify token and a paid provider run are required to verify real search output. No token is bundled. Full review acquisition, deterministic metrics, shared reviewers, Mastra/AI, and Gamma PowerPoint generation remain later milestones in `docs/planning`.
+## Comparison AI
+
+Each comparison has an **AI analysis** section for preparing the comparison’s existing review snapshots for chat, asking questions, and requesting sentiment/theme charts or a word cloud. Area charts show stacked monthly sentiment counts; radar charts compare places across positive, negative, mixed, and unclassified review counts. Ask for “an area chart of sentiment over time” or “a radar chart comparing places.” Both support review evidence drill-down and PNG downloads. Preparation copies all available comparison snapshot review rows into a versioned AI dataset; each chat request includes the active comparison period and only matching review text is sent to Anthropic. Claude citations link back to the imported review evidence.
+
+Set `ANTHROPIC_API_KEY` and a random `COMPARISON_AI_WORKER_SECRET` of at least 32 characters in `.env.local`, then restart the app. The feature uses the direct Anthropic TypeScript SDK on the server. Keep these credentials private; no provider key is used in browser code.
+
+An Apify token and a paid provider run are required to verify real search output. No token is bundled. Review acquisition, deterministic metrics, shared reviewers, findings, and Gamma PowerPoint generation are described in `docs/planning`.
 
 ## Architecture
 
