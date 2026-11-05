@@ -15,6 +15,12 @@ import type { Collection, Snapshot } from "../schemas/collection";
 import type { NormalizedReview } from "../domain/normalizeReviews";
 import type { GetReviewDashboardInput } from "../schemas/getReviewDashboardInput";
 import { rawMetricsSchema } from "../schemas/getReviewDashboardOutput";
+import { resolvePeriod } from "@/features/_shared/domain/period";
+import type { ReviewExcelOptions } from "../schemas/reviewExcelOptions";
+import {
+  worksheetQuarterMetricsSchema,
+  type WorksheetQuarterMetrics,
+} from "../schemas/worksheetQuarterMetrics";
 import type { GetSharedReviewerEvidenceInput } from "../schemas/getSharedReviewerEvidenceInput";
 import {
   getSharedReviewerEvidenceOutputSchema,
@@ -153,6 +159,34 @@ export async function readMetrics(
   });
   if (error) throw error;
   return rawMetricsSchema.parse(data);
+}
+export async function readWorksheetQuarters(
+  db: DB,
+  snapshotId: string,
+  input: GetReviewDashboardInput,
+  options: ReviewExcelOptions,
+): Promise<WorksheetQuarterMetrics> {
+  const years = new Map<number, number>();
+  for (const id of options.sheets) {
+    const config = options.sheetSettings?.[id];
+    if (config?.window !== "quarterly") continue;
+    const quarter = config.quarter ?? input.period.quarter;
+    const year = config.year ?? input.period.year;
+    years.set(quarter, Math.max(year, years.get(quarter) ?? year));
+  }
+  const entries = await Promise.all(
+    [...years].map(async ([quarter, year]) => {
+      const period = resolvePeriod({
+        ...input.period,
+        kind: "quarter",
+        quarter,
+        year,
+      });
+      const metrics = await readMetrics(db, snapshotId, { ...input, period });
+      return [String(quarter), metrics.quarters] as const;
+    }),
+  );
+  return worksheetQuarterMetricsSchema.parse(Object.fromEntries(entries));
 }
 export async function claimCollection(
   db: DB,

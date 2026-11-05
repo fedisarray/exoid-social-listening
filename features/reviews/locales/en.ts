@@ -1,51 +1,82 @@
 export const reviewsEN = {
+  sheetYear: "Year",
+  sheetQuarter: "Quarter",
+  sheetMetricReviews: "Reviews",
+  sheetMetricRating: "Score",
+  sheetMetricSatisfaction: "Satisfied (4–5 stars)",
+
+  sheetAdd: "Add worksheet",
+  sheetDelete: "Remove",
+  sheetDown: "Down",
+  sheetUp: "Up",
+  sheetRemove: "Remove {name}",
+  sheetMoveDown: "Move {name} down",
+  sheetMoveUp: "Move {name} up",
+  sheetQuarterHint: "Each worksheet can use its own quarter and year.",
+  sheetNameError:
+    "Use a unique name (1–31 characters), without [ ] : * ? / or \\. Avoid leading or trailing apostrophes and the reserved name History.",
+  sheetNewName: "Worksheet {number}",
+  sheetUntitled: "Untitled worksheet",
+  sheetRestore: "Restore preset",
+  sheetGroupCompetitors: "Competitors",
+  sheetGroupOwn: "Own places",
+  sheetGroupAll: "All included places",
+  sheetGroupAnchors: "Anchors",
+  sheetGroupProperties: "Places and competitors",
+  sheetWindowMonthly: "Monthly trend in selected period",
+  sheetWindowQuarterly: "Same quarter across years",
+  sheetWindowAnnual: "Calendar years + L12M",
+  sheetWindowSelected: "Selected reporting period",
+  sheetGroup: "Places",
+  sheetWindow: "Comparison window",
+  sheetMetric: "Metric",
+  sheetName: "Worksheet name",
   exportWorkspaceDescription:
-    "Choose a comparison, dates and places, then configure the Excel sheets to download. Charts remain editable. Sentiment will be added later.",
+    "Choose what to include, then download Excel or PowerPoint.",
   exportEmpty:
     "Save a comparison and collect its reviews to configure an export.",
   exportComparison: "Comparison",
-  exportScope: "Dates and dataset",
+  exportScope: "Reporting period",
   exportProperties: "Included places",
   exportSelectAll: "Select all places",
-  exportContent: "Workbook sheets",
+  exportContent: "Worksheets",
   exportContentHint:
-    "The original seven sheets are selected by default. For custom dates or trailing twelve months, the period sheets show the selected range instead of quarterly history.",
+    "Expand a worksheet to choose its name, metric, places, period and chart. Up to 7 worksheets.",
   exportPeriodRating: "Selected-period average rating",
   exportPeriodSatisfaction: "Selected-period satisfaction",
   exportEmptyGroup:
     "No places in this group were selected. This sheet has no data.",
   exportHistory: "Previous years to include",
   exportHistoryHint:
-    "0–20 years. Zero keeps the last-12-month and selected-period rows only.",
+    "0–20 years. Use 0 for the selected period and last 12 months only.",
   exportCharts: "Include editable Excel charts",
-  exportSummary: "Download summary",
-  exportSharedScope:
-    "New Excel and PowerPoint exports use the period, review dataset, and places selected here.",
+  exportSummary: "Download",
+  exportSave: "Save configuration",
+  exportSaving: "Saving…",
+  exportSaved: "Configuration saved in this browser.",
+  exportSaveHint:
+    "Remember places, worksheets, dates and language for this comparison in this browser.",
+  exportSaveError:
+    "Could not save in this browser. Check that browser storage is enabled, then retry. Your changes are still here.",
   exportReset: "Reset configuration",
-  exportNewDataset: "Create a frozen copy from collected reviews",
-  exportFrozenHint:
-    "Uses this dataset's frozen review revisions, property names, roles and coverage. Choose places again when changing datasets.",
-  exportChecking: "Checking dataset and date coverage…",
+  exportChecking: "Checking available data…",
   exportCoverageHint:
     "Choose at least one place with complete coverage for the selected dates. Collect missing dates from the comparison dashboard.",
   exportInvalidSelection:
-    "Check the dates and years, and choose at least one valid place and sheet.",
-  exportDownloadStarted:
-    "Your download has started. The saved dataset is selected for the next export; your configuration is retained.",
+    "Check the worksheet names, dates and history. Include at least one place and worksheet.",
+  exportDownloadStarted: "Download started.",
   exportExcel: "Export Excel",
-  excelNewDataset:
-    "Creates a frozen copy of collected reviews. This requires coverage of the saved comparison dates for every place. The download includes only the places you select here.",
   excelDownload: "Download Excel (.xlsx)",
   excelGenerating: "Preparing Excel…",
   excelError:
     "Excel could not be generated. Retry; your saved data is unchanged.",
   excelCoverageError:
-    "The export dates or saved comparison dates are not fully covered. Sync the missing dates, or choose an existing saved dataset, then retry.",
+    "Some export or saved comparison dates are missing. Sync them from the comparison dashboard, then retry.",
   excelVersionError:
     "The comparison setup changed. Reload the page before exporting.",
   excelNotFound:
     "This comparison is no longer available. Return to comparisons.",
-  excelDataset: "Saved dataset",
+  excelDataset: "Review data",
   excelSource:
     "Figures describe collected Google reviews, not all reviews ever published. Source completeness cannot be guaranteed. Dates use UTC.",
   excelDates: "Dates (UTC)",

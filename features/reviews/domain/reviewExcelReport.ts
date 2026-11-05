@@ -2,13 +2,15 @@ import type { Period } from "@/features/_shared/schemas/period";
 import type { ReviewDashboard } from "../schemas/getReviewDashboardOutput";
 import { reviewsEN } from "../locales/en";
 import { reviewsIT } from "../locales/it";
-import { comparisonTrendWindows } from "./comparisonTrendWindows";
+import { reviewExcelSheetPresets } from "./reviewExcelSheetPresets";
+import { reviewExcelSheetWindows } from "./reviewExcelSheetWindows";
 import type { ReviewExcelOptions } from "../schemas/reviewExcelOptions";
+import type { WorksheetQuarterMetrics } from "../schemas/worksheetQuarterMetrics";
 
 export type ReviewExcelData = Pick<
   ReviewDashboard,
   "metrics" | "coverage" | "snapshot" | "mode" | "comparisonReady"
->;
+> & { quarterMetrics?: WorksheetQuarterMetrics };
 
 export type ExcelCell = string | number | null;
 export type ReviewExcelSheet = {
@@ -16,6 +18,7 @@ export type ReviewExcelSheet = {
   title: string;
   format: "#,##0" | "0.00" | "0.0%";
   maximum?: number;
+  includeCharts?: boolean;
   rows: ExcelCell[][];
   notes: string[];
   samples: ExcelCell[][];
@@ -41,193 +44,124 @@ export function reviewExcelReport(
     throw new Error("FROZEN_DATASET_REQUIRED");
   const t = locale === "it" ? reviewsIT : reviewsEN;
   const snapshot = data.snapshot;
-  const metrics = data.metrics;
   const selected = new Set(options.listingIds);
   const scoped = {
     ...data,
     coverage: data.coverage.filter((place) => selected.has(place.listingId)),
   };
-  const windows = comparisonTrendWindows(scoped, period);
-  const historyStart = Number(period.end.slice(0, 4)) - options.historyYears;
-  windows.annual = windows.annual.filter(
-    (window) =>
-      window.id === "l12m" ||
-      (options.historyYears > 0 &&
-        Number(window.id) >= historyStart &&
-        Number(window.id) < Number(period.end.slice(0, 4))),
+  const presets = reviewExcelSheetPresets(
+    period,
+    options.historyYears,
+    options.includeCharts,
   );
-  windows.quarters = windows.quarters.filter(
-    (window) =>
-      Number(window.id) >= period.year - options.historyYears &&
-      Number(window.id) <= period.year,
-  );
-  const properties = scoped.coverage.filter((place) => place.role !== "anchor");
-  const anchors = scoped.coverage.filter((place) => place.role === "anchor");
-  const selectedWindow = [
-    {
-      id: t.selected,
-      start: period.start,
-      end: period.end,
-      rows: scoped.coverage.map(
-        (place) =>
-          metrics.properties.find(
-            (row) => row.listingId === place.listingId,
-          ) ?? {
-            listingId: place.listingId,
-            reviews: 0,
-            ratedCount: 0,
-            rating: null,
-            satisfaction: null,
-            textReviews: 0,
-            identifiedReviews: 0,
-            identifiedReviewers: 0,
-          },
-      ),
-    },
-  ];
-  const definitions = [
-    {
-      id: "reviews",
-      name: "reviews L12M",
-      title: t.trendVolume,
-      metric: "reviews",
-      anchors: false,
-      quarter: false,
-    },
-    {
-      id: "rating",
-      name: "score L12M",
-      title: t.rating,
-      metric: "rating",
-      anchors: false,
-      quarter: false,
-    },
-    {
-      id: "quarterRating",
-      name:
-        period.kind === "quarter" ? `score Q${period.quarter}` : "score period",
-      title:
-        period.kind === "quarter" ? t.trendQuarterRating : t.exportPeriodRating,
-      metric: "rating",
-      anchors: false,
-      quarter: true,
-    },
-    {
-      id: "satisfaction",
-      name: "satisfied L12M",
-      title: t.satisfied,
-      metric: "satisfaction",
-      anchors: false,
-      quarter: false,
-    },
-    {
-      id: "quarterSatisfaction",
-      name:
-        period.kind === "quarter"
-          ? `satisfied Q${period.quarter}`
-          : "satisfied period",
-      title:
-        period.kind === "quarter"
-          ? t.trendQuarterSatisfaction
-          : t.exportPeriodSatisfaction,
-      metric: "satisfaction",
-      anchors: false,
-      quarter: true,
-    },
-    {
-      id: "anchorRating",
-      name: "score anchors",
-      title: t.trendAnchorRating,
-      metric: "rating",
-      anchors: true,
-      quarter: false,
-    },
-    {
-      id: "anchorSatisfaction",
-      name: "satisfied anchors",
-      title: t.trendAnchorSatisfaction,
-      metric: "satisfaction",
-      anchors: true,
-      quarter: false,
-    },
-  ] as const;
+  const metricLabels = {
+    reviews: t.trendVolume,
+    rating: t.rating,
+    satisfaction: t.satisfied,
+  };
+  const windowLabels = {
+    selected: t.selected,
+    l12m: t.trendRollingLabel,
+    annual: t.sheetWindowAnnual,
+    quarterly: t.sheetWindowQuarterly,
+    monthly: t.sheetWindowMonthly,
+  };
   return {
     locale,
     includeCharts: options.includeCharts,
-    sheets: definitions
-      .filter((definition) => options.sheets.includes(definition.id))
-      .map((definition): ReviewExcelSheet => {
-        const places = definition.anchors ? anchors : properties;
-        const ranges = definition.quarter
-          ? period.kind === "quarter"
-            ? windows.quarters
-            : selectedWindow
-          : windows.annual;
-        const label = (id: string) =>
-          definition.quarter && period.kind === "quarter"
-            ? `Q${period.quarter} ${id}`
-            : id === "l12m"
-              ? "L12M"
-              : id;
-        return {
-          name: definition.name,
-          title: definition.title,
-          format:
-            definition.metric === "reviews"
-              ? "#,##0"
-              : definition.metric === "rating"
-                ? "0.00"
-                : "0.0%",
-          maximum:
-            definition.metric === "rating"
-              ? 5
-              : definition.metric === "satisfaction"
-                ? 1
-                : undefined,
-          rows: [
-            [t.bucket, ...places.map((place) => place.label)],
-            ...ranges.map((range) => [
-              label(range.id),
-              ...places.map((place) => {
-                const facts = range.rows.find(
-                  (row) => row.listingId === place.listingId,
-                );
-                const value = facts?.[definition.metric] ?? null;
-                return definition.metric === "satisfaction" && value !== null
-                  ? value / 100
-                  : value;
-              }),
-            ]),
-          ],
-          notes: [
-            `${definition.title} · Google · ${period.start} — ${period.end} (UTC)`,
-            `${t.excelDataset}: ${snapshot.id} · v${snapshot.version} · ${snapshot.createdAt}`,
-            t.excelMissing,
-            ...(places.length ? [] : [t.exportEmptyGroup]),
-            `${t.exportProperties}: ${scoped.coverage.length}`,
-            ...(ranges.some((range) => !range.rows.length)
-              ? [t.excelPartialHistory]
-              : []),
-            ...(definition.metric === "satisfaction"
-              ? [t.excelSatisfactionMethod]
-              : []),
-            t.excelSource,
-            t.excelSamples,
-          ],
-          samples: [
-            [t.bucket, t.excelDates, ...places.map((place) => place.label)],
-            ...ranges.map((range) => [
-              label(range.id),
-              `${range.start} — ${range.end} (UTC)`,
-              ...places.map((place) => {
-                const facts = range.rows.find(
-                  (row) => row.listingId === place.listingId,
-                );
-                return facts?.ratedCount ?? null;
-              }),
-            ]),
-          ],
-        };
-      }),
+    sheets: options.sheets.map((id): ReviewExcelSheet => {
+      const config = options.sheetSettings?.[id] ?? presets[id];
+      const places = scoped.coverage.filter((place) => {
+        switch (config.group) {
+          case "all":
+            return true;
+          case "anchors":
+            return place.role === "anchor";
+          case "own":
+            return place.role === "primary" || place.role === "additionalOwn";
+          case "competitors":
+            return place.role === "competitor";
+          case "properties":
+            return place.role !== "anchor";
+        }
+      });
+      const ranges = reviewExcelSheetWindows(
+        { ...scoped, coverage: places },
+        period,
+        config,
+      );
+      const label = (id: string) =>
+        id === "selected" ? t.selected : id === "l12m" ? "L12M" : id;
+      const title = options.sheetSettings?.[id]
+        ? config.name
+        : metricLabels[config.metric];
+      const start =
+        ranges.map((range) => range.start).sort()[0] ?? period.start;
+      const end =
+        ranges
+          .map((range) => range.end)
+          .sort()
+          .at(-1) ?? period.end;
+      return {
+        name: config.name,
+        title,
+        includeCharts: config.includeCharts,
+        format:
+          config.metric === "reviews"
+            ? "#,##0"
+            : config.metric === "rating"
+              ? "0.00"
+              : "0.0%",
+        maximum:
+          config.metric === "rating"
+            ? 5
+            : config.metric === "satisfaction"
+              ? 1
+              : undefined,
+        rows: [
+          [t.bucket, ...places.map((place) => place.label)],
+          ...ranges.map((range) => [
+            label(range.id),
+            ...places.map((place) => {
+              const facts = range.rows.find(
+                (row) => row.listingId === place.listingId,
+              );
+              const value = facts?.[config.metric] ?? null;
+              return config.metric === "satisfaction" && value !== null
+                ? value / 100
+                : value;
+            }),
+          ]),
+        ],
+        notes: [
+          `${title} · ${metricLabels[config.metric]} · ${windowLabels[config.window]} · Google · ${start} — ${end} (UTC)`,
+          `${t.excelDataset}: ${snapshot.id} · v${snapshot.version} · ${snapshot.createdAt}`,
+          t.excelMissing,
+          ...(places.length ? [] : [t.exportEmptyGroup]),
+          `${t.exportProperties}: ${places.length}`,
+          ...(ranges.some((range) => !range.rows.length)
+            ? [t.excelPartialHistory]
+            : []),
+          ...(config.metric === "satisfaction"
+            ? [t.excelSatisfactionMethod]
+            : []),
+          t.excelSource,
+          t.excelSamples,
+        ],
+        samples: [
+          [t.bucket, t.excelDates, ...places.map((place) => place.label)],
+          ...ranges.map((range) => [
+            label(range.id),
+            `${range.start} — ${range.end} (UTC)`,
+            ...places.map((place) => {
+              const facts = range.rows.find(
+                (row) => row.listingId === place.listingId,
+              );
+              return facts?.ratedCount ?? null;
+            }),
+          ]),
+        ],
+      };
+    }),
   };
 }

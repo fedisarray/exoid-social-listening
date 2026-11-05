@@ -165,9 +165,8 @@ export function buildReviewExcel(
     const numericStyle =
       sheet.format === "#,##0" ? 2 : sheet.format === "0.00" ? 3 : 4;
     const chartRow = Math.max(9, sheet.rows.length + 2);
-    const noteRow = report.includeCharts
-      ? chartRow + 25
-      : sheet.rows.length + 3;
+    const includeCharts = report.includeCharts && sheet.includeCharts !== false;
+    const noteRow = includeCharts ? chartRow + 25 : sheet.rows.length + 3;
     const sampleRow = noteRow + sheet.notes.length + 2;
     const lastColumn = column(Math.max(7, sheet.rows[0].length));
     const noteMerges = sheet.notes
@@ -189,11 +188,11 @@ export function buildReviewExcel(
       <cols><col min="1" max="1" width="18" customWidth="1"/><col min="2" max="2" width="34" customWidth="1"/><col min="3" max="${Math.max(8, sheet.rows[0].length + 1)}" width="24" customWidth="1"/></cols>
       <sheetData>${sheet.rows.map((row, index) => cells(row, index + 1, numericStyle, index === 0)).join("")}${notes}${sheet.samples.map((row, index) => cells(row, sampleRow + index, 2, index === 0)).join("")}</sheetData>
       <mergeCells count="${sheet.notes.length}">${noteMerges}</mergeCells>
-      <pageMargins left="0.25" right="0.25" top="0.5" bottom="0.5" header="0.2" footer="0.2"/>${report.includeCharts ? '<drawing r:id="drawing"/>' : ""}
+      <pageMargins left="0.25" right="0.25" top="0.5" bottom="0.5" header="0.2" footer="0.2"/>${includeCharts ? '<drawing r:id="drawing"/>' : ""}
     </worksheet>`,
     );
     override(`xl/worksheets/sheet${id}.xml`, "spreadsheetml.worksheet");
-    if (!report.includeCharts) return;
+    if (!includeCharts) return;
     add(
       `xl/worksheets/_rels/sheet${id}.xml.rels`,
       rels([

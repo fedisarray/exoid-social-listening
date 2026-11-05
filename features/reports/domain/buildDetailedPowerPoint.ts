@@ -289,7 +289,11 @@ export function buildDetailedPowerPoint(
   const chartSlide = (sheet: ReviewExcelSheet, subtitle: string) => {
     const number = ++chartNumber;
     const details = unzipSync(
-      buildReviewExcel({ locale, sheets: [sheet], includeCharts: true }),
+      buildReviewExcel({
+        locale,
+        sheets: [{ ...sheet, includeCharts: true }],
+        includeCharts: true,
+      }),
     );
     let chart = strFromU8(details["xl/charts/chart1.xml"]);
     chart = chart

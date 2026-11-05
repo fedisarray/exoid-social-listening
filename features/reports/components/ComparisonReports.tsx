@@ -1,14 +1,9 @@
 "use client";
+import Image from "next/image";
 import type { ReviewExcelOptions } from "@/features/reviews/schemas/reviewExcelOptions";
 import { reviewExcelOptionsSchema } from "@/features/reviews/schemas/reviewExcelOptions";
 import { useLocale, useTranslations } from "next-intl";
-import {
-  CircleAlert,
-  Download,
-  FileSliders,
-  LoaderCircle,
-  RotateCw,
-} from "lucide-react";
+import { CircleAlert, Download, LoaderCircle, RotateCw } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -131,8 +126,10 @@ export function ComparisonReports({
     <section
       aria-labelledby="powerpoint-report-title"
       className={cn(
-        "mt-5 min-w-0 scroll-mt-20",
-        embedded ? "border-t pt-5" : "exoid-panel p-4 sm:p-5",
+        "min-w-0 scroll-mt-20",
+        embedded
+          ? "border-t border-border/60 py-5"
+          : "mt-5 exoid-panel p-4 sm:p-5",
       )}
     >
       <div className="flex flex-col items-start gap-3">
@@ -146,17 +143,22 @@ export function ComparisonReports({
             </h2>
             <Badge variant="outline">{t("draft")}</Badge>
           </div>
-          <p className="mt-2 max-w-prose text-sm text-muted-foreground">
-            {t("description")}
-          </p>
-          <p className="mt-1 text-sm tabular-nums">
-            {range(period)} · {selectedLocale.toUpperCase()}
-          </p>
+          {!embedded ? (
+            <>
+              <p className="mt-2 max-w-prose text-sm text-muted-foreground">
+                {t("description")}
+              </p>
+              <p className="mt-1 text-sm tabular-nums">
+                {range(period)} · {selectedLocale.toUpperCase()}
+              </p>
+            </>
+          ) : null}
         </div>
         {options ? (
           <Button
             type="button"
             variant="outline"
+            className={embedded ? "w-full" : undefined}
             disabled={
               !query.data ||
               !validOptions.success ||
@@ -184,7 +186,13 @@ export function ComparisonReports({
                 aria-hidden="true"
               />
             ) : (
-              <FileSliders className="size-4" aria-hidden="true" />
+              <Image
+                src="/powerpoint.svg"
+                alt=""
+                width={20}
+                height={20}
+                className="size-5 shrink-0"
+              />
             )}
             {t(reports.length ? "regenerate" : "generate")}
           </Button>

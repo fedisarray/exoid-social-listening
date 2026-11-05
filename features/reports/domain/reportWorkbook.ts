@@ -41,6 +41,7 @@ export function reportWorkbook(
   return reviewExcelReport(
     {
       metrics,
+      quarterMetrics: data.quarterMetrics,
       coverage,
       snapshot: data.snapshot,
       mode: "frozen",

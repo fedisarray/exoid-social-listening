@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireUser } from "@/lib/auth/dal";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { listAnalyses } from "@/features/analyses/queries/listAnalyses";
@@ -47,6 +48,7 @@ export async function ExportsScreen({
       </>
     );
   if (!analyses.some((analysis) => analysis.id === requested)) notFound();
+  const user = await requireUser();
   const analysis = await getAnalysis({ id: requested });
   if (!analysis) notFound();
   const period = dashboardPeriod(analysis.config.period, searchParams);
@@ -63,6 +65,15 @@ export async function ExportsScreen({
   return (
     <ExportWorkspace
       key={`${analysis.id}-${input.snapshotId ?? "live"}`}
+      settingsKey={`exoid:export-settings:v1:${user.userId}:${analysis.id}`}
+      preservePeriod={[
+        "kind",
+        "year",
+        "quarter",
+        "cutoff",
+        "start",
+        "end",
+      ].some((key) => searchParams[key] !== undefined)}
       analyses={analyses}
       analysis={analysis}
       initialReviews={{ input, data }}

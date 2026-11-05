@@ -1,50 +1,81 @@
 export const reviewsIT = {
+  sheetYear: "Anno",
+  sheetQuarter: "Trimestre",
+  sheetMetricReviews: "Recensioni",
+  sheetMetricRating: "Voto medio",
+  sheetMetricSatisfaction: "Soddisfatti (4–5 stelle)",
+
+  sheetAdd: "Aggiungi foglio",
+  sheetDelete: "Rimuovi",
+  sheetDown: "Giù",
+  sheetUp: "Su",
+  sheetRemove: "Rimuovi {name}",
+  sheetMoveDown: "Sposta {name} in basso",
+  sheetMoveUp: "Sposta {name} in alto",
+  sheetQuarterHint: "Ogni foglio può usare un trimestre e un anno diversi.",
+  sheetNameError:
+    "Usa un nome univoco (1–31 caratteri), senza [ ] : * ? / o \\. Evita apostrofi iniziali o finali e il nome riservato History.",
+  sheetNewName: "Foglio {number}",
+  sheetUntitled: "Foglio senza nome",
+  sheetRestore: "Ripristina modello",
+  sheetGroupCompetitors: "Concorrenti",
+  sheetGroupOwn: "Luoghi propri",
+  sheetGroupAll: "Tutti i luoghi inclusi",
+  sheetGroupAnchors: "Anchor",
+  sheetGroupProperties: "Luoghi e concorrenti",
+  sheetWindowMonthly: "Andamento mensile del periodo",
+  sheetWindowQuarterly: "Stesso trimestre negli anni",
+  sheetWindowAnnual: "Anni solari + ultimi 12 mesi",
+  sheetWindowSelected: "Periodo del report selezionato",
+  sheetGroup: "Luoghi",
+  sheetWindow: "Periodo di confronto",
+  sheetMetric: "Metrica",
+  sheetName: "Nome del foglio",
   exportWorkspaceDescription:
-    "Scegli confronto, date e luoghi, poi configura i fogli Excel da scaricare. I grafici restano modificabili. Il sentiment verrà aggiunto in seguito.",
+    "Scegli cosa includere, poi scarica Excel o PowerPoint.",
   exportEmpty:
     "Salva un confronto e raccogli le recensioni per configurare un’esportazione.",
   exportComparison: "Confronto",
-  exportScope: "Date e dataset",
+  exportScope: "Periodo del report",
   exportProperties: "Luoghi inclusi",
   exportSelectAll: "Seleziona tutti i luoghi",
-  exportContent: "Fogli Excel",
+  exportContent: "Fogli di lavoro",
   exportContentHint:
-    "I sette fogli originali sono selezionati inizialmente. Con date personalizzate o gli ultimi dodici mesi, i fogli del periodo mostrano l’intervallo scelto al posto dello storico trimestrale.",
+    "Apri un foglio per scegliere nome, metrica, luoghi, periodo e grafico. Fino a 7 fogli.",
   exportPeriodRating: "Voto medio del periodo selezionato",
   exportPeriodSatisfaction: "Soddisfazione del periodo selezionato",
   exportEmptyGroup:
     "Nessun luogo di questo gruppo è stato selezionato. Il foglio non contiene dati.",
   exportHistory: "Anni precedenti da includere",
   exportHistoryHint:
-    "Da 0 a 20 anni. Zero mantiene solo le righe degli ultimi dodici mesi e del periodo selezionato.",
+    "Da 0 a 20 anni. Con 0 includi solo il periodo scelto e gli ultimi 12 mesi.",
   exportCharts: "Includi grafici Excel modificabili",
-  exportSummary: "Riepilogo download",
-  exportSharedScope:
-    "Le nuove esportazioni Excel e PowerPoint usano il periodo, il dataset di recensioni e i luoghi selezionati qui.",
+  exportSummary: "Scarica",
+  exportSave: "Salva configurazione",
+  exportSaving: "Salvataggio…",
+  exportSaved: "Configurazione salvata in questo browser.",
+  exportSaveHint:
+    "Ricorda luoghi, fogli, date e lingua per questo confronto in questo browser.",
+  exportSaveError:
+    "Impossibile salvare in questo browser. Verifica che l’archiviazione del browser sia attiva e riprova. Le modifiche sono ancora disponibili.",
   exportReset: "Ripristina configurazione",
-  exportNewDataset: "Crea una copia congelata delle recensioni raccolte",
-  exportFrozenHint:
-    "Utilizza revisioni, nomi dei luoghi, ruoli e copertura congelati nel dataset. Scegli nuovamente i luoghi quando cambi dataset.",
-  exportChecking: "Verifica dataset e copertura delle date…",
+  exportChecking: "Verifica dei dati disponibili…",
   exportCoverageHint:
     "Scegli almeno un luogo con copertura completa per le date selezionate. Raccogli le date mancanti dalla dashboard del confronto.",
   exportInvalidSelection:
-    "Controlla date e anni, e scegli almeno un luogo e un foglio validi.",
-  exportDownloadStarted:
-    "Il download è stato avviato. Il dataset salvato è selezionato per la prossima esportazione; la configurazione è mantenuta.",
+    "Controlla nomi dei fogli, date e anni di storico. Includi almeno un luogo e un foglio.",
+  exportDownloadStarted: "Download avviato.",
   exportExcel: "Esporta Excel",
-  excelNewDataset:
-    "Crea una copia congelata delle recensioni raccolte. Richiede la copertura delle date salvate del confronto per tutti i luoghi. Il download include solo i luoghi che selezioni qui.",
   excelDownload: "Scarica Excel (.xlsx)",
   excelGenerating: "Preparazione Excel…",
   excelError:
     "Impossibile generare Excel. Riprova; i dati salvati rimangono invariati.",
   excelCoverageError:
-    "Le date da esportare o quelle salvate del confronto non sono interamente coperte. Sincronizza le date mancanti oppure scegli un dataset già salvato, poi riprova.",
+    "Mancano dati per alcune date del report o del confronto salvato. Sincronizzali dalla dashboard del confronto e riprova.",
   excelVersionError:
     "La configurazione del confronto è cambiata. Ricarica la pagina prima di esportare.",
   excelNotFound: "Questo confronto non è più disponibile. Torna ai confronti.",
-  excelDataset: "Dataset salvato",
+  excelDataset: "Dati delle recensioni",
   excelSource:
     "Le metriche descrivono le recensioni Google raccolte, non tutte quelle mai pubblicate. La completezza della fonte non è garantita. Le date usano UTC.",
   excelDates: "Date (UTC)",

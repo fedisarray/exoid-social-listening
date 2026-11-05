@@ -6,6 +6,7 @@ import {
   findRunSnapshot,
   findSnapshot,
   readMetrics,
+  readWorksheetQuarters,
   readFrozenCoverage,
 } from "../repositories/collections";
 import { reviewCoverage, windowCovered } from "../domain/reviewCoverage";
@@ -65,9 +66,10 @@ export async function exportReviewExcel(
     { analysisId: analysis.id },
     snapshotId,
   );
-  const [raw, storedCoverage] = await Promise.all([
+  const [raw, storedCoverage, quarterMetrics] = await Promise.all([
     readMetrics(ctx.db, snapshot.id, dashboardInput),
     readFrozenCoverage(ctx.db, snapshot.id),
+    readWorksheetQuarters(ctx.db, snapshot.id, dashboardInput, input.options),
   ]);
   const selectedIds = new Set(input.options.listingIds);
   if (
@@ -90,6 +92,7 @@ export async function exportReviewExcel(
     snapshot,
     coverage,
     comparisonReady: true,
+    quarterMetrics,
     metrics: {
       ...raw,
       properties: raw.properties

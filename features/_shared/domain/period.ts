@@ -1,4 +1,9 @@
 import type { Period } from "@/features/_shared/schemas/period";
+export function lastCompleteDate(now = new Date()): string {
+  const yesterday = new Date(now);
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+  return yesterday.toISOString().slice(0, 10);
+}
 function day(year: number, month: number, date: number): string {
   return new Date(Date.UTC(year, month, date)).toISOString().slice(0, 10);
 }

@@ -1,5 +1,11 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import {
+  exportSettingsSchema,
+  type ExportSettings,
+} from "../schemas/exportSettings";
+
 import { ComparisonReports } from "@/features/reports/components/ComparisonReports";
 import { reviewExcelOptionsSchema } from "../schemas/reviewExcelOptions";
 import Link from "next/link";
@@ -8,7 +14,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Download, LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
+import Image from "next/image";
 import type {
   AnalysisDetail,
   AnalysisSummary,
@@ -16,7 +23,6 @@ import type {
 import { PeriodFields } from "@/features/analyses/components/PeriodFields";
 import { Choice } from "@/features/_shared/components/Choice";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useReviewDashboard } from "../hooks/useReviewDashboard";
@@ -29,12 +35,18 @@ import {
 import { reviewExcelSheets } from "../schemas/reviewExcelOptions";
 import { exportReviewExcel } from "../actions/exportReviewExcel";
 import { windowCovered } from "../domain/reviewCoverage";
+import { reviewExcelSheetPresets } from "../domain/reviewExcelSheetPresets";
+import { WorksheetEditor } from "../components/WorksheetEditor";
 
 export function ExportWorkspace({
+  settingsKey,
+  preservePeriod,
   analyses,
   analysis,
   initialReviews,
 }: {
+  settingsKey: string;
+  preservePeriod: boolean;
   analyses: AnalysisSummary[];
   analysis: AnalysisDetail;
   initialReviews: { input: GetReviewDashboardInput; data: ReviewDashboard };
@@ -60,13 +72,71 @@ export function ExportWorkspace({
         sheets: [...reviewExcelSheets],
         historyYears: 5,
         includeCharts: true,
+        sheetSettings: reviewExcelSheetPresets(initialReviews.input.period),
       },
+    },
+  });
+  const { reset, getValues } = form;
+  const restoredKey = useRef<string | null>(null);
+  useEffect(() => {
+    if (restoredKey.current === settingsKey) return;
+    restoredKey.current = settingsKey;
+    try {
+      const stored = localStorage.getItem(settingsKey);
+      if (!stored) return;
+      const saved = exportSettingsSchema.safeParse(JSON.parse(stored));
+      if (!saved.success) return;
+      const current = getValues();
+      const available = new Set(
+        initialReviews.data.coverage.map((place) => place.listingId),
+      );
+      reset(
+        {
+          ...current,
+          ...saved.data,
+          period: preservePeriod ? current.period : saved.data.period,
+          options: {
+            ...saved.data.options,
+            sheetSettings:
+              saved.data.options.sheetSettings ??
+              reviewExcelSheetPresets(
+                preservePeriod ? current.period : saved.data.period,
+                saved.data.options.historyYears,
+                saved.data.options.includeCharts,
+              ),
+            listingIds: saved.data.options.listingIds.filter((id) =>
+              available.has(id),
+            ),
+          },
+        },
+        { keepDefaultValues: true },
+      );
+    } catch {
+      // Storage may be unavailable; keep the editable defaults.
+    }
+  }, [
+    settingsKey,
+    preservePeriod,
+    getValues,
+    reset,
+    initialReviews.data.coverage,
+  ]);
+  const saveSettings = useMutation({
+    mutationFn: async (settings: ExportSettings) => {
+      const parsed = exportSettingsSchema.parse(settings);
+      localStorage.setItem(settingsKey, JSON.stringify(parsed));
+      return parsed;
     },
   });
   const period = useWatch({ control: form.control, name: "period" });
   const reportLocale = useWatch({ control: form.control, name: "locale" });
   const snapshotId = useWatch({ control: form.control, name: "snapshotId" });
   const options = useWatch({ control: form.control, name: "options" });
+  const currentSettings = exportSettingsSchema.safeParse({
+    locale: reportLocale,
+    options,
+    period,
+  });
   const validPeriod =
     exportReviewExcelInputSchema.shape.period.safeParse(period);
   const input: GetReviewDashboardInput = {
@@ -121,19 +191,6 @@ export function ExportWorkspace({
       });
     },
   });
-  const sheetLabels = {
-    reviews: "trendVolume",
-    rating: "rating",
-    quarterRating:
-      period.kind === "quarter" ? "trendQuarterRating" : "exportPeriodRating",
-    satisfaction: "satisfied",
-    quarterSatisfaction:
-      period.kind === "quarter"
-        ? "trendQuarterSatisfaction"
-        : "exportPeriodSatisfaction",
-    anchorRating: "trendAnchorRating",
-    anchorSatisfaction: "trendAnchorSatisfaction",
-  } as const;
   const errors: Record<string, string> = {
     COVERAGE_INCOMPLETE: "excelCoverageError",
     CONFIGURATION_CHANGED: "excelVersionError",
@@ -168,47 +225,6 @@ export function ExportWorkspace({
           disabled={download.isPending}
           className="min-w-0 space-y-4 disabled:opacity-70"
         >
-          <section className="space-y-4 exoid-panel p-4 sm:p-5">
-            <h2 className="text-lg font-semibold">{t("exportScope")}</h2>
-            <Controller
-              control={form.control}
-              name="period"
-              render={({ field }) => (
-                <PeriodFields value={field.value} onChange={field.onChange} />
-              )}
-            />
-            <div className="space-y-2">
-              <Label htmlFor="export-dataset">{t("excelDataset")}</Label>
-              <Choice
-                id="export-dataset"
-                label={t("excelDataset")}
-                value={snapshotId ?? "live"}
-                disabled={query.isFetching}
-                onChange={(id) => {
-                  form.setValue("snapshotId", id === "live" ? undefined : id, {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  });
-                  form.setValue("options.listingIds", [], {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  });
-                }}
-                options={[
-                  { value: "live", label: t("exportNewDataset") },
-                  ...(data?.snapshots ?? initialReviews.data.snapshots).map(
-                    (snapshot) => ({
-                      value: snapshot.id,
-                      label: `${new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(snapshot.createdAt))} · v${snapshot.version}`,
-                    }),
-                  ),
-                ]}
-              />
-              <p className="text-sm text-muted-foreground">
-                {t(snapshotId ? "exportFrozenHint" : "excelNewDataset")}
-              </p>
-            </div>
-          </section>
           <section className="space-y-4 exoid-panel p-4 sm:p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-lg font-semibold">{t("exportProperties")}</h2>
@@ -280,142 +296,151 @@ export function ExportWorkspace({
               </div>
             ) : null}
           </section>
-          <section className="space-y-4 exoid-panel p-4 sm:p-5">
-            <h2 className="text-lg font-semibold">{t("exportContent")}</h2>
-            <p className="text-sm text-muted-foreground">
-              {t("exportContentHint")}
-            </p>
-            <fieldset className="grid gap-1 sm:grid-cols-2">
-              <legend className="sr-only">{t("exportContent")}</legend>
-              {reviewExcelSheets.map((sheet) => (
-                <label
-                  key={sheet}
-                  className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg px-2 py-2 hover:bg-muted"
-                >
-                  <input
-                    type="checkbox"
-                    value={sheet}
-                    {...form.register("options.sheets")}
-                    className="size-4 accent-primary"
-                  />
-                  <span className="text-sm">{t(sheetLabels[sheet])}</span>
-                </label>
-              ))}
-            </fieldset>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="export-years">{t("exportHistory")}</Label>
-                <Input
-                  id="export-years"
-                  type="number"
-                  min={0}
-                  max={20}
-                  {...form.register("options.historyYears", {
-                    valueAsNumber: true,
-                  })}
+          <WorksheetEditor form={form} />
+          <Controller
+            control={form.control}
+            name="locale"
+            render={({ field }) => (
+              <div className="max-w-xs space-y-2">
+                <Label htmlFor="export-language">{app("language")}</Label>
+                <Choice
+                  id="export-language"
+                  label={app("language")}
+                  value={field.value}
+                  onChange={field.onChange}
+                  options={[
+                    { value: "it", label: "Italiano" },
+                    { value: "en", label: "English" },
+                  ]}
                 />
-                <p className="text-xs text-muted-foreground">
-                  {t("exportHistoryHint")}
-                </p>
               </div>
-              <Controller
-                control={form.control}
-                name="locale"
-                render={({ field }) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="export-language">{app("language")}</Label>
-                    <Choice
-                      id="export-language"
-                      label={app("language")}
-                      value={field.value}
-                      onChange={field.onChange}
-                      options={[
-                        { value: "it", label: "Italiano" },
-                        { value: "en", label: "English" },
-                      ]}
-                    />
-                  </div>
-                )}
-              />
-            </div>
-            <label className="flex min-h-11 cursor-pointer items-center gap-3">
-              <input
-                type="checkbox"
-                {...form.register("options.includeCharts")}
-                className="size-4 accent-primary"
-              />
-              <span className="text-sm">{t("exportCharts")}</span>
-            </label>
-          </section>
-        </fieldset>
-        <aside className="space-y-5 exoid-panel p-4 sm:p-5 xl:sticky xl:top-6">
-          <h2 className="text-lg font-semibold">{t("exportSummary")}</h2>
-          <p className="text-sm text-muted-foreground">
-            {t("exportSharedScope")}
-          </p>
-          <dl className="space-y-3 text-sm">
-            <div>
-              <dt className="text-muted-foreground">{t("exportComparison")}</dt>
-              <dd className="mt-1 break-words font-medium">{analysis.name}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">{t("selected")}</dt>
-              <dd className="mt-1 tabular-nums">
-                {period.start} — {period.end} (UTC)
-              </dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">{t("exportProperties")}</dt>
-              <dd className="mt-1">{options.listingIds.length}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">{t("exportContent")}</dt>
-              <dd className="mt-1">{options.sheets.length}</dd>
-            </div>
-          </dl>
-          <p className="text-sm text-muted-foreground">{t("excelMissing")}</p>
-          {!selectedCovered || !canFreeze ? (
-            <p role="status" className="text-sm">
-              {t(!canFreeze ? "excelCoverageError" : "exportCoverageHint")}
-            </p>
-          ) : null}
-          {Object.keys(form.formState.errors).length ? (
-            <p role="alert" className="text-sm text-destructive">
-              {t("exportInvalidSelection")}
-            </p>
-          ) : null}
-          {download.isError ? (
-            <p role="alert" className="text-sm text-destructive">
-              {t(errors[download.error.message] ?? "excelError")}
-            </p>
-          ) : null}
-          {download.isSuccess ? (
-            <p role="status" className="text-sm">
-              {t("exportDownloadStarted")}
-            </p>
-          ) : null}
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={
-              download.isPending ||
-              query.isFetching ||
-              query.isError ||
-              !selectedCovered ||
-              !canFreeze ||
-              !form.formState.isValid
-            }
-          >
-            {download.isPending ? (
-              <LoaderCircle
-                className="size-4 motion-safe:animate-spin"
-                aria-hidden="true"
-              />
-            ) : (
-              <Download className="size-4" aria-hidden="true" />
             )}
-            {t(download.isPending ? "excelGenerating" : "excelDownload")}
-          </Button>
+          />
+        </fieldset>
+        <aside className="min-w-0 exoid-panel p-4 sm:p-5 xl:sticky xl:top-20">
+          <fieldset
+            disabled={download.isPending}
+            className="min-w-0 space-y-3 pb-5 disabled:opacity-70"
+          >
+            <legend className="mb-3 text-base font-semibold">
+              {t("exportScope")}
+            </legend>
+            <Controller
+              control={form.control}
+              name="period"
+              render={({ field }) => (
+                <PeriodFields
+                  compact
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </fieldset>
+          <section className="space-y-3 border-t border-border/60 py-5">
+            <h2 className="text-base font-semibold">{t("exportSummary")}</h2>
+            <dl className="space-y-2 text-sm">
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-muted-foreground">
+                  {t("exportProperties")}
+                </dt>
+                <dd className="font-medium tabular-nums">
+                  {options.listingIds.length}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-muted-foreground">{t("exportContent")}</dt>
+                <dd className="font-medium tabular-nums">
+                  {options.sheets.length}
+                </dd>
+              </div>
+            </dl>
+            <details className="text-sm">
+              <summary className="cursor-pointer rounded-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring">
+                {t("dataNotes")}
+              </summary>
+              <p className="mt-2 text-muted-foreground">{t("excelMissing")}</p>
+            </details>
+            {!selectedCovered || !canFreeze ? (
+              <p role="status" className="text-sm">
+                {t(!canFreeze ? "excelCoverageError" : "exportCoverageHint")}
+              </p>
+            ) : null}
+            {Object.keys(form.formState.errors).length ? (
+              <p role="alert" className="text-sm text-destructive">
+                {t("exportInvalidSelection")}
+              </p>
+            ) : null}
+            {download.isError ? (
+              <p role="alert" className="text-sm text-destructive">
+                {t(errors[download.error.message] ?? "excelError")}
+              </p>
+            ) : null}
+            {download.isSuccess ? (
+              <p role="status" className="text-sm">
+                {t("exportDownloadStarted")}
+              </p>
+            ) : null}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={
+                download.isPending ||
+                query.isFetching ||
+                query.isError ||
+                !selectedCovered ||
+                !canFreeze ||
+                !form.formState.isValid
+              }
+            >
+              {download.isPending ? (
+                <LoaderCircle
+                  className="size-4 motion-safe:animate-spin"
+                  aria-hidden="true"
+                />
+              ) : (
+                <Image
+                  src="/icons/excel.svg"
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="size-5 shrink-0"
+                  aria-hidden="true"
+                />
+              )}
+              {t(download.isPending ? "excelGenerating" : "excelDownload")}
+            </Button>
+          </section>
+          <section className="space-y-2 border-t border-border/60 py-4">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              disabled={download.isPending || saveSettings.isPending}
+              onClick={form.handleSubmit((values) => {
+                const settings = exportSettingsSchema.parse(values);
+                saveSettings.mutate(settings);
+              })}
+            >
+              {t(saveSettings.isPending ? "exportSaving" : "exportSave")}
+            </Button>
+            <p className="text-xs text-muted-foreground">
+              {t("exportSaveHint")}
+            </p>
+            {saveSettings.isSuccess &&
+            currentSettings.success &&
+            JSON.stringify(saveSettings.data) ===
+              JSON.stringify(currentSettings.data) ? (
+              <p role="status" className="text-sm">
+                {t("exportSaved")}
+              </p>
+            ) : null}
+            {saveSettings.isError ? (
+              <p role="alert" className="text-sm text-destructive">
+                {t("exportSaveError")}
+              </p>
+            ) : null}
+          </section>
           <ComparisonReports
             embedded
             key={analysis.id}
@@ -433,35 +458,38 @@ export function ExportWorkspace({
               !query.isError,
             )}
           />
-          <Button
-            type="button"
-            variant="ghost"
-            className="w-full"
-            disabled={download.isPending}
-            onClick={() => {
-              form.reset();
-              download.reset();
-              const next = new URL(window.location.href);
-              if (initialReviews.input.snapshotId)
-                next.searchParams.set(
-                  "snapshot",
-                  initialReviews.input.snapshotId,
-                );
-              else next.searchParams.delete("snapshot");
-              window.history.replaceState(null, "", next);
-            }}
-          >
-            {t("exportReset")}
-          </Button>
-          <Link
-            data-slot="button"
-            data-variant="outline"
-            data-size="default"
-            href={`/analyses/${analysis.id}/dashboard`}
-            className={cn(buttonVariants({ variant: "outline" }), "w-full")}
-          >
-            {app("openAnalysis")}
-          </Link>
+          <div className="grid gap-2 border-t border-border/60 pt-4 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full"
+              disabled={download.isPending}
+              onClick={() => {
+                form.reset();
+                download.reset();
+                saveSettings.reset();
+                const next = new URL(window.location.href);
+                if (initialReviews.input.snapshotId)
+                  next.searchParams.set(
+                    "snapshot",
+                    initialReviews.input.snapshotId,
+                  );
+                else next.searchParams.delete("snapshot");
+                window.history.replaceState(null, "", next);
+              }}
+            >
+              {t("exportReset")}
+            </Button>
+            <Link
+              data-slot="button"
+              data-variant="outline"
+              data-size="default"
+              href={`/analyses/${analysis.id}/dashboard`}
+              className={cn(buttonVariants({ variant: "outline" }), "w-full")}
+            >
+              {app("openAnalysis")}
+            </Link>
+          </div>
         </aside>
       </form>
     </>
